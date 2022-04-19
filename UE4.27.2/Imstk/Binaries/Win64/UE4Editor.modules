@@ -1,0 +1,8 @@
+{
+	"BuildId": "17155196",
+	"Modules": 
+	{
+		"Imstk": "UE4Editor-Imstk.dll",
+		"ImstkEditor": "UE4Editor-ImstkEditor.dll"
+	}
+}
