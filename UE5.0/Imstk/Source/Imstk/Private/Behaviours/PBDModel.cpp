@@ -5,7 +5,7 @@
 #include "ImstkSettings.h"
 #include "iMSTK-5.0/imstkPbdModel.h"
 #include "iMSTK-5.0/imstkSelectEnclosedPoints.h"
-#include "iMSTK-5.0/imstkOneToOneMap.h"
+#include "iMSTK-5.0/imstkPointwiseMap.h"
 #include "iMSTK-5.0/imstkTetrahedralMesh.h"
 #include "Engine/GameEngine.h"
 //#include "iMSTK-5.0/imstkPbdFemConstraint.h"
@@ -303,12 +303,21 @@ void UPBDModel::Init()
 		TArray<FVector> Verts;
 		TArray<FVector> Normals;
 		TArray<int32> Triangles;
-		imstk::VecDataArray<int, 3>& Arr = *SurfMesh->getTriangleIndices().get();
+		/*imstk::VecDataArray<int, 3>& Arr = *SurfMesh->getTriangleIndices().get();
 		for (int i = 0; i < Arr.size(); i++) {
 			for (int j = 0; j < 3; j++) {
 				Triangles.Add(Arr[i][j]);
 			}
+		}*/
+		for (int i = 0; i < SurfMesh->getNumTriangles(); i++) {
+			for (int j = 0; j < 3; j++) {
+				imstk::Vec3i Indices = SurfMesh->getTriangleIndices(i);
+				Triangles.Add(Indices.x());
+				Triangles.Add(Indices.y());
+				Triangles.Add(Indices.z());
+			}
 		}
+
 
 		//Normals = UMathUtil::ToUnrealFVecArray(SurfMesh->getVertexNormals());
 		Verts = UMathUtil::ToUnrealFVecArray(SurfMesh->getVertexPositions());
@@ -320,7 +329,7 @@ void UPBDModel::Init()
 
 		PbdObject->setCollidingGeometry(SurfMesh);
 		PbdObject->setVisualGeometry(SurfMesh);
-		PbdObject->setPhysicsToCollidingMap(std::make_shared<imstk::OneToOneMap>(TetMesh, SurfMesh));
+		PbdObject->setPhysicsToCollidingMap(std::make_shared<imstk::PointwiseMap>(TetMesh, SurfMesh));
 
 		PbdObject->setPhysicsGeometry(TetMesh);
 		PbdModel->setModelGeometry(TetMesh);

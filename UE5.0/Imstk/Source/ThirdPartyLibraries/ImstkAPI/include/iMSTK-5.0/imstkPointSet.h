@@ -40,13 +40,10 @@ template<typename T, int N> class VecDataArray;
 class PointSet : public Geometry
 {
 public:
-    PointSet(const std::string& name = std::string(""));
+    PointSet();
     ~PointSet() override = default;
 
-    ///
-    /// \brief Returns the string representing the type name of the geometry
-    ///
-    const std::string getTypeName() const override { return "PointSet"; }
+    IMSTK_TYPE_NAME(PointSet)
 
     ///
     /// \brief Initializes the data structure given vertex positions
@@ -110,19 +107,6 @@ public:
     /// \brief Returns the number of total vertices in the mesh
     ///
     int getNumVertices() const;
-
-    ///
-    /// \brief Get/Set load factor
-    /// \param loadFactor the maximum number of vertices; a multiple of the original vertex count
-    ///@{
-    virtual void setLoadFactor(const double loadFactor);
-    virtual double getLoadFactor() const { return m_loadFactor; }
-    ///@}
-
-    ///
-    /// \brief Get the maximum number of vertices
-    ///
-    int getMaxNumVertices() const { return m_maxNumVertices; }
 
 // Attributes
     ///
@@ -212,9 +196,5 @@ protected:
     std::string m_activeVertexScalars  = "";
     std::string m_activeVertexTangents = "";
     std::string m_activeVertexTCoords  = "";
-
-    double m_loadFactor          = 2.0;
-    int    m_maxNumVertices      = 0;
-    int    m_originalNumVertices = 0;
 };
 } // namespace imstk

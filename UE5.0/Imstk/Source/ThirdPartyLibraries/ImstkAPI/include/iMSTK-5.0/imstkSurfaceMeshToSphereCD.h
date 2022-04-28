@@ -22,6 +22,7 @@
 #pragma once
 
 #include "imstkCollisionDetectionAlgorithm.h"
+#include "imstkMacros.h"
 
 namespace imstk
 {
@@ -36,18 +37,15 @@ class SurfaceMeshToSphereCD : public CollisionDetectionAlgorithm
 {
 public:
     SurfaceMeshToSphereCD();
-    virtual ~SurfaceMeshToSphereCD() override = default;
+    ~SurfaceMeshToSphereCD() override = default;
 
-    ///
-    /// \brief Returns collision detection type string name
-    ///
-    virtual const std::string getTypeName() const override { return "SurfaceMeshToSphereCD"; }
+    IMSTK_TYPE_NAME(SurfaceMeshToSphereCD)
 
 protected:
     ///
-    /// \brief Compute collision data for AB simulatenously
+    /// \brief Compute collision data for AB simultaneously
     ///
-    virtual void computeCollisionDataAB(
+    void computeCollisionDataAB(
         std::shared_ptr<Geometry>      geomA,
         std::shared_ptr<Geometry>      geomB,
         std::vector<CollisionElement>& elementsA,

@@ -13,10 +13,10 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define IMSTK_ImstkController_generated_h
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_SPARSE_DATA
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_RPC_WRAPPERS
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_RPC_WRAPPERS_NO_PURE_DECLS
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_INCLASS_NO_PURE_DECLS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_SPARSE_DATA
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_RPC_WRAPPERS
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_RPC_WRAPPERS_NO_PURE_DECLS
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUImstkController(); \
 	friend struct Z_Construct_UClass_UImstkController_Statics; \
@@ -25,7 +25,7 @@ public: \
 	DECLARE_SERIALIZER(UImstkController)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_INCLASS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_INCLASS \
 private: \
 	static void StaticRegisterNativesUImstkController(); \
 	friend struct Z_Construct_UClass_UImstkController_Statics; \
@@ -34,7 +34,7 @@ public: \
 	DECLARE_SERIALIZER(UImstkController)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_STANDARD_CONSTRUCTORS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_STANDARD_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UImstkController(const FObjectInitializer& ObjectInitializer); \
 	DEFINE_ABSTRACT_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UImstkController) \
@@ -47,7 +47,7 @@ private: \
 public:
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_ENHANCED_CONSTRUCTORS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	NO_API UImstkController(UImstkController&&); \
@@ -58,25 +58,25 @@ public: \
 	DEFINE_ABSTRACT_DEFAULT_CONSTRUCTOR_CALL(UImstkController)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_18_PROLOG
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_GENERATED_BODY_LEGACY \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_28_PROLOG
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_SPARSE_DATA \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_RPC_WRAPPERS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_INCLASS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_STANDARD_CONSTRUCTORS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_SPARSE_DATA \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_RPC_WRAPPERS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_INCLASS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_STANDARD_CONSTRUCTORS \
 public: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_GENERATED_BODY \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_SPARSE_DATA \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_INCLASS_NO_PURE_DECLS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_21_ENHANCED_CONSTRUCTORS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_SPARSE_DATA \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_INCLASS_NO_PURE_DECLS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_31_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -87,4 +87,7 @@ template<> IMSTK_API UClass* StaticClass<class UImstkController>();
 #define CURRENT_FILE_ID FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h
 
 
+#define FOREACH_ENUM_ETOOLGEOMETRY(op) \
+	op(LineMeshTool) \
+	op(SphereTool) 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

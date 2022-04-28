@@ -22,6 +22,7 @@
 #pragma once
 
 #include "imstkGeometryMap.h"
+#include "imstkMacros.h"
 
 namespace imstk
 {
@@ -33,9 +34,9 @@ namespace imstk
 class IsometricMap : public GeometryMap
 {
 public:
-    IsometricMap() { }
-
-    IsometricMap(std::shared_ptr<Geometry> parent, std::shared_ptr<Geometry> child)
+    IsometricMap() = default;
+    IsometricMap(std::shared_ptr<Geometry> parent,
+                 std::shared_ptr<Geometry> child)
     {
         this->setParentGeometry(parent);
         this->setChildGeometry(child);
@@ -43,24 +44,17 @@ public:
 
     ~IsometricMap() override = default;
 
-    const std::string getTypeName() const override { return "IsometricMap"; }
+    IMSTK_TYPE_NAME(IsometricMap)
 
     ///
     /// \brief Compute the map
     ///
-    void compute() override {}
+    void compute() override { }
 
+protected:
     ///
     /// \brief Apply the map
     ///
-    void apply() override;
-
-    ///
-    /// \brief Check the validity of the map
-    ///
-    inline bool isValid() const override
-    {
-        return true;
-    }
+    void requestUpdate() override;
 };
 } // namespace imstk

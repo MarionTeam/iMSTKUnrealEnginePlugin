@@ -10,7 +10,7 @@
  *  \brief Components for static models in imstk
  *  \details Attach to models in Unreal to initialize them in imstk 
  */
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Imstk), meta = (BlueprintSpawnableComponent))
 class IMSTK_API UStaticModel : public UDynamicalModel
 {
 	GENERATED_BODY()

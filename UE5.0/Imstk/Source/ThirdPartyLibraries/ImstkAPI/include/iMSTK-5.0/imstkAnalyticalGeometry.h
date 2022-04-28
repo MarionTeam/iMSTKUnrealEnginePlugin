@@ -79,7 +79,7 @@ public:
     void updatePostTransformData() const override;
 
 protected:
-    AnalyticalGeometry(const std::string& name = std::string(""));
+    AnalyticalGeometry();
 
     ///
     /// \brief Apply a user transform directly to (pre-transformed) parameters producing
@@ -87,9 +87,9 @@ protected:
     ///
     void applyTransform(const Mat4d& m) override;
 
-    Vec3d m_position;                         ///> position
-    mutable Vec3d m_positionPostTransform;    ///> position once transform applied
-    Quatd m_orientation;                      ///> orientation
-    mutable Quatd m_orientationPostTransform; ///> orientation once transform is applied
+    Vec3d m_position;                         ///< position
+    mutable Vec3d m_positionPostTransform;    ///< position once transform applied
+    Quatd m_orientation;                      ///< orientation
+    mutable Quatd m_orientationPostTransform; ///< orientation once transform is applied
 };
 } // namespace imstk

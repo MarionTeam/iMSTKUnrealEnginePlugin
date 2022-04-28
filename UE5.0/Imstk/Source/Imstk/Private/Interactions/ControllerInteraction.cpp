@@ -8,6 +8,8 @@
 #include "StaticModel.h"
 #include "iMSTK-5.0/imstkPBDObjectCollision.h"
 #include "iMSTK-5.0/imstkRigidObjectCollision.h"
+#include "iMSTK-5.0/imstkPbdRigidObjectGrasping.h"
+#include "iMSTK-5.0/imstkPbdObjectStitching.h"
 #include "iMSTK-5.0/imstkLineMesh.h"
 //#include "iMSTK-5.0/imstkMeshToMeshBruteForceCD.h"
 #include "ImstkSubsystem.h"
@@ -23,6 +25,22 @@ void UControllerInteraction::Init()
 		UE_LOG(LogTemp, Error, TEXT("%s"), ("Controller is not assigned in collision interaction"));
 		return;
 	}
+	UImstkSubsystem* SubsystemInstance = GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>();
+
+	if (Controller->bGraspingTool) {
+		std::shared_ptr<imstk::PbdRigidObjectGrasping> ToolPicking = std::make_shared<imstk::PbdRigidObjectGrasping>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), Controller->GetToolObj());
+		SubsystemInstance->ActiveScene->addInteraction(ToolPicking);
+
+		Controller->SetToolPicking(ToolPicking);
+		return;
+	}
+	if (Controller->bStitchingTool) {
+		std::shared_ptr<imstk::PbdObjectStitching> Stitching = std::make_shared<imstk::PbdObjectStitching>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject));
+		Stitching->setStitchDistance(10);
+		SubsystemInstance->ActiveScene->addInteraction(Stitching);
+		Controller->SetStitching(Stitching);
+		return;
+	}
 
 	// Determine the collision type if set to auto
 	if (CollisionType == CollisionInteractionType::Auto)
@@ -33,7 +51,6 @@ void UControllerInteraction::Init()
 		return;
 
 	// Create interaction and add to scene
-	UImstkSubsystem* SubsystemInstance = GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>();
 	if (Cast<URBDModel>(Model1) || Cast<UStaticModel>(Model1))
 	{
 		std::shared_ptr<imstk::RigidObjectCollision> Interaction = std::make_shared<imstk::RigidObjectCollision>(Controller->GetToolObj(), std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));

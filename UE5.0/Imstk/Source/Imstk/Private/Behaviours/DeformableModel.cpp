@@ -5,7 +5,6 @@
 
 #include "iMSTK-5.0/imstkPbdModel.h"
 #include "iMSTK-5.0/imstkSelectEnclosedPoints.h"
-#include "iMSTK-5.0/imstkOneToOneMap.h"
 #include "iMSTK-5.0/imstkTetrahedralMesh.h"
 
 // TODO: Normals get flipped seemingly at random. It seems to work as it is but kind of hard to predict
@@ -59,11 +58,15 @@ void UDeformableModel::ProcessBoundaryConditions()
 
 	// Get the mesh from the assigned variable
 	for (AActor* Actor : BoundaryConditionActors) {
+		if (!Actor) 
+			continue;
+		
 		UStaticMeshComponent* BoundaryMeshComp = (UStaticMeshComponent*)Actor->GetComponentByClass(UStaticMeshComponent::StaticClass());
 		if (!BoundaryMeshComp) {
 			UE_LOG(LogTemp, Error, TEXT("No Mesh attached to Boundary Condition Actor for %s"), *Owner->GetName());
-			return;
+			continue;
 		}
+
 
 		UStaticMesh* BoundaryMesh = BoundaryMeshComp->GetStaticMesh();
 

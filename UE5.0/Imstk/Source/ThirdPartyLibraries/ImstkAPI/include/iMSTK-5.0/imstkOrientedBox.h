@@ -22,6 +22,7 @@
 #pragma once
 
 #include "imstkAnalyticalGeometry.h"
+#include "imstkMacros.h"
 
 namespace imstk
 {
@@ -35,8 +36,7 @@ class OrientedBox : public AnalyticalGeometry
 public:
     OrientedBox(const Vec3d& pos         = Vec3d::Zero(),
                 const Vec3d extents      = Vec3d(0.5, 0.5, 0.5),
-                const Quatd& orientation = Quatd::Identity(),
-                const std::string& name  = std::string("defaultOrientedBox")) : AnalyticalGeometry(name)
+                const Quatd& orientation = Quatd::Identity()) : AnalyticalGeometry()
     {
         setPosition(pos);
         setOrientation(orientation);
@@ -45,10 +45,7 @@ public:
 
     ~OrientedBox() override = default;
 
-    ///
-    /// \brief Returns the string representing the type name of the geometry
-    ///
-    const std::string getTypeName() const override { return "OrientedBox"; }
+    IMSTK_TYPE_NAME(OrientedBox)
 
     ///
     /// \brief Print the cube info
@@ -94,6 +91,6 @@ protected:
     void applyTransform(const Mat4d& m) override;
 
     Vec3d m_extents = Vec3d(0.5, 0.5, 0.5);                      // Half dimensions of the oriented box
-    mutable Vec3d m_extentsPostTransform = Vec3d(0.5, 0.5, 0.5); ///> Half dimensions of the oriented box once transform applied
+    mutable Vec3d m_extentsPostTransform = Vec3d(0.5, 0.5, 0.5); ///< Half dimensions of the oriented box once transform applied
 };
 } // namespace imstk

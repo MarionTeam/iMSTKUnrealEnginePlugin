@@ -18,6 +18,9 @@ class IMSTK_API UPBDThread : public UDeformableModel
 
 
 public:
+	UPROPERTY(EditAnywhere, Category = "General")
+		bool bZeroTangents = false;
+
 	UPROPERTY(EditAnywhere, Category = "Constraints")
 		bool bUseBendConstraint = false;
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseBendConstraint", EditConditionHides), Category = "Constraints")

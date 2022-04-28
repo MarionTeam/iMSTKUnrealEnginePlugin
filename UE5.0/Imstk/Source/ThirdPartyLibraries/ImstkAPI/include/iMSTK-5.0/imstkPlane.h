@@ -22,6 +22,7 @@
 #pragma once
 
 #include "imstkAnalyticalGeometry.h"
+#include "imstkMacros.h"
 
 namespace imstk
 {
@@ -33,9 +34,8 @@ namespace imstk
 class Plane : public AnalyticalGeometry
 {
 public:
-    Plane(const Vec3d& pos = Vec3d(0.0, 0.0, 0.0), const Vec3d& normal = Vec3d(0.0, 1.0, 0.0),
-          const std::string& name = std::string("defaultPlane")) :
-        AnalyticalGeometry(name), m_width(1.0)
+    Plane(const Vec3d& pos = Vec3d(0.0, 0.0, 0.0), const Vec3d& normal = Vec3d(0.0, 1.0, 0.0)) :
+        AnalyticalGeometry(), m_width(1.0)
     {
         setPosition(pos);
         setNormal(normal.normalized());
@@ -44,10 +44,7 @@ public:
 
     ~Plane() override = default;
 
-    ///
-    /// \brief Returns the string representing the type name of the geometry
-    ///
-    const std::string getTypeName() const override { return "Plane"; }
+    IMSTK_TYPE_NAME(Plane)
 
     ///
     /// \brief Get/Set the normal to the plane
@@ -84,6 +81,6 @@ protected:
 
     Vec3d m_normal;
     mutable Vec3d m_normalPostTransform;
-    double m_width; ///> Width of plane, only used for visual purposes
+    double m_width; ///< Width of plane, only used for visual purposes
 };
 } // namespace imstk

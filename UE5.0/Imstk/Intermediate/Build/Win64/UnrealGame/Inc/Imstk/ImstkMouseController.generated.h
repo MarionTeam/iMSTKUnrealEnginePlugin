@@ -13,10 +13,22 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define IMSTK_ImstkMouseController_generated_h
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_SPARSE_DATA
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_RPC_WRAPPERS
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_RPC_WRAPPERS_NO_PURE_DECLS
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_INCLASS_NO_PURE_DECLS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_SPARSE_DATA
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_RPC_WRAPPERS \
+ \
+	DECLARE_FUNCTION(execBeginStitch); \
+	DECLARE_FUNCTION(execEndVertexGrasp); \
+	DECLARE_FUNCTION(execBeginVertexGrasp);
+
+
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_RPC_WRAPPERS_NO_PURE_DECLS \
+ \
+	DECLARE_FUNCTION(execBeginStitch); \
+	DECLARE_FUNCTION(execEndVertexGrasp); \
+	DECLARE_FUNCTION(execBeginVertexGrasp);
+
+
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUImstkMouseController(); \
 	friend struct Z_Construct_UClass_UImstkMouseController_Statics; \
@@ -25,7 +37,7 @@ public: \
 	DECLARE_SERIALIZER(UImstkMouseController)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_INCLASS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_INCLASS \
 private: \
 	static void StaticRegisterNativesUImstkMouseController(); \
 	friend struct Z_Construct_UClass_UImstkMouseController_Statics; \
@@ -34,7 +46,7 @@ public: \
 	DECLARE_SERIALIZER(UImstkMouseController)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_STANDARD_CONSTRUCTORS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_STANDARD_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UImstkMouseController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
 	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UImstkMouseController) \
@@ -47,7 +59,7 @@ private: \
 public:
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_ENHANCED_CONSTRUCTORS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UImstkMouseController() { }; \
 private: \
@@ -60,25 +72,25 @@ public: \
 	DEFINE_DEFAULT_CONSTRUCTOR_CALL(UImstkMouseController)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_13_PROLOG
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_GENERATED_BODY_LEGACY \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_14_PROLOG
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_SPARSE_DATA \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_RPC_WRAPPERS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_INCLASS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_STANDARD_CONSTRUCTORS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_SPARSE_DATA \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_RPC_WRAPPERS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_INCLASS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_STANDARD_CONSTRUCTORS \
 public: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_GENERATED_BODY \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_SPARSE_DATA \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_INCLASS_NO_PURE_DECLS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_16_ENHANCED_CONSTRUCTORS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_SPARSE_DATA \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_INCLASS_NO_PURE_DECLS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_17_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

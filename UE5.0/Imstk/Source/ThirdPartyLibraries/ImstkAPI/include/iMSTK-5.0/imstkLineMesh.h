@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "imstkMacros.h"
 #include "imstkPointSet.h"
 
 #include <array>
@@ -37,13 +38,10 @@ struct Color;
 class LineMesh : public PointSet
 {
 public:
-    LineMesh(const std::string& name = std::string(""));
+    LineMesh();
     ~LineMesh() override = default;
 
-    ///
-    /// \brief Returns the string representing the type name of the geometry
-    ///
-    const std::string getTypeName() const override { return "LineMesh"; }
+    IMSTK_TYPE_NAME(LineMesh)
 
     ///
     /// \brief Initializes the rest of the data structures given vertex positions and
@@ -128,7 +126,7 @@ protected:
     void setCellActiveAttribute(std::string& activeAttributeName, std::string attributeName,
                                 const int expectedNumComponents, const ScalarTypeId expectedScalarType);
 
-    std::shared_ptr<VecDataArray<int, 2>> m_segmentIndices;   ///> line connectivity
+    std::shared_ptr<VecDataArray<int, 2>> m_segmentIndices;   ///< line connectivity
 
     std::unordered_map<std::string, std::shared_ptr<AbstractDataArray>> m_cellAttributes;
     std::string m_activeCellScalars = "";

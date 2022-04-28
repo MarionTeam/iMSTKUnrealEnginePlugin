@@ -23,6 +23,7 @@
 
 #include "imstkGeometry.h"
 #include "imstkMath.h"
+#include "imstkMacros.h"
 
 #ifdef WIN32
 #pragma warning( push )
@@ -68,13 +69,10 @@ public:
     /// \param time Lifespan of each particle (in milliseconds)
     /// \param mode Mode for emitter
     ///
-    RenderParticles(const unsigned int maxNumParticles = 128, const std::string& name = std::string(""));
+    RenderParticles(const unsigned int maxNumParticles = 128);
     ~RenderParticles() override = default;
 
-    ///
-    /// \brief Returns the string representing the type name of the geometry
-    ///
-    const std::string getTypeName() const override { return "RenderParticles"; }
+    IMSTK_TYPE_NAME(RenderParticles)
 
     ///
     /// \brief Set size of particle

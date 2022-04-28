@@ -2,12 +2,22 @@
 
 
 #include "TetrahedralMeshAsset.h"
+#include "iMSTK-5.0/imstkSurfaceMesh.h"
 #include "MathUtil.h"
 
 void UTetrahedralMeshAsset::SetTetrahedralMesh(std::shared_ptr<imstk::TetrahedralMesh> Input) {
 	// Extract the values from imstk and and store in arrays
 	Vertices = UMathUtil::ToUnrealFVecArray(Input->getVertexPositions());
-	Indices = UMathUtil::ToUnrealUIntArray(Input->getTetrahedraIndices());
+	std::shared_ptr<imstk::SurfaceMesh> SurfMesh = Input->extractSurfaceMesh();
+	for (int i = 0; i < SurfMesh->getNumTriangles(); i++) {
+		for (int j = 0; j < 3; j++) {
+			imstk::Vec3i TriangleIndices = SurfMesh->getTriangleIndices(i);
+			Indices.Add(TriangleIndices.x());
+			Indices.Add(TriangleIndices.y());
+			Indices.Add(TriangleIndices.z());
+		}
+	}
+	//Indices = UMathUtil::ToUnrealUIntArray(Input->getTetrahedraIndices());
 }
 
 std::shared_ptr<imstk::TetrahedralMesh> UTetrahedralMeshAsset::GetTetrahedralMesh() {

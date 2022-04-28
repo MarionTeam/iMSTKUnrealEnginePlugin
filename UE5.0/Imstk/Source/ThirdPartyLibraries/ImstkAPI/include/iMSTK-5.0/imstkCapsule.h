@@ -22,6 +22,7 @@
 #pragma once
 
 #include "imstkAnalyticalGeometry.h"
+#include "imstkMacros.h"
 
 namespace imstk
 {
@@ -35,9 +36,9 @@ namespace imstk
 class Capsule : public AnalyticalGeometry
 {
 public:
-    Capsule(const Vec3d& pos = Vec3d(0.0, 0.0, 0.0), const double radius = 0.5, const double length = 1.0, const Quatd orientation = Quatd::Identity(),
-            const std::string& name = std::string("defaultCapsule")) :
-        AnalyticalGeometry(name)
+    Capsule(const Vec3d& pos    = Vec3d(0.0, 0.0, 0.0), const double radius = 0.5,
+            const double length = 1.0, const Quatd orientation = Quatd::Identity()) :
+        AnalyticalGeometry()
     {
         setPosition(pos);
         setOrientation(orientation);
@@ -47,10 +48,7 @@ public:
 
     ~Capsule() override = default;
 
-    ///
-    /// \brief Returns the string representing the type name of the geometry
-    ///
-    const std::string getTypeName() const override { return "Capsule"; }
+    IMSTK_TYPE_NAME(Capsule)
 
     ///
     /// \brief Print the capsule info
@@ -94,9 +92,9 @@ public:
 protected:
     void applyTransform(const Mat4d& m) override;
 
-    double m_radius = 1.0;                      ///> Radius of the hemispheres at the end of the capsule
-    mutable double m_radiusPostTransform = 1.0; ///> Radius after transform
-    double m_length = 1.0;                      ///> Length between the centers of two hemispheres
-    mutable double m_lengthPostTransform = 1.0; ///> Length after transform
+    double m_radius = 1.0;                      ///< Radius of the hemispheres at the end of the capsule
+    mutable double m_radiusPostTransform = 1.0; ///< Radius after transform
+    double m_length = 1.0;                      ///< Length between the centers of two hemispheres
+    mutable double m_lengthPostTransform = 1.0; ///< Length after transform
 };
 } // namespace imstk

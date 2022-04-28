@@ -11,6 +11,10 @@ void UImstkController::InitializeComponent()
 	
 	if (GetWorld() && GetWorld()->GetGameInstance()) {
 		SubsystemInstance = GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>();
+		UStaticMeshComponent* MeshComp = (UStaticMeshComponent*)GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass());
+
+		if (MeshComp)
+			MeshComp->SetMobility(EComponentMobility::Type::Movable);
 	}
 	
 }
@@ -55,7 +59,18 @@ std::shared_ptr<imstk::RigidObject2> UImstkController::GetToolObj()
 	return ToolObj;
 }
 
+void UImstkController::SetToolPicking(std::shared_ptr<imstk::PbdRigidObjectGrasping> Picking)
+{
+	this->ToolPicking = Picking;
+}
+
+void UImstkController::SetStitching(std::shared_ptr<imstk::PbdObjectStitching> InputStitch)
+{
+	this->Stitching = InputStitch;
+}
+
 void UImstkController::UnInit()
 {
 	ToolObj.reset();
+	//Stitching.reset();
 }

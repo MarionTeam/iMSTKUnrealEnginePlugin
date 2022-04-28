@@ -22,6 +22,7 @@
 #pragma once
 
 #include "imstkAnalyticalGeometry.h"
+#include "imstkMacros.h"
 
 namespace imstk
 {
@@ -33,11 +34,8 @@ namespace imstk
 class Sphere : public AnalyticalGeometry
 {
 public:
-    ///
-    /// \brief Constructor
-    ///
-    Sphere(const Vec3d& pos = Vec3d(0.0, 0.0, 0.0), const double radius = 1.0, const std::string& name = std::string("defaultSphere")) :
-        AnalyticalGeometry(name)
+    Sphere(const Vec3d& pos = Vec3d(0.0, 0.0, 0.0), const double radius = 1.0) :
+        AnalyticalGeometry()
     {
         setPosition(pos);
         setRadius(radius);
@@ -45,10 +43,7 @@ public:
 
     ~Sphere() override = default;
 
-    ///
-    /// \brief Returns the string representing the type name of the geometry
-    ///
-    const std::string getTypeName() const override { return "Sphere"; }
+    IMSTK_TYPE_NAME(Sphere)
 
     ///
     /// \brief Print the sphere info
@@ -85,7 +80,7 @@ public:
 protected:
     void applyTransform(const Mat4d& m) override;
 
-    double m_radius = 1.0;                      ///> Radius of the sphere
-    mutable double m_radiusPostTransform = 1.0; ///> Radius of the sphere once transform applied
+    double m_radius = 1.0;                      ///< Radius of the sphere
+    mutable double m_radiusPostTransform = 1.0; ///< Radius of the sphere once transform applied
 };
 } // namespace imstk

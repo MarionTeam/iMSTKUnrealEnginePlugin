@@ -106,7 +106,7 @@ UObject* UImstkGeometryImporterFactory::FactoryCreateFile(UClass* InClass, UObje
 			RawMesh.VertexPositions.Add(FVector3f(UMathUtil::ToUnrealFVec(Vertices[i])));
 		}
 
-		imstk::VecDataArray<int, 3>& Indices = *SurfaceMesh->getTriangleIndices();
+		//imstk::VecDataArray<int, 3>& Indices = *SurfaceMesh->getTriangleIndices();
 		//UE_LOG(LogTemp, Log, TEXT("Is indices null: %s"), (SurfaceMesh->getTriangleIndices() == nullptr ? TEXT("true") : TEXT("false")));
 		SurfaceMesh->flipNormals();
 		//imstk::VecDataArray<double, 3>& Tangents = *SurfaceMesh->getCellTangents().get();
@@ -123,10 +123,11 @@ UObject* UImstkGeometryImporterFactory::FactoryCreateFile(UClass* InClass, UObje
 		}
 
 
-		for (int i = 0; i < Indices.size(); i++) {
-			RawMesh.WedgeIndices.Add(Indices[i][0]);
-			RawMesh.WedgeIndices.Add(Indices[i][1]);
-			RawMesh.WedgeIndices.Add(Indices[i][2]);
+		for (int i = 0; i < SurfaceMesh->getNumTriangles(); i++) {
+			imstk::Vec3i Indices = SurfaceMesh->getTriangleIndices(i);
+			RawMesh.WedgeIndices.Add(Indices.x());
+			RawMesh.WedgeIndices.Add(Indices.y());
+			RawMesh.WedgeIndices.Add(Indices.z());
 
 			RawMesh.WedgeTangentX.Add(FVector3f::ZeroVector);
 			RawMesh.WedgeTangentX.Add(FVector3f::ZeroVector);

@@ -91,6 +91,13 @@ void UPBDThread::Init()
 
 	SubsystemInstance->ActiveScene->addSceneObject(PbdObject);
 
+	if (bZeroTangents) {
+		for (int i = 0; i < Vertices.size(); i++)
+		{
+			SplineComponent->SetTangentsAtSplinePoint(i, FVector::Zero(), FVector::Zero(), ESplineCoordinateSpace::Local);
+		}
+	}
+
 	Super::bIsInitalized = true;
 }
 

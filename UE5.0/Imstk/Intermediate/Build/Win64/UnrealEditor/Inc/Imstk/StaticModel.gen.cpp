@@ -38,7 +38,7 @@ void EmptyLinkFunctionForGeneratedCodeStaticModel() {}
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UStaticModel_Statics::Class_MetaDataParams[] = {
 		{ "BlueprintSpawnableComponent", "" },
-		{ "ClassGroupNames", "Custom" },
+		{ "ClassGroupNames", "Imstk" },
 		{ "Comment", "/** \\file StaticModel.h\n *  \\brief Components for static models in imstk\n *  \\details Attach to models in Unreal to initialize them in imstk \n */" },
 		{ "IncludePath", "StaticModel.h" },
 		{ "ModuleRelativePath", "Public/StaticModel.h" },
@@ -81,9 +81,9 @@ void EmptyLinkFunctionForGeneratedCodeStaticModel() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_StaticModel_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UStaticModel, UStaticModel::StaticClass, TEXT("UStaticModel"), &Z_Registration_Info_UClass_UStaticModel, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UStaticModel), 3769170600U) },
+		{ Z_Construct_UClass_UStaticModel, UStaticModel::StaticClass, TEXT("UStaticModel"), &Z_Registration_Info_UClass_UStaticModel, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UStaticModel), 2760386855U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_StaticModel_h_4058307031(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_StaticModel_h_1399132734(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_StaticModel_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_StaticModel_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "imstkMacros.h"
 #include "imstkVolumetricMesh.h"
 
 namespace imstk
@@ -33,13 +34,10 @@ namespace imstk
 class HexahedralMesh : public VolumetricMesh
 {
 public:
-    HexahedralMesh(const std::string& name = std::string(""));
+    HexahedralMesh();
     ~HexahedralMesh() override = default;
 
-    ///
-    /// \brief Returns the string representing the type name of the geometry
-    ///
-    const std::string getTypeName() const override { return "HexahedralMesh"; }
+    IMSTK_TYPE_NAME(HexahedralMesh)
 
     ///
     /// \brief Initializes the rest of the data structures given vertex positions and

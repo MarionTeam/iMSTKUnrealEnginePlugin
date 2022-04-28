@@ -23,6 +23,7 @@ limitations under the License.
 
 #include "imstkCollisionDetectionAlgorithm.h"
 #include "imstkImplicitFunctionFiniteDifferenceFunctor.h"
+#include "imstkMacros.h"
 
 namespace imstk
 {
@@ -36,18 +37,15 @@ class ImplicitGeometryToPointSetCD : public CollisionDetectionAlgorithm
 {
 public:
     ImplicitGeometryToPointSetCD();
-    virtual ~ImplicitGeometryToPointSetCD() override = default;
+    ~ImplicitGeometryToPointSetCD() override = default;
 
-    ///
-    /// \brief Returns collision detection type string name
-    ///
-    virtual const std::string getTypeName() const override { return "ImplicitGeometryToPointSetCD"; }
+    IMSTK_TYPE_NAME(ImplicitGeometryToPointSetCD)
 
 protected:
     ///
-    /// \brief Compute collision data for AB simulatenously
+    /// \brief Compute collision data for AB simultaneously
     ///
-    virtual void computeCollisionDataAB(
+    void computeCollisionDataAB(
         std::shared_ptr<Geometry>      geomA,
         std::shared_ptr<Geometry>      geomB,
         std::vector<CollisionElement>& elementsA,
@@ -56,7 +54,7 @@ protected:
     ///
     /// \brief Compute collision data for side A
     ///
-    virtual void computeCollisionDataA(
+    void computeCollisionDataA(
         std::shared_ptr<Geometry>      geomA,
         std::shared_ptr<Geometry>      geomB,
         std::vector<CollisionElement>& elementsA) override;
@@ -64,7 +62,7 @@ protected:
     ///
     /// \brief Compute collision data for side B
     ///
-    virtual void computeCollisionDataB(
+    void computeCollisionDataB(
         std::shared_ptr<Geometry>      geomA,
         std::shared_ptr<Geometry>      geomB,
         std::vector<CollisionElement>& elementsB) override;

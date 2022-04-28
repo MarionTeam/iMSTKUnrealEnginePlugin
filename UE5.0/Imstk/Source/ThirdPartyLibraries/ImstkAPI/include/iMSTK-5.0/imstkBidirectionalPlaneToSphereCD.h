@@ -35,18 +35,15 @@ class BidirectionalPlaneToSphereCD : public CollisionDetectionAlgorithm
 {
 public:
     BidirectionalPlaneToSphereCD();
-    virtual ~BidirectionalPlaneToSphereCD() override = default;
+    ~BidirectionalPlaneToSphereCD() override = default;
 
-    ///
-    /// \brief Returns collision detection type string name
-    ///
-    virtual const std::string getTypeName() const override { return "BidirectionalPlaneToSphereCD"; }
+    IMSTK_TYPE_NAME(BidirectionalPlaneToSphereCD)
 
 protected:
     ///
-    /// \brief Compute collision data for AB simulatenously
+    /// \brief Compute collision data for AB simultaneously
     ///
-    virtual void computeCollisionDataAB(
+    void computeCollisionDataAB(
         std::shared_ptr<Geometry>      geomA,
         std::shared_ptr<Geometry>      geomB,
         std::vector<CollisionElement>& elementsA,

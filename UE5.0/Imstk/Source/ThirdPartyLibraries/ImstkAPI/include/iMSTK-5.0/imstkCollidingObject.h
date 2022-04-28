@@ -22,6 +22,7 @@
 #pragma once
 
 #include "imstkSceneObject.h"
+#include "imstkMacros.h"
 #include "imstkMath.h"
 
 namespace imstk
@@ -40,7 +41,7 @@ public:
     CollidingObject(const std::string& name) : SceneObject(name) { }
     ~CollidingObject() override = default;
 
-    const std::string getTypeName() const override { return "CollidingObject"; }
+    IMSTK_TYPE_NAME(CollidingObject)
 
     ///
     /// \brief
@@ -67,8 +68,8 @@ public:
     bool initialize() override;
 
 protected:
-    std::shared_ptr<Geometry>    m_collidingGeometry;    ///> Geometry for collisions
-    std::shared_ptr<GeometryMap> m_collidingToVisualMap; ///> Maps transformations to visual geometry
+    std::shared_ptr<Geometry>    m_collidingGeometry    = nullptr; ///< Geometry for collisions
+    std::shared_ptr<GeometryMap> m_collidingToVisualMap = nullptr; ///< Maps transformations to visual geometry
     Vec3d m_force = Vec3d::Zero();
 };
 } // namespace imstk

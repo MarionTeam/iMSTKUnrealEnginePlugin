@@ -30,6 +30,11 @@ void EmptyLinkFunctionForGeneratedCodePBDThread() {}
 		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
 #endif
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_bZeroTangents_MetaData[];
+#endif
+		static void NewProp_bZeroTangents_SetBit(void* Obj);
+		static const UECodeGen_Private::FBoolPropertyParams NewProp_bZeroTangents;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_bUseBendConstraint_MetaData[];
 #endif
 		static void NewProp_bUseBendConstraint_SetBit(void* Obj);
@@ -61,6 +66,17 @@ void EmptyLinkFunctionForGeneratedCodePBDThread() {}
 	};
 #endif
 #if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDThread_Statics::NewProp_bZeroTangents_MetaData[] = {
+		{ "Category", "General" },
+		{ "ModuleRelativePath", "Public/PBDThread.h" },
+	};
+#endif
+	void Z_Construct_UClass_UPBDThread_Statics::NewProp_bZeroTangents_SetBit(void* Obj)
+	{
+		((UPBDThread*)Obj)->bZeroTangents = 1;
+	}
+	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UPBDThread_Statics::NewProp_bZeroTangents = { "bZeroTangents", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UPBDThread), &Z_Construct_UClass_UPBDThread_Statics::NewProp_bZeroTangents_SetBit, METADATA_PARAMS(Z_Construct_UClass_UPBDThread_Statics::NewProp_bZeroTangents_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDThread_Statics::NewProp_bZeroTangents_MetaData)) };
+#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDThread_Statics::NewProp_bUseBendConstraint_MetaData[] = {
 		{ "Category", "Constraints" },
 		{ "ModuleRelativePath", "Public/PBDThread.h" },
@@ -88,6 +104,7 @@ void EmptyLinkFunctionForGeneratedCodePBDThread() {}
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPBDThread_Statics::NewProp_SplineComponent = { "SplineComponent", nullptr, (EPropertyFlags)0x0010000000080008, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UPBDThread, SplineComponent), Z_Construct_UClass_USplineComponent_NoRegister, METADATA_PARAMS(Z_Construct_UClass_UPBDThread_Statics::NewProp_SplineComponent_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDThread_Statics::NewProp_SplineComponent_MetaData)) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPBDThread_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDThread_Statics::NewProp_bZeroTangents,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDThread_Statics::NewProp_bUseBendConstraint,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDThread_Statics::NewProp_BendStiffness,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDThread_Statics::NewProp_SplineComponent,
@@ -128,9 +145,9 @@ void EmptyLinkFunctionForGeneratedCodePBDThread() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDThread_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPBDThread, UPBDThread::StaticClass, TEXT("UPBDThread"), &Z_Registration_Info_UClass_UPBDThread, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPBDThread), 798621719U) },
+		{ Z_Construct_UClass_UPBDThread, UPBDThread::StaticClass, TEXT("UPBDThread"), &Z_Registration_Info_UClass_UPBDThread, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPBDThread), 633064395U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDThread_h_3491551718(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDThread_h_1521702823(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDThread_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDThread_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

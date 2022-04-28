@@ -22,6 +22,7 @@
 #pragma once
 
 #include "imstkAnalyticalGeometry.h"
+#include "imstkMacros.h"
 
 namespace imstk
 {
@@ -34,8 +35,8 @@ class Cylinder : public AnalyticalGeometry
 {
 public:
     Cylinder(const Vec3d& pos = Vec3d(0.0, 0.0, 0.0), const double radius = 1.0, const double length = 1.0,
-             const Quatd& orientation = Quatd::Identity(), const std::string& name = std::string("defaultCylinder")) :
-        AnalyticalGeometry(name)
+             const Quatd& orientation = Quatd::Identity()) :
+        AnalyticalGeometry()
     {
         setPosition(pos);
         setOrientation(orientation);
@@ -46,10 +47,7 @@ public:
 
     ~Cylinder() override = default;
 
-    ///
-    /// \brief Returns the string representing the type name of the geometry
-    ///
-    const std::string getTypeName() const override { return "Cylinder"; }
+    IMSTK_TYPE_NAME(Cylinder)
 
     ///
     /// \brief Print the cylinder info
@@ -91,9 +89,9 @@ protected:
 
     void applyTransform(const Mat4d& m) override;
 
-    double m_radius = 1.0;                      ///> Radius of the cylinder
-    double m_length = 1.0;                      ///> Length of the cylinder
-    mutable double m_radiusPostTransform = 1.0; ///> Radius of the cylinder oncee transform applied
-    mutable double m_lengthPostTransform = 1.0; ///> Length of the cylinder onc transform applied
+    double m_radius = 1.0;                      ///< Radius of the cylinder
+    double m_length = 1.0;                      ///< Length of the cylinder
+    mutable double m_radiusPostTransform = 1.0; ///< Radius of the cylinder oncee transform applied
+    mutable double m_lengthPostTransform = 1.0; ///< Length of the cylinder onc transform applied
 };
 } // namespace imstk

@@ -22,6 +22,7 @@
 #pragma once
 
 #include "imstkDynamicObject.h"
+#include "imstkMacros.h"
 
 namespace imstk
 {
@@ -41,7 +42,7 @@ public:
     RigidObject2(const std::string& name) : DynamicObject(name) { }
     ~RigidObject2() override = default;
 
-    const std::string getTypeName() const override { return "RigidObject2"; }
+    IMSTK_TYPE_NAME(RigidObject2)
 
     ///
     /// \brief Initialize the rigid scene object
@@ -72,6 +73,6 @@ public:
 
 protected:
     std::shared_ptr<RigidBodyModel2> m_rigidBodyModel2;
-    std::shared_ptr<RigidBody>       m_rigidBody; ///> Gives the actual body within the model
+    std::shared_ptr<RigidBody>       m_rigidBody; ///< Gives the actual body within the model
 };
 } // namespace imstk

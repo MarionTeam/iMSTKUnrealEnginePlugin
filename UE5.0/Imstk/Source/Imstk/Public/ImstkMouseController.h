@@ -6,6 +6,7 @@
 #include "ImstkController.h"
 #include "ImstkMouseController.generated.h"
 
+
 /** \file ImstkMouseController.h
  *  \brief Component to attach to objects that can be controlled using the mouse
  *  \details Currently very basic and will only generate a line mesh of a specific size. Primarily used for testing purposes.
@@ -38,6 +39,21 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
 		float Mass = 0.2;
 
+	// TODO: Maybe separate into different tool types (stitching tool as a separate class)
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolGeometry == EToolGeometry::LineMeshTool", EditConditionHides), Category = "General")
+		FVector Vertex1;
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolGeometry == EToolGeometry::LineMeshTool", EditConditionHides), Category = "General")
+		FVector Vertex2;
+
+	UFUNCTION(BlueprintCallable, Category = "Imstk")
+		void BeginVertexGrasp();
+
+	UFUNCTION(BlueprintCallable, Category = "Imstk")
+		void EndVertexGrasp();	
+
+	UFUNCTION(BlueprintCallable, Category = "Imstk")
+		void BeginStitch();
+	
 public:
 	virtual void UnInit() override;
 };

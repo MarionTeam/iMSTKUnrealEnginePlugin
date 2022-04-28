@@ -22,6 +22,7 @@
 #pragma once
 
 #include "imstkSceneEntity.h"
+#include "imstkMacros.h"
 
 #include <memory>
 #include <vector>
@@ -46,14 +47,11 @@ public:
     SceneObject(const std::string& name);
     ~SceneObject() override = default;
 
+    IMSTK_TYPE_NAME(SceneObject)
+
     // *INDENT-OFF*
     SIGNAL(SceneObject, modified);
     // *INDENT-ON*
-
-    ///
-    /// \brief Get the type of the object
-    ///
-    virtual const std::string getTypeName() const { return "SceneObject"; }
 
     ///
     /// \brief Get the computational graph
@@ -148,9 +146,9 @@ protected:
     ///
     virtual void initGraphEdges(std::shared_ptr<TaskNode> source, std::shared_ptr<TaskNode> sink);
 
-    std::string m_name;                                       ///> Custom name of the scene object
-    std::vector<std::shared_ptr<VisualModel>> m_visualModels; ///> Visual objects for rendering
-    std::shared_ptr<TaskGraph> m_taskGraph = nullptr;         ///> Computational Graph
+    std::string m_name;                                       ///< Custom name of the scene object
+    std::vector<std::shared_ptr<VisualModel>> m_visualModels; ///< Visual objects for rendering
+    std::shared_ptr<TaskGraph> m_taskGraph = nullptr;         ///< Computational Graph
 
 private:
     // Dissallow reassignment of these in subclasses
