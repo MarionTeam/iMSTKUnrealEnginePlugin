@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "iMSTK-5.0/imstkGeometry.h"
-#include "iMSTK-5.0/imstkSphere.h"
-#include "iMSTK-5.0/imstkCapsule.h"
-#include "iMSTK-5.0/imstkCylinder.h"
-#include "iMSTK-5.0/imstkSurfaceMesh.h"
-#include "iMSTK-5.0/imstkOrientedBox.h"
-#include "iMSTK-5.0/imstkPlane.h"
+#include "imstkGeometry.h"
+#include "imstkSphere.h"
+#include "imstkCapsule.h"
+#include "imstkCylinder.h"
+#include "imstkSurfaceMesh.h"
+#include "imstkOrientedBox.h"
+#include "imstkPlane.h"
 #include "MathUtil.h"
 
 #include "Components/StaticMeshComponent.h"
@@ -73,7 +73,7 @@ struct FSphereGeomStruct : public FGeometryTypeStruct
 		std::shared_ptr<imstk::Sphere> SphereGeom = std::make_shared<imstk::Sphere>();
 
 		//SphereGeom->setPosition(UMathUtil::ToImstkVec3(Actor->GetActorLocation()));
-		SphereGeom->setRadius(Radius);
+		SphereGeom->setRadius(Radius / UMathUtil::GetScale());
 		//SphereGeom->setRotation(UMathUtil::ToImstkQuat(Actor->GetActorRotation().Quaternion()));
 		SphereGeom->updatePostTransformData();
 		return SphereGeom;
@@ -106,8 +106,11 @@ struct FSurfaceMeshGeomStruct : public FGeometryTypeStruct
 		UProceduralMeshComponent* ProcMeshComp = (UProceduralMeshComponent*)Actor->GetComponentByClass(UProceduralMeshComponent::StaticClass());
 		if (StaticMeshComp) {
 			// Get vertices and indices from static mesh and create imstk geometry
-			FPositionVertexBuffer* VertexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
+			FPositionVertexBuffer* PositionVertexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
+			//&StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.StaticMeshVertexBuffer.VertexTangentZ();
 			FRawStaticIndexBuffer* IndexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].IndexBuffer;
+
+			//FStaticMeshVertexBuffer* VertBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.StaticMeshVertexBuffer;
 
 			/*for (int32 i = 0; i < IndexBuffer->GetNumIndices(); i++) {
 				UE_LOG(LogTemp, Warning, TEXT("%s"), *(VertexBuffer->VertexPosition(i).ToString()));
@@ -118,8 +121,8 @@ struct FSurfaceMeshGeomStruct : public FGeometryTypeStruct
 
 			// Get vertices and indices in the mesh and set those values in the imstk mesh
 			TArray<FVector> Vertices;
-			for (uint32 i = 0; i < VertexBuffer->GetNumVertices(); i++) {
-				Vertices.Add(FVector(VertexBuffer->VertexPosition(i)));
+			for (uint32 i = 0; i < PositionVertexBuffer->GetNumVertices(); i++) {
+				Vertices.Add(FVector(PositionVertexBuffer->VertexPosition(i)));
 			}
 
 			// TODO: Could change this to array view?
@@ -127,8 +130,15 @@ struct FSurfaceMeshGeomStruct : public FGeometryTypeStruct
 			for (int32 i = 0; i < IndexBuffer->GetNumIndices(); i++) {
 				Indices.Add(IndexBuffer->GetIndex(i));
 			}
-			MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices), UMathUtil::ToImstkVecDataArray3i(Indices));
 
+			/*TArray<FVector> Normals;
+			for (uint32 i = 0; i < VertBuffer->GetNumVertices(); i++) {
+				Normals.Add(FVector(VertBuffer->VertexTangentZ(i)));
+			}*/
+
+			//, UMathUtil::ToImstkVecDataArray3d(Normals, false)
+			MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
+			MeshGeom->computeVertexNormals();
 		}
 		else if (ProcMeshComp) {
 			// Get vertices and indices from procedural mesh and create imstk geometry
@@ -147,7 +157,8 @@ struct FSurfaceMeshGeomStruct : public FGeometryTypeStruct
 				Indices.Add(IndexBuffer[i]);
 			}
 
-			MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices), UMathUtil::ToImstkVecDataArray3i(Indices));
+			MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
+			MeshGeom->computeVertexNormals();
 		}
 		else {
 			// ERROR
@@ -193,9 +204,9 @@ struct FCapsuleGeomStruct : public FGeometryTypeStruct
 	std::shared_ptr<imstk::Geometry> Init(AActor* Actor) const {
 		std::shared_ptr<imstk::Capsule> CapsuleGeom = std::make_shared<imstk::Capsule>();
 
-		//CapsuleGeom->setPosition(UMathUtil::ToImstkVec3(Actor->GetActorLocation()));
-		CapsuleGeom->setRadius(Radius);
-		CapsuleGeom->setLength(Length);
+		CapsuleGeom->setPosition(imstk::Vec3d(0, (Length / UMathUtil::GetScale()) / 2, 0));
+		CapsuleGeom->setRadius(Radius / UMathUtil::GetScale());
+		CapsuleGeom->setLength(Length / UMathUtil::GetScale());
 		//CapsuleGeom->setOrientation(UMathUtil::ToImstkQuat(Actor->GetActorRotation().Quaternion()));
 		CapsuleGeom->updatePostTransformData();
 		return CapsuleGeom;
@@ -226,8 +237,8 @@ struct FCylinderGeomStruct : public FGeometryTypeStruct
 		std::shared_ptr<imstk::Cylinder> CylinderGeom = std::make_shared<imstk::Cylinder>();
 
 		//CylinderGeom->setPosition(UMathUtil::ToImstkVec3(Actor->GetActorLocation()));
-		CylinderGeom->setRadius(Radius);
-		CylinderGeom->setLength(Length);
+		CylinderGeom->setRadius(Radius / UMathUtil::GetScale());
+		CylinderGeom->setLength(Length / UMathUtil::GetScale());
 		//CylinderGeom->setOrientation(UMathUtil::ToImstkQuat(Actor->GetActorRotation().Quaternion()));
 		CylinderGeom->updatePostTransformData();
 		return CylinderGeom;
@@ -255,16 +266,16 @@ struct FPointSetGeomStruct : public FGeometryTypeStruct
 		UStaticMeshComponent* StaticMeshComp = (UStaticMeshComponent*)Actor->GetComponentByClass(UStaticMeshComponent::StaticClass());
 		UProceduralMeshComponent* ProcMeshComp = (UProceduralMeshComponent*)Actor->GetComponentByClass(UProceduralMeshComponent::StaticClass());
 		if (StaticMeshComp) {
-			FPositionVertexBuffer* VertexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
+			FPositionVertexBuffer* PositionVertexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
 
 			// Get vertices and indices in the mesh and set those values in the imstk mesh
 			TArray<FVector> Vertices;
-			for (uint32 i = 0; i < VertexBuffer->GetNumVertices(); i++) {
-				Vertices.Add(FVector(VertexBuffer->VertexPosition(i)));
+			for (uint32 i = 0; i < PositionVertexBuffer->GetNumVertices(); i++) {
+				Vertices.Add(FVector(PositionVertexBuffer->VertexPosition(i)));
 			}
 
-			MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices));
-			MeshGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale()), imstk::Geometry::TransformType::ApplyToData);
+			MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true));
+			MeshGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 			MeshGeom->updatePostTransformData();
 			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString(MeshGeom->getName().c_str()));
 			return MeshGeom;
@@ -279,8 +290,8 @@ struct FPointSetGeomStruct : public FGeometryTypeStruct
 				Vertices.Add(VertexBuffer[i].Position);
 			}
 
-			MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices));
-			MeshGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale()), imstk::Geometry::TransformType::ApplyToData);
+			MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true));
+			MeshGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 			MeshGeom->updatePostTransformData();
 			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString(MeshGeom->getName().c_str()));
 			return MeshGeom;
@@ -314,7 +325,7 @@ struct FOrientedBoxGeomStruct : public FGeometryTypeStruct
 	*/
 	std::shared_ptr<imstk::Geometry> Init(AActor* Actor) const {
 		std::shared_ptr<imstk::OrientedBox> BoxGeom = std::make_shared<imstk::OrientedBox>();
-		BoxGeom->setExtents(UMathUtil::ToImstkVec3(Extents));
+		BoxGeom->setExtents(UMathUtil::ToImstkVec3(Extents, true));
 
 		//BoxGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale()), imstk::Geometry::TransformType::ApplyToData);
 		//BoxGeom->rotate(UMathUtil::ToImstkQuat(Actor->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
@@ -344,7 +355,7 @@ struct FPlaneGeomStruct : public FGeometryTypeStruct
 	*/
 	std::shared_ptr<imstk::Geometry> Init(AActor* Actor) const {
 		std::shared_ptr<imstk::Plane> PlaneGeom = std::make_shared<imstk::Plane>();
-		PlaneGeom->setNormal(UMathUtil::ToImstkVec3(Normal));
+		PlaneGeom->setNormal(UMathUtil::ToImstkVec3(Normal, false));
 
 		//BoxGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale()), imstk::Geometry::TransformType::ApplyToData);
 		//BoxGeom->rotate(UMathUtil::ToImstkQuat(Actor->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);

@@ -4,13 +4,13 @@
 #include "MathUtil.h"
 #include "ImstkSubsystem.h"
 #include "RBDModel.h"
-#include "iMSTK-5.0/imstkLineMesh.h"
-#include "iMSTK-5.0/imstkRigidBodyModel2.h"
-#include "iMSTK-5.0/imstkRbdConstraint.h"
-#include "iMSTK-5.0/imstkCollisionUtils.h"
+#include "imstkLineMesh.h"
+#include "imstkRigidBodyModel2.h"
+#include "imstkRbdConstraint.h"
+#include "imstkCollisionUtils.h"
 
-#include "iMSTK-5.0/imstkGeometryUtilities.h"
-#include "iMSTK-5.0/imstkPbdModel.h"
+#include "imstkGeometryUtilities.h"
+#include "imstkPbdModel.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
@@ -36,8 +36,8 @@ void UCustomController::InitController()
 	if (ToolGeometry == EToolGeometry::LineMeshTool) {
 		ToolGeom = std::make_shared<imstk::LineMesh>();
 		std::shared_ptr<imstk::VecDataArray<double, 3>> VertPtr = std::make_shared<imstk::VecDataArray<double, 3>>(2);
-		(*VertPtr)[0] = UMathUtil::ToImstkVec3(Vertex1);
-		(*VertPtr)[1] = UMathUtil::ToImstkVec3(Vertex2);
+		(*VertPtr)[0] = UMathUtil::ToImstkVec3(Vertex1, true);
+		(*VertPtr)[1] = UMathUtil::ToImstkVec3(Vertex2, true);
 		std::shared_ptr<imstk::VecDataArray<int, 2>> IndicesPtr = std::make_shared<imstk::VecDataArray<int, 2>>(1);
 		(*IndicesPtr)[0] = imstk::Vec2i(0, 1);
 		std::dynamic_pointer_cast<imstk::LineMesh>(ToolGeom)->initialize(VertPtr, IndicesPtr);
@@ -45,14 +45,15 @@ void UCustomController::InitController()
 	else if (ToolGeometry == EToolGeometry::SphereTool) {
 		// TODO: Sphere for vertex grasp not working
 		std::shared_ptr <imstk::Sphere> SphereGeom = std::make_shared<imstk::Sphere>();
-		SphereGeom->setRadius(Radius);
+		SphereGeom->setRadius(Radius / UMathUtil::GetScale());
 
 		ToolGeom = SphereGeom;
 	}
 	else if (ToolGeometry == EToolGeometry::CapsuleTool) {
 		std::shared_ptr <imstk::Capsule> CapsuleGeom = std::make_shared<imstk::Capsule>();
-		CapsuleGeom->setRadius(Radius);
-		CapsuleGeom->setLength(Length);
+		CapsuleGeom->setRadius(Radius / UMathUtil::GetScale());
+		CapsuleGeom->setLength(Length / UMathUtil::GetScale());
+		CapsuleGeom->setPosition(UMathUtil::ToImstkVec3(GeometryOffset, true));
 		ToolGeom = CapsuleGeom;
 	}
 	else if (ToolGeometry == EToolGeometry::SurfaceMeshTool) {
@@ -73,18 +74,18 @@ void UCustomController::InitController()
 			Indices.Add(IndexBuffer->GetIndex(i));
 		}
 
-		MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices), UMathUtil::ToImstkVecDataArray3i(Indices));
+		MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
 
-		MeshGeom->scale(UMathUtil::ToImstkVec3(MeshComp->GetComponentScale()), imstk::Geometry::TransformType::ApplyToData);
-		MeshGeom->rotate(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
-		MeshGeom->translate(UMathUtil::ToImstkVec3(MeshComp->GetComponentLocation()), imstk::Geometry::TransformType::ApplyToData);
+		MeshGeom->scale(UMathUtil::ToImstkVec3(MeshComp->GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
+		//MeshGeom->rotate(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
+		//MeshGeom->translate(UMathUtil::ToImstkVec3(MeshComp->GetComponentLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 		MeshGeom->updatePostTransformData();
 		ToolGeom = MeshGeom;
 
 		/*std::shared_ptr<imstk::Plane> PlaneGeom = std::make_shared<imstk::Plane>();
 		PlaneGeom->setNormal(imstk::Vec3d(0,1,0));
 		ToolGeom = PlaneGeom;*/
-		
+
 
 		/*ToolGeom = imstk::GeometryUtils::toTriangleGrid(imstk::Vec3d(0,-35, 0),
 			imstk::Vec2d(1000.0, 1000.0), imstk::Vec2i(2, 2));*/
@@ -106,10 +107,8 @@ void UCustomController::InitController()
 
 	ToolObj->getRigidBody()->m_mass = Mass;
 	ToolObj->getRigidBody()->m_intertiaTensor = imstk::Mat3d::Identity() * InertiaTensorMultiplier;
-	if (ToolGeometry != EToolGeometry::SurfaceMeshTool) {
-		ToolObj->getRigidBody()->m_initPos = UMathUtil::ToImstkVec3(GetOwner()->GetActorLocation());
-		ToolObj->getRigidBody()->m_initOrientation = UMathUtil::ToImstkQuat(GetOwner()->GetActorRotation().Quaternion());
-	}
+	ToolObj->getRigidBody()->m_initPos = UMathUtil::ToImstkVec3(GetComponentToWorld().GetLocation(), true);
+	ToolObj->getRigidBody()->m_initOrientation = UMathUtil::ToImstkQuat(GetComponentToWorld().GetRotation());
 
 	SubsystemInstance->ActiveScene->addSceneObject(ToolObj);
 
@@ -183,7 +182,7 @@ FVector UCustomController::UpdateImstkPosRot(FVector WorldPos, FQuat Orientation
 
 		if (Plane) {
 			imstk::Vec3d IntersectPoint = imstk::Vec3d::Zero();
-			if (imstk::CollisionUtils::testRayToPlane(UMathUtil::ToImstkVec3(WorldPos), UMathUtil::ToImstkVec3(WorldDir), Plane->getPosition(), Plane->getNormal(), IntersectPoint))
+			if (imstk::CollisionUtils::testRayToPlane(UMathUtil::ToImstkVec3(WorldPos, true), UMathUtil::ToImstkVec3(WorldDir, true), Plane->getPosition(), Plane->getNormal(), IntersectPoint))
 			{
 				Position = IntersectPoint;
 			}
@@ -200,36 +199,33 @@ FVector UCustomController::UpdateImstkPosRot(FVector WorldPos, FQuat Orientation
 		}
 	}
 	else {
-		Position = UMathUtil::ToImstkVec3(WorldPos);
+		Position = UMathUtil::ToImstkVec3(WorldPos, true);
 	}
 
 	// TODO: Should probably change to edit the position and orientation rather than creating new each time
-
-	imstk::Quatd rot = UMathUtil::ToImstkQuat(Orientation);
 	//std::dynamic_pointer_cast<imstk::Plane> (ToolObj->getCollidingGeometry())->setPosition(Position);
-	ToolObj->getRigidBody()->m_orientation = new imstk::Quatd(rot);
+	ToolObj->getRigidBody()->m_orientation = new imstk::Quatd(UMathUtil::ToImstkQuat(Orientation));
 	ToolObj->getRigidBody()->m_pos = new imstk::Vec3d(Position);
 
 	//ToolObj->getRigidBody()->m_pos = new imstk::Vec3d(WorldPos.Z, WorldPos.X, WorldPos.Y);
 
 	if (GEngine && bPrintImstkPos) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition()).ToString());
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true).ToString());
 		/*GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, UMathUtil::ToUnrealFVec(std::dynamic_pointer_cast<imstk::SurfaceMesh>(ToolObj->getCollidingGeometry())->getVertexPosition(0)).ToString() + " " +
 			UMathUtil::ToUnrealFVec(std::dynamic_pointer_cast<imstk::SurfaceMesh>(ToolObj->getCollidingGeometry())->getVertexPosition(4)).ToString() + " " +
 			UMathUtil::ToUnrealFVec(std::dynamic_pointer_cast<imstk::SurfaceMesh>(ToolObj->getCollidingGeometry())->getVertexPosition(20)).ToString() + " " +
 			UMathUtil::ToUnrealFVec(std::dynamic_pointer_cast<imstk::SurfaceMesh>(ToolObj->getCollidingGeometry())->getVertexPosition(24)).ToString());*/
 	}
 
-	return UMathUtil::ToUnrealFVec(Position);
+	return UMathUtil::ToUnrealFVec(Position, true);
 }
 
 void UCustomController::UpdateUnrealPosRot()
 {
-	GetOwner()->SetActorLocation(UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition()));
+	GetOwner()->SetActorLocation(UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true));
 	//imstk::Vec3d position = ToolObj->getRigidBody()->getPosition();
 	//GetOwner()->SetActorLocation(FVector(position.y(), position.z(), position.x()));
-	FQuat rot = UMathUtil::ToUnrealFQuat(ToolObj->getRigidBody()->getOrientation());
-	GetOwner()->SetActorRotation(rot);
+	GetOwner()->SetActorRotation(UMathUtil::ToUnrealFQuat(ToolObj->getRigidBody()->getOrientation()));
 }
 
 void UCustomController::MoveControllerToLocation(FVector Location, FQuat Orientation, bool bUpdateUnrealPosRot)
@@ -265,13 +261,29 @@ void UCustomController::BeginVertexGrasp()
 	}
 }
 
+void UCustomController::BeginCellGrasp()
+{
+	if (ToolPickings.Num() > 0) {
+		if (GraspType == EGraspType::CellGrasp) {
+			for (std::shared_ptr<imstk::PbdObjectGrasping> ToolPicking : ToolPickings) {
+				ToolPicking->beginCellGrasp(std::dynamic_pointer_cast<imstk::AnalyticalGeometry>(ToolObj->getCollidingGeometry()), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(GraspCollisionType))));
+			}
+		}
+	}
+	else {
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "ToolPicking not assigned");
+		UE_LOG(LogTemp, Error, TEXT("ToolPicking not assigned"));
+	}
+}
+
 void UCustomController::BeginRayPointGrasp(FVector RayStart, FVector RayDir)
 {
 	if (ToolPickings.Num() > 0) {
-		 if (GraspType == EGraspType::RayPointGrasp) {
-			 for (std::shared_ptr<imstk::PbdObjectGrasping> ToolPicking : ToolPickings) {
-				 ToolPicking->beginRayPointGrasp(std::dynamic_pointer_cast<imstk::AnalyticalGeometry>(ToolObj->getCollidingGeometry()), UMathUtil::ToImstkVec3(RayStart), UMathUtil::ToImstkVec3(RayDir));
-			 }
+		if (GraspType == EGraspType::RayPointGrasp) {
+			for (std::shared_ptr<imstk::PbdObjectGrasping> ToolPicking : ToolPickings) {
+				ToolPicking->beginRayPointGrasp(std::dynamic_pointer_cast<imstk::AnalyticalGeometry>(ToolObj->getCollidingGeometry()), UMathUtil::ToImstkVec3(RayStart, true), UMathUtil::ToImstkVec3(RayDir, true));
+			}
 		}
 	}
 	else {
@@ -317,6 +329,6 @@ void UCustomController::BeginCut()
 void UCustomController::UnInit()
 {
 	Super::UnInit();
-	
-	
+
+
 }

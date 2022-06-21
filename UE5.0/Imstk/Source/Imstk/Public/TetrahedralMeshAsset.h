@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "iMSTK-5.0/imstkTetrahedralMesh.h"
+#include "imstkTetrahedralMesh.h"
 #include "TetrahedralMeshAsset.generated.h"
 
 /** \file TetrahedralMeshAsset.h

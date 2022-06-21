@@ -6,18 +6,19 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ImstkBehaviour.h"
 #include "ImstkInteraction.h"
-#include "ImstkController.h"
-#include "iMSTK-5.0/imstkSceneManager.h"
-#include "iMSTK-5.0/imstkScene.h"
-#include "iMSTK-5.0/imstkRigidBodyModel2.h"
+//#include "ImstkController.h"
+#include "imstkSceneManager.h"
+#include "imstkScene.h"
+#include "imstkRigidBodyModel2.h"
 
-#include "iMSTK-5.0/imstkPbdObjectCutting.h"
+#include "imstkPbdObjectCutting.h"
 
 #include "ImstkSubsystem.generated.h"
 
 //#define CHECK_NULL(Pointer, LogClass, Message) if(Pointer) UE_LOG(LogClass, Error, TEXT(Message)); return
 
 class UDeformableModel;
+class UImstkController;
 
 struct FImstkSubsystemTickFunction : public FTickFunction
 {
@@ -48,8 +49,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "iMSTKSubsystem")
 		void ImstkInit();
 
-	UFUNCTION(BlueprintCallable, Category = "iMSTKSubsystem")
-		void ImstkTest();
 
 	UFUNCTION(BlueprintCallable, Category = "iMSTKSubsystem")
 		void ToggleSimulation();
@@ -90,11 +89,18 @@ public:
 	std::shared_ptr<imstk::RigidBodyModel2> RigidBodyModel;
 	std::shared_ptr<imstk::Scene> ActiveScene;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "General")
+		float TickInterval = 0.01;
+
 	// Values to be set as defaults in the manager for imstk
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "General")
 		int RigidBodyMaxIterations;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "General")
 		FVector Gravity;
+
+	// How scaled down the Imstk scene is in comparison to Unreal. By default 1/100th because Unreal is in cm and Imstk is in m
+	UPROPERTY(BlueprintReadWrite, Meta = (ClampMin = "1"), VisibleAnywhere, Category = "General")
+		int SceneScale = 100;
 
 	// All ImstkBehaviours attached to objects in Unreal, used to initialize the objects
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "General")
@@ -112,10 +118,10 @@ public:
 
 	virtual void Deinitialize() override;
 
-	bool TEMP = false;
+	/*bool TEMP = false;
 
-
-
+	UFUNCTION(BlueprintCallable, Category = "iMSTKSubsystem")
+		void ImstkTest();
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "General")
 		FVector PlaneNorm;
 
@@ -125,5 +131,5 @@ public:
 	std::shared_ptr<imstk::PbdObject> clothObj;
 
 	UFUNCTION(BlueprintCallable, Category = "iMSTKSubsystem")
-		void CutTest();
+		void CutTest();*/
 };

@@ -13,26 +13,22 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define IMSTK_ImstkSubsystem_generated_h
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_SPARSE_DATA
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_RPC_WRAPPERS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_SPARSE_DATA
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_RPC_WRAPPERS \
  \
-	DECLARE_FUNCTION(execCutTest); \
 	DECLARE_FUNCTION(execUpdateSimulation); \
 	DECLARE_FUNCTION(execToggleSimulation); \
-	DECLARE_FUNCTION(execImstkTest); \
 	DECLARE_FUNCTION(execImstkInit);
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_RPC_WRAPPERS_NO_PURE_DECLS \
  \
-	DECLARE_FUNCTION(execCutTest); \
 	DECLARE_FUNCTION(execUpdateSimulation); \
 	DECLARE_FUNCTION(execToggleSimulation); \
-	DECLARE_FUNCTION(execImstkTest); \
 	DECLARE_FUNCTION(execImstkInit);
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_INCLASS_NO_PURE_DECLS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUImstkSubsystem(); \
 	friend struct Z_Construct_UClass_UImstkSubsystem_Statics; \
@@ -41,7 +37,7 @@ public: \
 	DECLARE_SERIALIZER(UImstkSubsystem)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_INCLASS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_INCLASS \
 private: \
 	static void StaticRegisterNativesUImstkSubsystem(); \
 	friend struct Z_Construct_UClass_UImstkSubsystem_Statics; \
@@ -50,7 +46,7 @@ public: \
 	DECLARE_SERIALIZER(UImstkSubsystem)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_STANDARD_CONSTRUCTORS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_STANDARD_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UImstkSubsystem(const FObjectInitializer& ObjectInitializer); \
 	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UImstkSubsystem) \
@@ -63,7 +59,7 @@ private: \
 public:
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_ENHANCED_CONSTRUCTORS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	NO_API UImstkSubsystem(UImstkSubsystem&&); \
@@ -74,25 +70,25 @@ public: \
 	DEFINE_DEFAULT_CONSTRUCTOR_CALL(UImstkSubsystem)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_33_PROLOG
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_GENERATED_BODY_LEGACY \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_34_PROLOG
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_SPARSE_DATA \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_RPC_WRAPPERS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_INCLASS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_STANDARD_CONSTRUCTORS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_SPARSE_DATA \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_RPC_WRAPPERS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_INCLASS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_STANDARD_CONSTRUCTORS \
 public: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_GENERATED_BODY \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_SPARSE_DATA \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_INCLASS_NO_PURE_DECLS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_36_ENHANCED_CONSTRUCTORS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_SPARSE_DATA \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_INCLASS_NO_PURE_DECLS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_37_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

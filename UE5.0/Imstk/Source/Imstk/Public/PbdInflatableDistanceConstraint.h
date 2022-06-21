@@ -1,7 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "iMSTK-5.0/imstkPbdDistanceConstraint.h"
-//#include "iMSTK-5.0/imstkPbdConstraintFunctor.h"
+#include "imstkPbdDistanceConstraint.h"
+//#include "imstkPbdConstraintFunctor.h"
 
 class IMSTK_API PbdInflatableDistanceConstraint : public imstk::PbdDistanceConstraint
 {

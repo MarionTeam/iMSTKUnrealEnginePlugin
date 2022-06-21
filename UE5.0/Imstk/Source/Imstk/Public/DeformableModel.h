@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "DynamicalModel.h"
 #include "ProceduralMeshComponent.h"
-#include "iMSTK-5.0/imstkPbdObject.h"
+#include "imstkPbdObject.h"
 
 #include "DeformableModel.generated.h"
 

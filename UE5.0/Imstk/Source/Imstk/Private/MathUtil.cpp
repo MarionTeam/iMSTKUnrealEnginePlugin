@@ -3,15 +3,20 @@
 
 #include "MathUtil.h"
 
+int UMathUtil::Scale = 100;
 
-imstk::Vec3d UMathUtil::ToImstkVec3(const FVector InputVec)
+imstk::Vec3d UMathUtil::ToImstkVec3(const FVector InputVec, const bool IsScaled)
 {
-	return imstk::Vec3d(InputVec.X, InputVec.Z, InputVec.Y);
+	int Scaling = IsScaled ? Scale : 1;
+
+	return imstk::Vec3d(InputVec.X / Scaling, InputVec.Z / Scaling, InputVec.Y / Scaling);
 }
 
-FVector UMathUtil::ToUnrealFVec(const imstk::Vec3d InputVec)
+FVector UMathUtil::ToUnrealFVec(const imstk::Vec3d InputVec, const bool IsScaled)
 {
-	return FVector(InputVec.x(), InputVec.z(), InputVec.y());
+	int Scaling = IsScaled ? Scale : 1;
+
+	return FVector(InputVec.x() * Scaling, InputVec.z() * Scaling, InputVec.y() * Scaling);
 }
 
 imstk::Quatd UMathUtil::ToImstkQuat(const FQuat InputQuat)
@@ -25,11 +30,11 @@ FQuat UMathUtil::ToUnrealFQuat(const imstk::Quatd InputQuat)
 }
 
 // TODO: Add errors if arrays are not divisible by 3
-std::shared_ptr<imstk::VecDataArray<double, 3>> UMathUtil::ToImstkVecDataArray3d(const TArray<FVector> InputArray)
+std::shared_ptr<imstk::VecDataArray<double, 3>> UMathUtil::ToImstkVecDataArray3d(const TArray<FVector> InputArray, const bool IsScaled)
 {
 	std::shared_ptr<imstk::VecDataArray<double, 3>> Output = std::make_shared<imstk::VecDataArray<double, 3>>();
 	for (FVector Vector : InputArray) {
-		Output->push_back(ToImstkVec3(Vector));
+		Output->push_back(ToImstkVec3(Vector, IsScaled));
 	}
 	return Output;
 }
@@ -92,14 +97,14 @@ TArray<uint32> UMathUtil::ToUnrealUIntArray(const std::shared_ptr<imstk::VecData
 
 
 
-TArray<FVector> UMathUtil::ToUnrealFVecArray(const std::shared_ptr<imstk::VecDataArray<double, 3>> InputArray)
+TArray<FVector> UMathUtil::ToUnrealFVecArray(const std::shared_ptr<imstk::VecDataArray<double, 3>> InputArray, const bool IsScaled)
 {
 	TArray<FVector> Output;
 
 	imstk::VecDataArray<double, 3>& Arr = *InputArray.get();
 
 	for (int i = 0; i < Arr.size(); i++) {
-		Output.Add(ToUnrealFVec(Arr[i]));
+		Output.Add(ToUnrealFVec(Arr[i], IsScaled));
 	}
 
 
@@ -131,4 +136,13 @@ imstk::Mat4d UMathUtil::ToImstkMat4d(const FMatrix Input)
 	}
 
 	return Output;
+}
+
+void UMathUtil::SetScale(int InScale) 
+{
+	Scale = InScale;
+}
+int UMathUtil::GetScale()
+{
+	return Scale;
 }

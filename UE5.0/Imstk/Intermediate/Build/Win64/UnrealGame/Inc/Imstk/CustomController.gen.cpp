@@ -47,6 +47,13 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 		P_THIS->BeginRayPointGrasp(Z_Param_RayStart,Z_Param_RayDir);
 		P_NATIVE_END;
 	}
+	DEFINE_FUNCTION(UCustomController::execBeginCellGrasp)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->BeginCellGrasp();
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(UCustomController::execBeginVertexGrasp)
 	{
 		P_FINISH;
@@ -80,6 +87,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	{
 		UClass* Class = UCustomController::StaticClass();
 		static const FNameNativePtrPair Funcs[] = {
+			{ "BeginCellGrasp", &UCustomController::execBeginCellGrasp },
 			{ "BeginCut", &UCustomController::execBeginCut },
 			{ "BeginRayPointGrasp", &UCustomController::execBeginRayPointGrasp },
 			{ "BeginStitch", &UCustomController::execBeginStitch },
@@ -89,6 +97,29 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 			{ "MoveControllerToRaycastOnPlane", &UCustomController::execMoveControllerToRaycastOnPlane },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
+	}
+	struct Z_Construct_UFunction_UCustomController_BeginCellGrasp_Statics
+	{
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UCustomController_BeginCellGrasp_Statics::Function_MetaDataParams[] = {
+		{ "Category", "Imstk" },
+		{ "ModuleRelativePath", "Public/CustomController.h" },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UCustomController_BeginCellGrasp_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UCustomController, nullptr, "BeginCellGrasp", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04080401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UCustomController_BeginCellGrasp_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UCustomController_BeginCellGrasp_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UCustomController_BeginCellGrasp()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UCustomController_BeginCellGrasp_Statics::FuncParams);
+		}
+		return ReturnFunction;
 	}
 	struct Z_Construct_UFunction_UCustomController_BeginCut_Statics
 	{
@@ -391,6 +422,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 		(UObject* (*)())Z_Construct_UPackage__Script_Imstk,
 	};
 	const FClassFunctionLinkInfo Z_Construct_UClass_UCustomController_Statics::FuncInfo[] = {
+		{ &Z_Construct_UFunction_UCustomController_BeginCellGrasp, "BeginCellGrasp" }, // 3560092539
 		{ &Z_Construct_UFunction_UCustomController_BeginCut, "BeginCut" }, // 83034063
 		{ &Z_Construct_UFunction_UCustomController_BeginRayPointGrasp, "BeginRayPointGrasp" }, // 3418216217
 		{ &Z_Construct_UFunction_UCustomController_BeginStitch, "BeginStitch" }, // 60443789
@@ -404,6 +436,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 		{ "BlueprintSpawnableComponent", "" },
 		{ "ClassGroupNames", "Imstk" },
 		{ "Comment", "/**\n * \n */" },
+		{ "HideCategories", "Trigger PhysicsVolume" },
 		{ "IncludePath", "CustomController.h" },
 		{ "ModuleRelativePath", "Public/CustomController.h" },
 	};
@@ -522,9 +555,9 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UCustomController, UCustomController::StaticClass, TEXT("UCustomController"), &Z_Registration_Info_UClass_UCustomController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UCustomController), 1959975966U) },
+		{ Z_Construct_UClass_UCustomController, UCustomController::StaticClass, TEXT("UCustomController"), &Z_Registration_Info_UClass_UCustomController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UCustomController), 1189580033U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_2054757730(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_3774923212(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

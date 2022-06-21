@@ -71,6 +71,11 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 #endif
 		static const UECodeGen_Private::FBytePropertyParams NewProp_MaterialType;
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_bGenerateSurfaceFromTetrahedral_MetaData[];
+#endif
+		static void NewProp_bGenerateSurfaceFromTetrahedral_SetBit(void* Obj);
+		static const UECodeGen_Private::FBoolPropertyParams NewProp_bGenerateSurfaceFromTetrahedral;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_MeshComp_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_MeshComp;
@@ -185,6 +190,21 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 #endif
 	const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_UPBDModel_Statics::NewProp_MaterialType = { "MaterialType", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UPBDModel, MaterialType), Z_Construct_UEnum_Imstk_FemConstraintMaterial, METADATA_PARAMS(Z_Construct_UClass_UPBDModel_Statics::NewProp_MaterialType_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDModel_Statics::NewProp_MaterialType_MetaData)) }; // 2062938130
 #if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDModel_Statics::NewProp_bGenerateSurfaceFromTetrahedral_MetaData[] = {
+		{ "Category", "General" },
+		{ "Comment", "// Generate a new surface mesh from the tetrahedral mesh. Simulation may be more accurate, but most material information will be lost\n" },
+		{ "EditCondition", "TetrahedralMesh != nullptr" },
+		{ "EditConditionHides", "" },
+		{ "ModuleRelativePath", "Public/PBDModel.h" },
+		{ "ToolTip", "Generate a new surface mesh from the tetrahedral mesh. Simulation may be more accurate, but most material information will be lost" },
+	};
+#endif
+	void Z_Construct_UClass_UPBDModel_Statics::NewProp_bGenerateSurfaceFromTetrahedral_SetBit(void* Obj)
+	{
+		((UPBDModel*)Obj)->bGenerateSurfaceFromTetrahedral = 1;
+	}
+	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UPBDModel_Statics::NewProp_bGenerateSurfaceFromTetrahedral = { "bGenerateSurfaceFromTetrahedral", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UPBDModel), &Z_Construct_UClass_UPBDModel_Statics::NewProp_bGenerateSurfaceFromTetrahedral_SetBit, METADATA_PARAMS(Z_Construct_UClass_UPBDModel_Statics::NewProp_bGenerateSurfaceFromTetrahedral_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDModel_Statics::NewProp_bGenerateSurfaceFromTetrahedral_MetaData)) };
+#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDModel_Statics::NewProp_MeshComp_MetaData[] = {
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/PBDModel.h" },
@@ -201,6 +221,7 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDModel_Statics::NewProp_YoungsModulus,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDModel_Statics::NewProp_PossionsRatio,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDModel_Statics::NewProp_MaterialType,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDModel_Statics::NewProp_bGenerateSurfaceFromTetrahedral,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDModel_Statics::NewProp_MeshComp,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UPBDModel_Statics::StaticCppClassTypeInfo = {
@@ -239,9 +260,9 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPBDModel, UPBDModel::StaticClass, TEXT("UPBDModel"), &Z_Registration_Info_UClass_UPBDModel, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPBDModel), 2947806508U) },
+		{ Z_Construct_UClass_UPBDModel, UPBDModel::StaticClass, TEXT("UPBDModel"), &Z_Registration_Info_UClass_UPBDModel, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPBDModel), 307835113U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_52675084(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_904755296(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

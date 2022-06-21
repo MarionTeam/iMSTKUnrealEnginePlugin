@@ -6,10 +6,11 @@
 #include "Components/ActorComponent.h"
 //#include "ImstkSubsystem.h"
 //#include "RBDModel.h"
-#include "iMSTK-5.0/imstkRigidObject2.h"
-#include "iMSTK-5.0/imstkPbdObjectStitching.h"
-#include "iMSTK-5.0/imstkPbdRigidObjectGrasping.h"
-#include "iMSTK-5.0/imstkPbdObjectCutting.h"
+#include "imstkRigidObject2.h"
+#include "imstkPbdObjectStitching.h"
+#include "imstkPbdRigidObjectGrasping.h"
+#include "imstkPbdObjectCutting.h"
+#include "CollisionInteraction.h"
 #include "ImstkController.generated.h"
 
 class UImstkSubsystem;
@@ -27,7 +28,8 @@ UENUM()
 enum EGraspType
 {
 	RayPointGrasp,
-	VertexGrasp
+	VertexGrasp,
+	CellGrasp
 };
 
 UENUM()
@@ -45,7 +47,7 @@ enum EToolType
  *  \details 
  */
 UCLASS(Abstract)
-class IMSTK_API UImstkController : public UActorComponent
+class IMSTK_API UImstkController : public USceneComponent
 {
 	GENERATED_BODY()
 
@@ -69,6 +71,8 @@ protected:
 	
 	TArray<std::shared_ptr<imstk::PbdObjectCutting>> Cuttings;
 
+	TArray<std::shared_ptr<imstk::CollisionInteraction>> Collisions;
+
 	UPROPERTY()
 		UStaticMeshComponent* MeshComp;
 	
@@ -90,11 +94,16 @@ public:
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolGeometry == EToolGeometry::SphereTool || ToolGeometry == EToolGeometry::CapsuleTool", EditConditionHides), Category = "ToolSettings")
 		bool bGraspingTool = false;*/
 
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "ToolSettings")
 		TEnumAsByte<EGraspType> GraspType;
 
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "ToolSettings")
 		float GraspStiffness = 0.0;
+
+
+	// TODO: Do not pick auto! Change to remove auto from collision types
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GraspType == EGraspType::CellGrasp && ToolType == EToolType::GraspingTool", EditConditionHides), Category = "ToolSettings")
+		TEnumAsByte<ECollisionInteractionType> GraspCollisionType;
 
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolGeometry == EToolGeometry::LineMeshTool", EditConditionHides), Category = "ToolSettings")
 		bool bStitchingTool = false;*/
@@ -105,6 +114,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Imstk")
 		void SetStaticMeshComp(UStaticMeshComponent* InputMeshComp);
 
+	UFUNCTION(BlueprintCallable, Category = "Imstk")
+		void DisableAllCollisions();
+
+	UFUNCTION(BlueprintCallable, Category = "Imstk")
+		void EnableAllCollisions();
+
 
 	/** Initializes the controller in imstk
 	* @return None
@@ -113,24 +128,28 @@ public:
 
 	std::shared_ptr<imstk::RigidObject2> GetToolObj();
 
-	void AddToolPicking(std::shared_ptr<imstk::PbdObjectGrasping> Picking);
+	void AddToolPicking(std::shared_ptr<imstk::PbdObjectGrasping> InputPicking);
 
 	void AddStitching(std::shared_ptr<imstk::PbdObjectStitching> InputStitch);
 
 	void AddCutting(std::shared_ptr<imstk::PbdObjectCutting> InputCutting);
 
-	
+	void AddCollision(std::shared_ptr<imstk::CollisionInteraction> InputCollision);
 
 protected:
 	// TODO: Maybe separate into different tool types (stitching tool as a separate class)
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolGeometry == EToolGeometry::LineMeshTool", EditConditionHides), Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolGeometry == EToolGeometry::LineMeshTool", EditConditionHides), Category = "ToolSettings")
 		FVector Vertex1;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolGeometry == EToolGeometry::LineMeshTool", EditConditionHides), Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolGeometry == EToolGeometry::LineMeshTool", EditConditionHides), Category = "ToolSettings")
 		FVector Vertex2;
-	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.01", EditCondition = "ToolGeometry == EToolGeometry::SphereTool || ToolGeometry == EToolGeometry::CapsuleTool", EditConditionHides), Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.01", EditCondition = "ToolGeometry == EToolGeometry::SphereTool || ToolGeometry == EToolGeometry::CapsuleTool", EditConditionHides), Category = "ToolSettings")
 		float Radius = 1;
-	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.01", EditCondition = " ToolGeometry == EToolGeometry::CapsuleTool", EditConditionHides), Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.01", EditCondition = " ToolGeometry == EToolGeometry::CapsuleTool", EditConditionHides), Category = "ToolSettings")
 		float Length = 1;
+
+	// Shifts the origin of the capsule to this position (origin of capsule geometry defaults to center of capsule)
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolGeometry == EToolGeometry::CapsuleTool", EditConditionHides), Category = "ToolSettings")
+		FVector GeometryOffset;
 
 public:
 	virtual void UnInit();

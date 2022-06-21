@@ -5,9 +5,9 @@
 #include "CoreMinimal.h"
 #include "DynamicalModel.h"
 #include "ProceduralMeshComponent.h"
-#include "iMSTK-5.0/imstkLevelSetDeformableObject.h"
+#include "imstkLevelSetDeformableObject.h"
 
-#include "iMSTK-5.0/imstkLocalMarchingCubes.h"
+#include "imstkLocalMarchingCubes.h"
 
 #include "LevelSetModel.generated.h"
 

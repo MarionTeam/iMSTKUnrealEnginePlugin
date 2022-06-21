@@ -3,10 +3,13 @@
 
 #include "PBDModel.h"
 #include "ImstkSettings.h"
-#include "iMSTK-5.0/imstkPbdModel.h"
-#include "iMSTK-5.0/imstkSelectEnclosedPoints.h"
-#include "iMSTK-5.0/imstkPointwiseMap.h"
-#include "iMSTK-5.0/imstkTetrahedralMesh.h"
+#include "imstkPbdModel.h"
+#include "imstkSelectEnclosedPoints.h"
+#include "imstkPointwiseMap.h"
+#include "imstkPointToTetMap.h"
+#include "imstkTetrahedralMesh.h"
+#include "KismetProceduralMeshLibrary.h"
+
 #include "Engine/GameEngine.h"
 //#include "iMSTK-5.0/imstkPbdFemConstraint.h"
 
@@ -91,11 +94,11 @@ void UPBDModel::Init()
 	}
 
 	PbdConfig->m_uniformMassValue = Mass;
-	PbdConfig->m_gravity = UMathUtil::ToImstkVec3(SubsystemInstance->Gravity);
+	PbdConfig->m_gravity = UMathUtil::ToImstkVec3(SubsystemInstance->Gravity, true);
 	PbdConfig->m_iterations = 5;
 	PbdConfig->m_viscousDampingCoeff = ViscousDampingCoeff;
 	PbdConfig->m_contactStiffness = ContactStiffness;
-	PbdConfig->m_dt = 0.01;
+	PbdConfig->m_dt = SubsystemInstance->TickInterval;
 
 	std::shared_ptr<imstk::PbdModel> PbdModel = std::make_shared<imstk::PbdModel>();
 
@@ -111,9 +114,9 @@ void UPBDModel::Init()
 			return;
 		}
 
-		Geom->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale()), imstk::Geometry::TransformType::ApplyToData);
+		Geom->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 		Geom->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
-		Geom->translate(UMathUtil::ToImstkVec3(Owner->GetActorLocation()), imstk::Geometry::TransformType::ApplyToData);
+		Geom->translate(UMathUtil::ToImstkVec3(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 		Geom->updatePostTransformData();
 		PbdObject->setCollidingGeometry(Geom);
 		PbdObject->setVisualGeometry(Geom);
@@ -128,202 +131,57 @@ void UPBDModel::Init()
 		std::shared_ptr<imstk::TetrahedralMesh> TetMesh = TetrahedralMesh->GetTetrahedralMesh();
 		//std::shared_ptr<imstk::TetrahedralMesh> TetMesh = imstk::MeshIO::read<imstk::TetrahedralMesh>("D:\\Temp\\heart_volume.vtk");
 
-		TetMesh->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale()), imstk::Geometry::TransformType::ApplyToData);
+		TetMesh->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 		TetMesh->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
-		TetMesh->translate(UMathUtil::ToImstkVec3(Owner->GetActorLocation()), imstk::Geometry::TransformType::ApplyToData);
+		TetMesh->translate(UMathUtil::ToImstkVec3(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 		TetMesh->updatePostTransformData();
 
-		std::shared_ptr<imstk::SurfaceMesh> SurfMesh = TetMesh->extractSurfaceMesh();
+		std::shared_ptr<imstk::SurfaceMesh> SurfMesh;
 
-		/************************************************************************************************
-		imstk::imstkNew<imstk::SurfaceMesh> clothMesh;
+		if (bGenerateSurfaceFromTetrahedral) {
+			SurfMesh = TetMesh->extractSurfaceMesh();
 
-		imstk::imstkNew<imstk::VecDataArray<double, 3>> verticesPtr(16 * 16);
-		imstk::VecDataArray<double, 3>& vertices = *verticesPtr.get();
-		const double                      dy = 10 / (16 - 1);
-		const double                      dx = 10 / (16 - 1);
-		for (int i = 0; i < 16; ++i)
-		{
-			for (int j = 0; j < 16; j++)
-			{
-				vertices[i * 16 + j] = imstk::Vec3d(dx * static_cast<double>(i), 1.0, dy * static_cast<double>(j));
-			}
-		}
+			// Create a procedural mesh section and override the existing one using the values from the extracted surface mesh
+			TArray<FVector2D> UV0;
+			TArray<FColor> VertColors;
+			TArray<FProcMeshTangent> Tangents;
 
-		// Add connectivity data
-		imstk::imstkNew<imstk::VecDataArray<int, 3>> indicesPtr;
-		imstk::VecDataArray<int, 3>& indices = *indicesPtr.get();
-		for (int i = 0; i < 16 - 1; i++)
-		{
-			for (int j = 0; j < 16 - 1; j++)
-			{
-				const int index1 = i * 16 + j;
-				const int index2 = index1 + 16;
-				const int index3 = index1 + 1;
-				const int index4 = index2 + 1;
-
-				// Interleave [/][\]
-				if (i % 2 ^ j % 2)
-				{
-					indices.push_back(imstk::Vec3i(index1, index2, index3));
-					indices.push_back(imstk::Vec3i(index4, index3, index2));
+			TArray<FVector> Verts;
+			TArray<FVector> Normals;
+			TArray<int32> Triangles;
+			/*imstk::VecDataArray<int, 3>& Arr = *SurfMesh->getTriangleIndices().get();
+			for (int i = 0; i < Arr.size(); i++) {
+				for (int j = 0; j < 3; j++) {
+					Triangles.Add(Arr[i][j]);
 				}
-				else
-				{
-					indices.push_back(imstk::Vec3i(index2, index4, index1));
-					indices.push_back(imstk::Vec3i(index4, index3, index1));
-				}
+			}*/
+
+			for (int i = 0; i < SurfMesh->getNumTriangles(); i++) {
+				imstk::Vec3i Indices = SurfMesh->getTriangleIndices(i);
+				Triangles.Add(Indices.x());
+				Triangles.Add(Indices.y());
+				Triangles.Add(Indices.z());
 			}
+
+
+			//Normals = UMathUtil::ToUnrealFVecArray(SurfMesh->getVertexNormals());
+			Verts = UMathUtil::ToUnrealFVecArray(SurfMesh->getVertexPositions(), true);
+			MeshComp->CreateMeshSection(0, Verts, Triangles, Normals, UV0, VertColors, Tangents, false);
 		}
-
-		imstk::imstkNew<imstk::VecDataArray<float, 2>> uvCoordsPtr(16 * 16);
-		imstk::VecDataArray<float, 2>& uvCoords = *uvCoordsPtr.get();
-		for (int i = 0; i < 16; ++i)
-		{
-			for (int j = 0; j < 16; j++)
-			{
-				uvCoords[i * 16 + j] = imstk::Vec2f(static_cast<float>(i) / 16, static_cast<float>(j) / 16) * 2;
-			}
+		else {
+			SurfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(GetImstkGeometry());
+			SurfMesh->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+			SurfMesh->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
+			SurfMesh->translate(UMathUtil::ToImstkVec3(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+			SurfMesh->updatePostTransformData();
 		}
-
-		clothMesh->initialize(verticesPtr, indicesPtr);
-		clothMesh->setVertexTCoords("uvs", uvCoordsPtr);
-		LOG(WARNING) << clothMesh->getTriangleIndices()->size();
-		************************************************************************************************/
-
-
-		//************************************************************************************************
-		//imstkNew<TetrahedralMesh> tissueMesh;
-
-		//imstkNew<VecDataArray<double, 3>> verticesPtr(dim[0] * dim[1] * dim[2]);
-		//VecDataArray<double, 3>& vertices = *verticesPtr.get();
-		//const Vec3d                       dx = size.cwiseQuotient((dim - Vec3i(1, 1, 1)).cast<double>());
-		//for (int z = 0; z < dim[2]; z++)
-		//{
-		//	for (int y = 0; y < dim[1]; y++)
-		//	{
-		//		for (int x = 0; x < dim[0]; x++)
-		//		{
-		//			vertices[x + dim[0] * (y + dim[1] * z)] = Vec3i(x, y, z).cast<double>().cwiseProduct(dx) - size * 0.5 + center;
-		//		}
-		//	}
-		//}
-
-		//// Add connectivity data
-		//imstkNew<VecDataArray<int, 4>> indicesPtr;
-		//VecDataArray<int, 4>& indices = *indicesPtr.get();
-		//for (int z = 0; z < dim[2] - 1; z++)
-		//{
-		//	for (int y = 0; y < dim[1] - 1; y++)
-		//	{
-		//		for (int x = 0; x < dim[0] - 1; x++)
-		//		{
-		//			int cubeIndices[8] =
-		//			{
-		//				x + dim[0] * (y + dim[1] * z),
-		//				(x + 1) + dim[0] * (y + dim[1] * z),
-		//				(x + 1) + dim[0] * (y + dim[1] * (z + 1)),
-		//				x + dim[0] * (y + dim[1] * (z + 1)),
-		//				x + dim[0] * ((y + 1) + dim[1] * z),
-		//				(x + 1) + dim[0] * ((y + 1) + dim[1] * z),
-		//				(x + 1) + dim[0] * ((y + 1) + dim[1] * (z + 1)),
-		//				x + dim[0] * ((y + 1) + dim[1] * (z + 1))
-		//			};
-
-		//			// Alternate the pattern so the edges line up on the sides of each voxel
-		//			if ((z % 2 ^ x % 2) ^ y % 2)
-		//			{
-		//				indices.push_back(Vec4i(cubeIndices[0], cubeIndices[7], cubeIndices[5], cubeIndices[4]));
-		//				indices.push_back(Vec4i(cubeIndices[3], cubeIndices[7], cubeIndices[2], cubeIndices[0]));
-		//				indices.push_back(Vec4i(cubeIndices[2], cubeIndices[7], cubeIndices[5], cubeIndices[0]));
-		//				indices.push_back(Vec4i(cubeIndices[1], cubeIndices[2], cubeIndices[0], cubeIndices[5]));
-		//				indices.push_back(Vec4i(cubeIndices[2], cubeIndices[6], cubeIndices[7], cubeIndices[5]));
-		//			}
-		//			else
-		//			{
-		//				indices.push_back(Vec4i(cubeIndices[3], cubeIndices[7], cubeIndices[6], cubeIndices[4]));
-		//				indices.push_back(Vec4i(cubeIndices[1], cubeIndices[3], cubeIndices[6], cubeIndices[4]));
-		//				indices.push_back(Vec4i(cubeIndices[3], cubeIndices[6], cubeIndices[2], cubeIndices[1]));
-		//				indices.push_back(Vec4i(cubeIndices[1], cubeIndices[6], cubeIndices[5], cubeIndices[4]));
-		//				indices.push_back(Vec4i(cubeIndices[0], cubeIndices[3], cubeIndices[1], cubeIndices[4]));
-		//			}
-		//		}
-		//	}
-		//}
-
-		//imstkNew<VecDataArray<float, 2>> uvCoordsPtr(dim[0] * dim[1] * dim[2]);
-		//VecDataArray<float, 2>& uvCoords = *uvCoordsPtr.get();
-		//for (int z = 0; z < dim[2]; z++)
-		//{
-		//	for (int y = 0; y < dim[1]; y++)
-		//	{
-		//		for (int x = 0; x < dim[0]; x++)
-		//		{
-		//			uvCoords[x + dim[0] * (y + dim[1] * z)] = Vec2f(static_cast<float>(x) / dim[0], static_cast<float>(z) / dim[2]) * 3.0;
-		//		}
-		//	}
-		//}
-
-		//// Ensure correct windings
-		//for (int i = 0; i < indices.size(); i++)
-		//{
-		//	if (tetVolume(vertices[indices[i][0]], vertices[indices[i][1]], vertices[indices[i][2]], vertices[indices[i][3]]) < 0.0)
-		//	{
-		//		std::swap(indices[i][0], indices[i][2]);
-		//	}
-		//}
-
-		//tissueMesh->initialize(verticesPtr, indicesPtr);
-		//tissueMesh->setVertexTCoords("uvs", uvCoordsPtr);
-		//************************************************************************************************
-
-		//UE_LOG(LogTemp, Warning, TEXT("TCoords %s"), (SurfMesh->getVertexTCoords() == nullptr) ? TEXT("true") : TEXT("false"));
-		//SurfMesh->flipNormals();
-		/*
-		imstk::VecDataArray<double, 3>& Arr = *SurfMesh->getVertexPositions();
-		//LOG(WARNING) << Arr.size();
-		std::shared_ptr<imstk::VecDataArray<int, 3>> indicesPtr = SurfMesh->getTriangleIndices();
-		imstk::VecDataArray<int, 3>& indices = *indicesPtr;
-		indices.size();
-		LOG(WARNING) << indices.size();
-		*/
-
-		//MeshComp->GetProcMeshSection(0)->Reset();
-
-		// Create a procedural mesh section and override the existing one using the values from the extracted surface mesh
-		TArray<FVector2D> UV0;
-		TArray<FColor> VertColors;
-		TArray<FProcMeshTangent> Tangents;
-
-		TArray<FVector> Verts;
-		TArray<FVector> Normals;
-		TArray<int32> Triangles;
-		/*imstk::VecDataArray<int, 3>& Arr = *SurfMesh->getTriangleIndices().get();
-		for (int i = 0; i < Arr.size(); i++) {
-			for (int j = 0; j < 3; j++) {
-				Triangles.Add(Arr[i][j]);
-			}
-		}*/
-
-		for (int i = 0; i < SurfMesh->getNumTriangles(); i++) {
-			imstk::Vec3i Indices = SurfMesh->getTriangleIndices(i);
-			Triangles.Add(Indices.x());
-			Triangles.Add(Indices.y());
-			Triangles.Add(Indices.z());
-		}
-
-
-		//Normals = UMathUtil::ToUnrealFVecArray(SurfMesh->getVertexNormals());
-		Verts = UMathUtil::ToUnrealFVecArray(SurfMesh->getVertexPositions());
-		MeshComp->CreateMeshSection(0, Verts, Triangles, Normals, UV0, VertColors, Tangents, false);
-
-
-		//LOG(WARNING) << SurfMesh->getNumVertices();
-		//LOG(WARNING) << SurfMesh->getNumTriangles();
 
 		PbdObject->setCollidingGeometry(SurfMesh);
 		PbdObject->setVisualGeometry(SurfMesh);
-		PbdObject->setPhysicsToCollidingMap(std::make_shared<imstk::PointwiseMap>(TetMesh, SurfMesh));
+		if (bGenerateSurfaceFromTetrahedral)
+			PbdObject->setPhysicsToCollidingMap(std::make_shared<imstk::PointwiseMap>(TetMesh, SurfMesh));
+		else
+			PbdObject->setPhysicsToCollidingMap(std::make_shared<imstk::PointToTetMap>(TetMesh, SurfMesh));
 
 		PbdObject->setPhysicsGeometry(TetMesh);
 		PbdModel->setModelGeometry(TetMesh);
@@ -387,20 +245,28 @@ void UPBDModel::UpdateModel()
 	// Update the procedural mesh to positions from imstk
 	// Currently only supports vertex positions and normals
 	if (MeshComp) {
+		MeshGeom->computeVertexNormals();
+		imstk::VecDataArray<double, 3>& ImstkNorms = *MeshGeom->getVertexNormals();
+
 		TArray<FVector2D> UV0;
 		TArray<FLinearColor> VertColors;
 		TArray<FProcMeshTangent> Tangents;
-		MeshGeom->computeVertexNormals();
-		imstk::VecDataArray<double, 3>& ImstkNorms = *MeshGeom->getVertexNormals();
+		
 		TArray<FVector> Verts;
 		TArray<FVector> Normals;
+		TArray<int32> Indices;
+		UKismetProceduralMeshLibrary::GetSectionFromProceduralMesh(MeshComp, 0, Verts, Indices, Normals, UV0, Tangents);
+		//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Verts, Indices, UV0, Normals, Tangents);
+		
+		// Use normals from imstk
+		Normals.Empty();
 		for (int i = 0; i < ImstkNorms.size(); i++) {
-			Normals.Add(UMathUtil::ToUnrealFVec(ImstkNorms[i]));
+			Normals.Add(UMathUtil::ToUnrealFVec(ImstkNorms[i], false));
 		}
-
-
-		Verts = UMathUtil::ToUnrealFVecArray(MeshGeom->getVertexPositions());
-
+		
+		// Get vertex data from imstk
+		Verts = UMathUtil::ToUnrealFVecArray(MeshGeom->getVertexPositions(), true);
+		
 		// If the number of verts and triangles is the same then just update the positions, otherwise clear the old mesh section and create a new one
 		if (Verts.Num() == MeshComp->GetProcMeshSection(0)->ProcVertexBuffer.Num() && MeshGeom->getNumTriangles() * 3 == MeshComp->GetProcMeshSection(0)->ProcIndexBuffer.Num()) {
 			MeshComp->UpdateMeshSection_LinearColor(0, Verts, Normals, UV0, VertColors, Tangents);
@@ -408,7 +274,6 @@ void UPBDModel::UpdateModel()
 		else {
 			MeshComp->ClearMeshSection(0);
 
-			TArray<int32> Indices;
 			for (int i = 0; i < MeshGeom->getNumTriangles(); i++) {
 				imstk::Vec3i Triangle = MeshGeom->getTriangleIndices(i);
 				Indices.Add(Triangle.x());
@@ -418,7 +283,7 @@ void UPBDModel::UpdateModel()
 
 			MeshComp->CreateMeshSection_LinearColor(0, Verts, Indices, Normals, UV0, VertColors, Tangents, false);
 		}
-
+		
 		// Get vert positions from imstk and apply to each section in order
 		// imstk object is flattened mesh with vertices in order of sections in unreal
 		// Might be needed if there are multiple sections in the mesh
@@ -438,7 +303,7 @@ void UPBDModel::UpdateModel()
 	if (UImstkSettings::IsDebugging()) {
 		if (GEngine) {
 			if (bPrintPositionInformation)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Owner->GetName() + ": " + UMathUtil::ToUnrealFVec(PbdObject->getCollidingGeometry()->getCenter()).ToString());
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Owner->GetName() + ": " + UMathUtil::ToUnrealFVec(PbdObject->getCollidingGeometry()->getCenter(), true).ToString());
 		}
 	}
 

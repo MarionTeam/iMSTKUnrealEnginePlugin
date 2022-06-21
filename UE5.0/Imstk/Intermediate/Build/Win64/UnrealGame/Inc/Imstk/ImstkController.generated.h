@@ -14,38 +14,42 @@ class UStaticMeshComponent;
 #endif
 #define IMSTK_ImstkController_generated_h
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_SPARSE_DATA
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_RPC_WRAPPERS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_SPARSE_DATA
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_RPC_WRAPPERS \
  \
+	DECLARE_FUNCTION(execEnableAllCollisions); \
+	DECLARE_FUNCTION(execDisableAllCollisions); \
 	DECLARE_FUNCTION(execSetStaticMeshComp); \
 	DECLARE_FUNCTION(execIsInitialized);
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_RPC_WRAPPERS_NO_PURE_DECLS \
  \
+	DECLARE_FUNCTION(execEnableAllCollisions); \
+	DECLARE_FUNCTION(execDisableAllCollisions); \
 	DECLARE_FUNCTION(execSetStaticMeshComp); \
 	DECLARE_FUNCTION(execIsInitialized);
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_INCLASS_NO_PURE_DECLS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUImstkController(); \
 	friend struct Z_Construct_UClass_UImstkController_Statics; \
 public: \
-	DECLARE_CLASS(UImstkController, UActorComponent, COMPILED_IN_FLAGS(CLASS_Abstract | CLASS_Config), CASTCLASS_None, TEXT("/Script/Imstk"), NO_API) \
+	DECLARE_CLASS(UImstkController, USceneComponent, COMPILED_IN_FLAGS(CLASS_Abstract | CLASS_Config), CASTCLASS_None, TEXT("/Script/Imstk"), NO_API) \
 	DECLARE_SERIALIZER(UImstkController)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_INCLASS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_INCLASS \
 private: \
 	static void StaticRegisterNativesUImstkController(); \
 	friend struct Z_Construct_UClass_UImstkController_Statics; \
 public: \
-	DECLARE_CLASS(UImstkController, UActorComponent, COMPILED_IN_FLAGS(CLASS_Abstract | CLASS_Config), CASTCLASS_None, TEXT("/Script/Imstk"), NO_API) \
+	DECLARE_CLASS(UImstkController, USceneComponent, COMPILED_IN_FLAGS(CLASS_Abstract | CLASS_Config), CASTCLASS_None, TEXT("/Script/Imstk"), NO_API) \
 	DECLARE_SERIALIZER(UImstkController)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_STANDARD_CONSTRUCTORS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_STANDARD_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UImstkController(const FObjectInitializer& ObjectInitializer); \
 	DEFINE_ABSTRACT_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UImstkController) \
@@ -58,7 +62,7 @@ private: \
 public:
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_ENHANCED_CONSTRUCTORS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	NO_API UImstkController(UImstkController&&); \
@@ -69,25 +73,25 @@ public: \
 	DEFINE_ABSTRACT_DEFAULT_CONSTRUCTOR_CALL(UImstkController)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_47_PROLOG
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_GENERATED_BODY_LEGACY \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_49_PROLOG
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_SPARSE_DATA \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_RPC_WRAPPERS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_INCLASS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_STANDARD_CONSTRUCTORS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_SPARSE_DATA \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_RPC_WRAPPERS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_INCLASS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_STANDARD_CONSTRUCTORS \
 public: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_GENERATED_BODY \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_SPARSE_DATA \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_INCLASS_NO_PURE_DECLS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_50_ENHANCED_CONSTRUCTORS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_SPARSE_DATA \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_INCLASS_NO_PURE_DECLS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_52_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -105,7 +109,8 @@ template<> IMSTK_API UClass* StaticClass<class UImstkController>();
 	op(SurfaceMeshTool) 
 #define FOREACH_ENUM_EGRASPTYPE(op) \
 	op(RayPointGrasp) \
-	op(VertexGrasp) 
+	op(VertexGrasp) \
+	op(CellGrasp) 
 #define FOREACH_ENUM_ETOOLTYPE(op) \
 	op(GraspingTool) \
 	op(StitchingTool) \

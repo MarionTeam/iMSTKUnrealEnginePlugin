@@ -162,6 +162,7 @@ void EmptyLinkFunctionForGeneratedCodeImstkMouseController() {}
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UImstkMouseController_Statics::Class_MetaDataParams[] = {
 		{ "Comment", "/** \\file ImstkMouseController.h\n *  \\brief Component to attach to objects that can be controlled using the mouse\n *  \\details Currently not spawnable, use is replaced with custom controller and setting parameters using the functions available\n */" },
+		{ "HideCategories", "Trigger PhysicsVolume" },
 		{ "IncludePath", "ImstkMouseController.h" },
 		{ "ModuleRelativePath", "Public/ImstkMouseController.h" },
 		{ "ToolTip", "\\file ImstkMouseController.h\n\\brief Component to attach to objects that can be controlled using the mouse\n\\details Currently not spawnable, use is replaced with custom controller and setting parameters using the functions available" },
@@ -245,9 +246,9 @@ void EmptyLinkFunctionForGeneratedCodeImstkMouseController() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UImstkMouseController, UImstkMouseController::StaticClass, TEXT("UImstkMouseController"), &Z_Registration_Info_UClass_UImstkMouseController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UImstkMouseController), 1549150376U) },
+		{ Z_Construct_UClass_UImstkMouseController, UImstkMouseController::StaticClass, TEXT("UImstkMouseController"), &Z_Registration_Info_UClass_UImstkMouseController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UImstkMouseController), 2986851673U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_2504994153(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_2488650618(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkMouseController_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "DeformableModel.h"
 #include "TetrahedralMeshAsset.h"
-#include "iMSTK-5.0/imstkSurfaceMesh.h"
+#include "imstkSurfaceMesh.h"
 #include "PBDModel.generated.h"
 
 /**
@@ -39,6 +39,10 @@ public:
 		float PossionsRatio = 0.0;
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseFEMConstraint && TetrahedralMesh != nullptr", EditConditionHides), Category = "Constraints")
 		TEnumAsByte<FemConstraintMaterial> MaterialType = FemConstraintMaterial::StVK;
+
+	// Generate a new surface mesh from the tetrahedral mesh. Simulation may be more accurate, but most material information will be lost
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "TetrahedralMesh != nullptr", EditConditionHides), Category = "General")
+		bool bGenerateSurfaceFromTetrahedral = false;
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

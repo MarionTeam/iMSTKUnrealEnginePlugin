@@ -7,9 +7,9 @@
 #include "MathUtil.h"
 #include "MeshDescription.h"
 #include "AssetRegistry/AssetRegistryModule.h"
-#include "iMSTK-5.0/imstkMeshIO.h"
-#include "iMSTK-5.0/imstkTetrahedralMesh.h"
-#include "iMSTK-5.0/imstkSurfaceMesh.h"
+#include "imstkMeshIO.h"
+#include "imstkTetrahedralMesh.h"
+#include "imstkSurfaceMesh.h"
 
 UImstkGeometryImporterFactory::UImstkGeometryImporterFactory(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -19,7 +19,7 @@ UImstkGeometryImporterFactory::UImstkGeometryImporterFactory(const FObjectInitia
 	Formats.Add(FString(TEXT("stl;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatStl", "Stl File").ToString());
 	Formats.Add(FString(TEXT("ply;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatPly", "Ply File").ToString());
 	Formats.Add(FString(TEXT("veg;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatVeg", "Veg File").ToString());
-	Formats.Add(FString(TEXT("msh;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatVeg", "Veg File").ToString());
+	Formats.Add(FString(TEXT("msh;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatVeg", "Msh File").ToString());
 	SupportedClass = UTetrahedralMeshAsset::StaticClass();
 	bCreateNew = false;
 	bEditorImport = true;
@@ -39,8 +39,11 @@ UObject* UImstkGeometryImporterFactory::FactoryCreateFile(UClass* InClass, UObje
 
 		// Create TetrahedralMeshAsset
 		std::shared_ptr<imstk::TetrahedralMesh> TetMesh = std::dynamic_pointer_cast<imstk::TetrahedralMesh>(ImportedPointSet);
+		FString TetAssetStr = InName.ToString();
+		TetAssetStr.Append("_volume");
+		FName TetAssetName = FName(*TetAssetStr);
 
-		TetMeshAsset = NewObject<UTetrahedralMeshAsset>(InParent, InClass, InName, Flags);
+		TetMeshAsset = NewObject<UTetrahedralMeshAsset>(InParent, InClass, TetAssetName, Flags);
 
 		if (TetMeshAsset)
 			TetMeshAsset->SetTetrahedralMesh(TetMesh);
@@ -104,7 +107,9 @@ UObject* UImstkGeometryImporterFactory::FactoryCreateFile(UClass* InClass, UObje
 
 		imstk::VecDataArray<double, 3>& Vertices = *SurfaceMesh->getVertexPositions();
 		for (int i = 0; i < Vertices.size(); i++) {
-			RawMesh.VertexPositions.Add(FVector3f(UMathUtil::ToUnrealFVec(Vertices[i])));
+			//RawMesh.VertexPositions.Add(FVector3f(UMathUtil::ToUnrealFVec(Vertices[i], false)));
+			// Avoid using Math util function to maintain vertex positions on import
+			RawMesh.VertexPositions.Add(FVector3f(Vertices[i].x(), -Vertices[i].y(), Vertices[i].z()));
 		}
 
 		//imstk::VecDataArray<int, 3>& Indices = *SurfaceMesh->getTriangleIndices();
@@ -141,6 +146,26 @@ UObject* UImstkGeometryImporterFactory::FactoryCreateFile(UClass* InClass, UObje
 			RawMesh.WedgeTangentZ.Add(FVector3f::ZeroVector);
 			RawMesh.WedgeTangentZ.Add(FVector3f::ZeroVector);
 			RawMesh.WedgeTangentZ.Add(FVector3f::ZeroVector);
+
+
+
+			/*FVector TangentXX = UMathUtil::ToUnrealFVec((*Tangents)[Indices.x()], false);
+			FVector TangentXY = UMathUtil::ToUnrealFVec((*Tangents)[Indices.y()], false);
+			FVector TangentXZ = UMathUtil::ToUnrealFVec((*Tangents)[Indices.z()], false);
+
+			RawMesh.WedgeTangentX.Add(TangentXX);
+			RawMesh.WedgeTangentX.Add(TangentXY);
+			RawMesh.WedgeTangentX.Add(TangentXZ);
+
+			FVector TangentZX = UMathUtil::ToUnrealFVec((*Normals)[Indices.x()], false);
+			FVector TangentZY = UMathUtil::ToUnrealFVec((*Normals)[Indices.y()], false);
+			FVector TangentZZ = UMathUtil::ToUnrealFVec((*Normals)[Indices.z()], false);
+
+			RawMesh.WedgeTangentZ.Add(TangentZX);
+			RawMesh.WedgeTangentZ.Add(TangentZY);
+			RawMesh.WedgeTangentZ.Add(TangentZZ);
+
+			FVector TangentYX = (TangentXX ^ TangentZX).GetSafeNormal();*/
 
 			if (!ImstkTCoordsPtr) {
 				RawMesh.WedgeTexCoords->Add(FVector2f(0, 0));

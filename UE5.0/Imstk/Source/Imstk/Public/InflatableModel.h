@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PBDModel.h"
-#include "iMSTK-5.0/imstkPbdConstraintContainer.h"
+#include "imstkPbdConstraintContainer.h"
 #include "InflatableModel.generated.h"
 
 /**

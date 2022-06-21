@@ -74,9 +74,24 @@ bool UImstkController::IsInitialized()
 	return bIsInitialized;
 }
 
-void UImstkController::AddToolPicking(std::shared_ptr<imstk::PbdObjectGrasping> Picking)
+void UImstkController::DisableAllCollisions()
 {
-	this->ToolPickings.Add(Picking);
+	for (std::shared_ptr<imstk::CollisionInteraction> Collision : Collisions) {
+		Collision->setEnabled(false);
+	}
+}
+
+void UImstkController::EnableAllCollisions()
+{
+	for (std::shared_ptr<imstk::CollisionInteraction> Collision : Collisions) {
+		Collision->setEnabled(true);
+	}
+}
+
+
+void UImstkController::AddToolPicking(std::shared_ptr<imstk::PbdObjectGrasping> InputPicking)
+{
+	this->ToolPickings.Add(InputPicking);
 }
 
 void UImstkController::AddStitching(std::shared_ptr<imstk::PbdObjectStitching> InputStitch)
@@ -87,6 +102,11 @@ void UImstkController::AddStitching(std::shared_ptr<imstk::PbdObjectStitching> I
 void UImstkController::AddCutting(std::shared_ptr<imstk::PbdObjectCutting> InputCutting)
 {
 	this->Cuttings.Add(InputCutting);
+}
+
+void UImstkController::AddCollision(std::shared_ptr<imstk::CollisionInteraction> InputCollision)
+{
+	this->Collisions.Add(InputCollision);
 }
 
 void UImstkController::SetStaticMeshComp(UStaticMeshComponent* InputMeshComp) 
@@ -105,5 +125,8 @@ void UImstkController::UnInit()
 	}
 	for (std::shared_ptr<imstk::PbdObjectCutting> Cutting : Cuttings) {
 		Cutting.reset();
+	}
+	for (std::shared_ptr<imstk::CollisionInteraction> Collision : Collisions) {
+		Collision.reset();
 	}
 }

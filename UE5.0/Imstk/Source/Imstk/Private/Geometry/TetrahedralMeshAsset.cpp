@@ -2,12 +2,23 @@
 
 
 #include "TetrahedralMeshAsset.h"
-#include "iMSTK-5.0/imstkSurfaceMesh.h"
+#include "imstkSurfaceMesh.h"
 #include "MathUtil.h"
 
 void UTetrahedralMeshAsset::SetTetrahedralMesh(std::shared_ptr<imstk::TetrahedralMesh> Input) {
 	// Extract the values from imstk and and store in arrays
-	Vertices = UMathUtil::ToUnrealFVecArray(Input->getVertexPositions());
+	//Vertices = UMathUtil::ToUnrealFVecArray(Input->getVertexPositions(), false);
+	
+	// Store tet mesh without flipped y and z to maintain surface mesh orientation (since it is flipped on return) and have tet mesh line up in imstk
+	std::shared_ptr<imstk::VecDataArray<double, 3>> CurVerts = Input->getVertexPositions();
+
+	for (int i = 0; i < Input->getNumVertices(); i++) {
+		imstk::Vec3d Vector = Input->getVertexPosition(i);
+		Vertices.Add(FVector(Vector.x(), -Vector.y(), Vector.z()));
+	}
+	
+
+	// TODO: replace this with get tetrahedron indices after it is fixed
 	for (int i = 0; i < Input->getNumTetrahedra(); i++) {
 			imstk::Vec4i TriangleIndices = Input->getTetrahedronIndices(i);
 			Indices.Add(TriangleIndices.x());
@@ -21,6 +32,6 @@ void UTetrahedralMeshAsset::SetTetrahedralMesh(std::shared_ptr<imstk::Tetrahedra
 std::shared_ptr<imstk::TetrahedralMesh> UTetrahedralMeshAsset::GetTetrahedralMesh() {
 	// Convert the stored values back into an imstk tetrahedral mesh
 	std::shared_ptr<imstk::TetrahedralMesh> Output = std::make_shared<imstk::TetrahedralMesh>();
-	Output->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices), UMathUtil::ToImstkVecDataArray4i(Indices));
+	Output->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray4i(Indices));
 	return Output;
 }

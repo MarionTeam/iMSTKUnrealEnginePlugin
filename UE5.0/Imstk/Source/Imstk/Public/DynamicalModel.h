@@ -6,7 +6,7 @@
 #include "ImstkBehaviour.h"
 #include "GeometryFilter.h"
 #include "ImstkSubsystem.h"
-#include "iMSTK-5.0/imstkCollidingObject.h"
+#include "imstkCollidingObject.h"
 #include "DynamicalModel.generated.h"
 
 /** \file DynamicalModel.h

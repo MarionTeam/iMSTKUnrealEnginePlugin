@@ -5,18 +5,34 @@ using UnrealBuildTool;
 public class ImstkAPI : ModuleRules
 {
     public ImstkAPI(ReadOnlyTargetRules Target) : base(Target) {
+        string ImstkVersion = "6.0";
+
         bUseRTTI = true;
         bLegacyPublicIncludePaths = true;
         Type = ModuleType.External;
         if (Target.Platform == UnrealTargetPlatform.Win64) {
+
+            PrivateDependencyModuleNames.AddRange(
+                 new string[]
+                 {
+                "IntelTBB",
+                "OpenVR"
+                 }
+             );
+
+            PublicIncludePaths.AddRange(
+                 new string[]{
+                 "ThirdParty/Eigen"
+                 }
+             );
+
+
             string PlatformDir = Target.Platform.ToString();
 
             string IncPath = Path.Combine(ModuleDirectory, "include");
             PublicSystemIncludePaths.Add(IncPath);
 
-            // this is required because imstk geometry requires files in eigen3 but does not reference them in the subdirectory
-            // TODO: This also means that this folder is technically included twice (maybe just change the file structure)
-            IncPath = Path.Combine(ModuleDirectory, "include/eigen3");
+            IncPath = Path.Combine(ModuleDirectory, "include/iMSTK-" + ImstkVersion);
             PublicIncludePaths.Add(IncPath);
 
             IncPath = Path.Combine(ModuleDirectory, "include/vtk-9.1");
@@ -46,8 +62,8 @@ public class ImstkAPI : ModuleRules
             FileInfo[] dllFiles = d.GetFiles("*.dll");
 
             foreach (FileInfo file in dllFiles) {
-                if (file.Name == "tbb12.dll") // Skip, already included with Unreal Engine
-                    continue;
+                // if (file.Name == "tbb12.dll") // Skip, already included with Unreal Engine
+                //    continue;
                 RuntimeModuleNames.Add(file.Name);
             }
 
@@ -62,8 +78,7 @@ public class ImstkAPI : ModuleRules
                 RuntimeDependencies.Add("$(BinaryOutputDir)/" + RuntimeModuleName, ModulePath);
             }
 
-            // Stage Proj data files
-           // RuntimeDependencies.Add("$(BinaryOutputDir)/proj-data/*", Path.Combine(LibPath, "proj-data/*"), StagedFileType.SystemNonUFS);
+
 
 
 

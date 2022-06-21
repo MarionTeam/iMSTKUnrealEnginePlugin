@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DynamicalModel.h"
-#include "iMSTK-5.0/imstkRigidObject2.h"
+#include "imstkRigidObject2.h"
 
 #include "RBDModel.generated.h"
 

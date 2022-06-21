@@ -19,13 +19,6 @@ void EmptyLinkFunctionForGeneratedCodeImstkSubsystem() {}
 	IMSTK_API UClass* Z_Construct_UClass_UImstkInteraction_NoRegister();
 	IMSTK_API UClass* Z_Construct_UClass_UImstkController_NoRegister();
 // End Cross Module References
-	DEFINE_FUNCTION(UImstkSubsystem::execCutTest)
-	{
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		P_THIS->CutTest();
-		P_NATIVE_END;
-	}
 	DEFINE_FUNCTION(UImstkSubsystem::execUpdateSimulation)
 	{
 		P_GET_PROPERTY(FFloatProperty,Z_Param_DeltaTime);
@@ -41,13 +34,6 @@ void EmptyLinkFunctionForGeneratedCodeImstkSubsystem() {}
 		P_THIS->ToggleSimulation();
 		P_NATIVE_END;
 	}
-	DEFINE_FUNCTION(UImstkSubsystem::execImstkTest)
-	{
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		P_THIS->ImstkTest();
-		P_NATIVE_END;
-	}
 	DEFINE_FUNCTION(UImstkSubsystem::execImstkInit)
 	{
 		P_FINISH;
@@ -59,36 +45,11 @@ void EmptyLinkFunctionForGeneratedCodeImstkSubsystem() {}
 	{
 		UClass* Class = UImstkSubsystem::StaticClass();
 		static const FNameNativePtrPair Funcs[] = {
-			{ "CutTest", &UImstkSubsystem::execCutTest },
 			{ "ImstkInit", &UImstkSubsystem::execImstkInit },
-			{ "ImstkTest", &UImstkSubsystem::execImstkTest },
 			{ "ToggleSimulation", &UImstkSubsystem::execToggleSimulation },
 			{ "UpdateSimulation", &UImstkSubsystem::execUpdateSimulation },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
-	}
-	struct Z_Construct_UFunction_UImstkSubsystem_CutTest_Statics
-	{
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UECodeGen_Private::FFunctionParams FuncParams;
-	};
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UImstkSubsystem_CutTest_Statics::Function_MetaDataParams[] = {
-		{ "Category", "iMSTKSubsystem" },
-		{ "ModuleRelativePath", "Public/ImstkSubsystem.h" },
-	};
-#endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UImstkSubsystem_CutTest_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UImstkSubsystem, nullptr, "CutTest", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UImstkSubsystem_CutTest_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UImstkSubsystem_CutTest_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UImstkSubsystem_CutTest()
-	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UImstkSubsystem_CutTest_Statics::FuncParams);
-		}
-		return ReturnFunction;
 	}
 	struct Z_Construct_UFunction_UImstkSubsystem_ImstkInit_Statics
 	{
@@ -112,29 +73,6 @@ void EmptyLinkFunctionForGeneratedCodeImstkSubsystem() {}
 		if (!ReturnFunction)
 		{
 			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UImstkSubsystem_ImstkInit_Statics::FuncParams);
-		}
-		return ReturnFunction;
-	}
-	struct Z_Construct_UFunction_UImstkSubsystem_ImstkTest_Statics
-	{
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UECodeGen_Private::FFunctionParams FuncParams;
-	};
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UImstkSubsystem_ImstkTest_Statics::Function_MetaDataParams[] = {
-		{ "Category", "iMSTKSubsystem" },
-		{ "ModuleRelativePath", "Public/ImstkSubsystem.h" },
-	};
-#endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UImstkSubsystem_ImstkTest_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UImstkSubsystem, nullptr, "ImstkTest", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UImstkSubsystem_ImstkTest_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UImstkSubsystem_ImstkTest_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UImstkSubsystem_ImstkTest()
-	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UImstkSubsystem_ImstkTest_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
@@ -209,6 +147,10 @@ void EmptyLinkFunctionForGeneratedCodeImstkSubsystem() {}
 		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
 #endif
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_TickInterval_MetaData[];
+#endif
+		static const UECodeGen_Private::FFloatPropertyParams NewProp_TickInterval;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_RigidBodyMaxIterations_MetaData[];
 #endif
 		static const UECodeGen_Private::FUnsizedIntPropertyParams NewProp_RigidBodyMaxIterations;
@@ -216,6 +158,10 @@ void EmptyLinkFunctionForGeneratedCodeImstkSubsystem() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_Gravity_MetaData[];
 #endif
 		static const UECodeGen_Private::FStructPropertyParams NewProp_Gravity;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_SceneScale_MetaData[];
+#endif
+		static const UECodeGen_Private::FUnsizedIntPropertyParams NewProp_SceneScale;
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_AllBehaviours_Inner;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_AllBehaviours_MetaData[];
@@ -231,14 +177,6 @@ void EmptyLinkFunctionForGeneratedCodeImstkSubsystem() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_AllControllers_MetaData[];
 #endif
 		static const UECodeGen_Private::FArrayPropertyParams NewProp_AllControllers;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_PlaneNorm_MetaData[];
-#endif
-		static const UECodeGen_Private::FStructPropertyParams NewProp_PlaneNorm;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_PlanePos_MetaData[];
-#endif
-		static const UECodeGen_Private::FStructPropertyParams NewProp_PlanePos;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UECodeGen_Private::FClassParams ClassParams;
@@ -248,9 +186,7 @@ void EmptyLinkFunctionForGeneratedCodeImstkSubsystem() {}
 		(UObject* (*)())Z_Construct_UPackage__Script_Imstk,
 	};
 	const FClassFunctionLinkInfo Z_Construct_UClass_UImstkSubsystem_Statics::FuncInfo[] = {
-		{ &Z_Construct_UFunction_UImstkSubsystem_CutTest, "CutTest" }, // 2271433041
 		{ &Z_Construct_UFunction_UImstkSubsystem_ImstkInit, "ImstkInit" }, // 779165680
-		{ &Z_Construct_UFunction_UImstkSubsystem_ImstkTest, "ImstkTest" }, // 519226809
 		{ &Z_Construct_UFunction_UImstkSubsystem_ToggleSimulation, "ToggleSimulation" }, // 2252753939
 		{ &Z_Construct_UFunction_UImstkSubsystem_UpdateSimulation, "UpdateSimulation" }, // 123159512
 	};
@@ -262,6 +198,13 @@ void EmptyLinkFunctionForGeneratedCodeImstkSubsystem() {}
 		{ "ToolTip", "\\file ImstkSubsystem.h\n\\brief Subsystem to manage and initialize Imstk.\n\\details Creates the Imstk scene manager, scene and rigidbody model as well as initializing all imstk behaviours assigned in Unreal." },
 	};
 #endif
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_TickInterval_MetaData[] = {
+		{ "Category", "General" },
+		{ "ModuleRelativePath", "Public/ImstkSubsystem.h" },
+	};
+#endif
+	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_TickInterval = { "TickInterval", nullptr, (EPropertyFlags)0x0010000000020005, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UImstkSubsystem, TickInterval), METADATA_PARAMS(Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_TickInterval_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_TickInterval_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_RigidBodyMaxIterations_MetaData[] = {
 		{ "Category", "General" },
@@ -278,6 +221,16 @@ void EmptyLinkFunctionForGeneratedCodeImstkSubsystem() {}
 	};
 #endif
 	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_Gravity = { "Gravity", nullptr, (EPropertyFlags)0x0010000000020005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UImstkSubsystem, Gravity), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_Gravity_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_Gravity_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_SceneScale_MetaData[] = {
+		{ "Category", "General" },
+		{ "ClampMin", "1" },
+		{ "Comment", "// How scaled down the Imstk scene is in comparison to Unreal. By default 1/100th because Unreal is in cm and Imstk is in m\n" },
+		{ "ModuleRelativePath", "Public/ImstkSubsystem.h" },
+		{ "ToolTip", "How scaled down the Imstk scene is in comparison to Unreal. By default 1/100th because Unreal is in cm and Imstk is in m" },
+	};
+#endif
+	const UECodeGen_Private::FUnsizedIntPropertyParams Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_SceneScale = { "SceneScale", nullptr, (EPropertyFlags)0x0010000000020005, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UImstkSubsystem, SceneScale), METADATA_PARAMS(Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_SceneScale_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_SceneScale_MetaData)) };
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_AllBehaviours_Inner = { "AllBehaviours", nullptr, (EPropertyFlags)0x00000000000a0008, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, 0, Z_Construct_UClass_UImstkBehaviour_NoRegister, METADATA_PARAMS(nullptr, 0) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_AllBehaviours_MetaData[] = {
@@ -309,31 +262,17 @@ void EmptyLinkFunctionForGeneratedCodeImstkSubsystem() {}
 	};
 #endif
 	const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_AllControllers = { "AllControllers", nullptr, (EPropertyFlags)0x001000800002000d, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UImstkSubsystem, AllControllers), EArrayPropertyFlags::None, METADATA_PARAMS(Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_AllControllers_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_AllControllers_MetaData)) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_PlaneNorm_MetaData[] = {
-		{ "Category", "General" },
-		{ "ModuleRelativePath", "Public/ImstkSubsystem.h" },
-	};
-#endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_PlaneNorm = { "PlaneNorm", nullptr, (EPropertyFlags)0x0010000000020005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UImstkSubsystem, PlaneNorm), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_PlaneNorm_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_PlaneNorm_MetaData)) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_PlanePos_MetaData[] = {
-		{ "Category", "General" },
-		{ "ModuleRelativePath", "Public/ImstkSubsystem.h" },
-	};
-#endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_PlanePos = { "PlanePos", nullptr, (EPropertyFlags)0x0010000000020005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UImstkSubsystem, PlanePos), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_PlanePos_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_PlanePos_MetaData)) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UImstkSubsystem_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_TickInterval,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_RigidBodyMaxIterations,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_Gravity,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_SceneScale,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_AllBehaviours_Inner,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_AllBehaviours,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_AllInteractions_Inner,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_AllInteractions,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_AllControllers_Inner,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_AllControllers,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_PlaneNorm,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkSubsystem_Statics::NewProp_PlanePos,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UImstkSubsystem_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UImstkSubsystem>::IsAbstract,
@@ -371,9 +310,9 @@ void EmptyLinkFunctionForGeneratedCodeImstkSubsystem() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UImstkSubsystem, UImstkSubsystem::StaticClass, TEXT("UImstkSubsystem"), &Z_Registration_Info_UClass_UImstkSubsystem, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UImstkSubsystem), 4083125215U) },
+		{ Z_Construct_UClass_UImstkSubsystem, UImstkSubsystem::StaticClass, TEXT("UImstkSubsystem"), &Z_Registration_Info_UClass_UImstkSubsystem, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UImstkSubsystem), 1246823385U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_3663030074(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_3636111312(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkSubsystem_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

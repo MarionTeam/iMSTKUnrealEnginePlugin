@@ -2,8 +2,8 @@
 
 
 #include "InflatableModel.h"
-#include "iMSTK-5.0/imstkPbdModel.h"
-#include "iMSTK-5.0/imstkCollisionUtils.h"
+#include "imstkPbdModel.h"
+#include "imstkCollisionUtils.h"
 
 void UInflatableModel::Init() 
 {
@@ -65,7 +65,7 @@ void UInflatableModel::FindAffectedConstraint(const FVector ToolTip, const doubl
 		FVector Center(0.0, 0.0, 0.0);
 		for (auto i : Ids)
 		{
-			Center += UMathUtil::ToUnrealFVec((*Vertices)[i]);
+			Center += UMathUtil::ToUnrealFVec((*Vertices)[i], true);
 		}
 
 		double Distance = (Center / Ids.size() - ToolTip).Normalize();

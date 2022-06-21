@@ -21,6 +21,7 @@ class UDynamicalModel;
 	DECLARE_FUNCTION(execBeginStitch); \
 	DECLARE_FUNCTION(execEndGrasp); \
 	DECLARE_FUNCTION(execBeginRayPointGrasp); \
+	DECLARE_FUNCTION(execBeginCellGrasp); \
 	DECLARE_FUNCTION(execBeginVertexGrasp); \
 	DECLARE_FUNCTION(execMoveControllerToRaycastOnPlane); \
 	DECLARE_FUNCTION(execMoveControllerToLocation);
@@ -32,6 +33,7 @@ class UDynamicalModel;
 	DECLARE_FUNCTION(execBeginStitch); \
 	DECLARE_FUNCTION(execEndGrasp); \
 	DECLARE_FUNCTION(execBeginRayPointGrasp); \
+	DECLARE_FUNCTION(execBeginCellGrasp); \
 	DECLARE_FUNCTION(execBeginVertexGrasp); \
 	DECLARE_FUNCTION(execMoveControllerToRaycastOnPlane); \
 	DECLARE_FUNCTION(execMoveControllerToLocation);

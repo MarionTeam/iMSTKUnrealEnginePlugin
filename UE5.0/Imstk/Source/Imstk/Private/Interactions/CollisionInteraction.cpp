@@ -6,52 +6,58 @@
 #include "DeformableModel.h"
 #include "RBDModel.h"
 #include "StaticModel.h"
-#include "iMSTK-5.0/imstkPBDObjectCollision.h"
-#include "iMSTK-5.0/imstkRigidObjectCollision.h"
-#include "iMSTK-5.0/imstkLineMesh.h"
+#include "imstkPBDObjectCollision.h"
+#include "imstkRigidObjectCollision.h"
+#include "imstkLineMesh.h"
 #include "ImstkSubsystem.h"
 #include "ImstkSettings.h"
 #include "Engine/Engine.h"
 
-CollisionInteractionType UCollisionInteraction::GetAutoCollisionType(std::shared_ptr<imstk::Geometry> Geom1, std::shared_ptr<imstk::Geometry> Geom2)
+ECollisionInteractionType UCollisionInteraction::GetAutoCollisionType(std::shared_ptr<imstk::Geometry> Geom1, std::shared_ptr<imstk::Geometry> Geom2)
 {
 	//std::shared_ptr<imstk::Geometry> Geom1 = Model1->GetCollidingGeometry();
 	//std::shared_ptr<imstk::Geometry> Geom2 = Model2->GetCollidingGeometry();
 
 	// Cast both models to determine what types they are and return the corresponding CollisionInteractionType for each combination of imstk geometries 
 	if (std::dynamic_pointer_cast<imstk::Sphere>(Geom1) && std::dynamic_pointer_cast<imstk::Sphere>(Geom2)) {
-		return CollisionInteractionType::SphereToSphereCD;
+		return ECollisionInteractionType::SphereToSphereCD;
 	}
+	// TODO: These cause the mesh to disappear and give nan values for dimensions and center
+	
 	else if ((std::dynamic_pointer_cast<imstk::Sphere>(Geom1) && std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom1) && std::dynamic_pointer_cast<imstk::Sphere>(Geom2))) {
-		return CollisionInteractionType::SurfaceMeshToSphereCD;
+		return ECollisionInteractionType::SurfaceMeshToSphereCD;
+	}
+	else if ((std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom1) && std::dynamic_pointer_cast<imstk::Capsule>(Geom2)) ||
+		(std::dynamic_pointer_cast<imstk::Capsule>(Geom1) && std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom2))) {
+		return ECollisionInteractionType::SurfaceMeshToCapsuleCD;
 	}
 	else if ((std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom1) && std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::PointSet>(Geom1) && std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom1) && std::dynamic_pointer_cast<imstk::PointSet>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom1) && std::dynamic_pointer_cast<imstk::LineMesh>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::LineMesh>(Geom1) && std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom2))) {
-		return CollisionInteractionType::MeshToMeshBruteForceCD;
+		return ECollisionInteractionType::ClosedSurfaceMeshToMeshCD;
 	}
 	else if ((std::dynamic_pointer_cast<imstk::PointSet>(Geom1) && std::dynamic_pointer_cast<imstk::Sphere>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::Sphere>(Geom1) && std::dynamic_pointer_cast<imstk::PointSet>(Geom2))) {
-		return CollisionInteractionType::PointSetToSphereCD;
+		return ECollisionInteractionType::PointSetToSphereCD;
 	}
 	else if ((std::dynamic_pointer_cast<imstk::PointSet>(Geom1) && std::dynamic_pointer_cast<imstk::Capsule>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::Capsule>(Geom1) && std::dynamic_pointer_cast<imstk::PointSet>(Geom2))) {
-		return CollisionInteractionType::PointSetToCapsuleCD;
+		return ECollisionInteractionType::PointSetToCapsuleCD;
 	}
 	else if ((std::dynamic_pointer_cast<imstk::OrientedBox>(Geom1) && std::dynamic_pointer_cast<imstk::PointSet>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::PointSet>(Geom1) && std::dynamic_pointer_cast<imstk::OrientedBox>(Geom2))) {
-		return CollisionInteractionType::PointSetToOrientedBoxCD;
+		return ECollisionInteractionType::PointSetToOrientedBoxCD;
 	}
 	else if ((std::dynamic_pointer_cast<imstk::Plane>(Geom1) && std::dynamic_pointer_cast<imstk::PointSet>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::PointSet>(Geom1) && std::dynamic_pointer_cast<imstk::Plane>(Geom2))) {
-		return CollisionInteractionType::PointSetToPlaneCD;
+		return ECollisionInteractionType::PointSetToPlaneCD;
 	}
 	else if ((std::dynamic_pointer_cast<imstk::Plane>(Geom1) && std::dynamic_pointer_cast<imstk::Sphere>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::Sphere>(Geom1) && std::dynamic_pointer_cast<imstk::Plane>(Geom2))) {
-		return CollisionInteractionType::UnidirectionalPlaneToSphereCD;
+		return ECollisionInteractionType::UnidirectionalPlaneToSphereCD;
 	}
 	else {
 		// Print an error if there is no type found and return Auto
@@ -60,7 +66,7 @@ CollisionInteractionType UCollisionInteraction::GetAutoCollisionType(std::shared
 		UE_LOG(LogTemp, Error, TEXT("%s"), "ERROR: Could not find collision type");
 	}
 
-	return CollisionInteractionType::Auto;
+	return ECollisionInteractionType::Auto;
 }
 
 void UCollisionInteraction::Init()
@@ -75,11 +81,11 @@ void UCollisionInteraction::Init()
 	}
 
 	// Determine the collision type if set to auto
-	if (CollisionType == CollisionInteractionType::Auto)
+	if (CollisionType == ECollisionInteractionType::Auto)
 		CollisionType = GetAutoCollisionType(Model1->GetImstkGeometry(), Model2->GetImstkGeometry());
 
 	// If GetAutoCollisionType returns Auto, then collision type was not found. Therefore return
-	if (CollisionType == CollisionInteractionType::Auto)
+	if (CollisionType == ECollisionInteractionType::Auto)
 		return;
 
 	// Create interaction and add to scene
@@ -121,7 +127,7 @@ void UCollisionInteraction::Init()
 	if (std::shared_ptr<imstk::RigidObjectCollision> RBDInteraction = std::dynamic_pointer_cast<imstk::RigidObjectCollision>(Interaction))
 	{
 		RBDInteraction->setFriction(Friction);
-		RBDInteraction->setStiffness(Stiffness);
+		RBDInteraction->setBaumgarteStabilization(Stiffness);
 	}
 	else if (std::shared_ptr<imstk::PbdObjectCollision> PBDInteraction = std::dynamic_pointer_cast<imstk::PbdObjectCollision>(Interaction))
 	{

@@ -2,17 +2,17 @@
 
 
 #include "LevelSetModel.h"
-#include "iMSTK-5.0/imstkSurfaceMeshDistanceTransform.h"
-#include "iMSTK-5.0/imstkLevelSetModel.h"
+#include "imstkSurfaceMeshDistanceTransform.h"
+#include "imstkLevelSetModel.h"
 #include "Engine/GameEngine.h"
 
 //TEMP
-#include "iMSTK-5.0/imstkMeshIO.h"
-#include "iMSTK-5.0/imstkVisualModel.h"
-#include "iMSTK-5.0/imstkSignedDistanceField.h"
-#include "iMSTK-5.0/imstkTaskGraph.h"
-#include "iMSTK-5.0/imstkImageData.h"
-#include "iMSTK-5.0/imstkSurfaceMesh.h"
+#include "imstkMeshIO.h"
+#include "imstkVisualModel.h"
+#include "imstkSignedDistanceField.h"
+#include "imstkTaskGraph.h"
+#include "imstkImageData.h"
+#include "imstkSurfaceMesh.h"
 
 
 
@@ -90,9 +90,9 @@ void ULevelSetModel::Init()
 
 	LOG(WARNING) << "TEST";
 	initLvlsetImage->print();
-	LOG(WARNING) << "x: " << initLvlsetImage->getDimensions(0);
-	LOG(WARNING) << "y: " << initLvlsetImage->getDimensions(1);
-	LOG(WARNING) << "z: " << initLvlsetImage->getDimensions(2);
+	//LOG(WARNING) << "x: " << initLvlsetImage->getDimensions(0);
+	//LOG(WARNING) << "y: " << initLvlsetImage->getDimensions(1);
+	//LOG(WARNING) << "z: " << initLvlsetImage->getDimensions(2);
 
 	//TESTObj = std::make_shared<FemurObject>();
 	//SubsystemInstance->ActiveScene->addSceneObject(TESTObj);

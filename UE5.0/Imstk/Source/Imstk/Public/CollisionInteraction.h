@@ -10,12 +10,14 @@
 
 // Defines the different types of collisions. Values must have the same name as the collision in imstk
 UENUM()
-enum CollisionInteractionType
+enum ECollisionInteractionType
 {
 	Auto,
+	ClosedSurfaceMeshToMeshCD,
 	SurfaceMeshToSurfaceMeshCD,
 	MeshToMeshBruteForceCD,
 	SurfaceMeshToSphereCD,
+	SurfaceMeshToCapsuleCD,
 	SphereToSphereCD,
 	PointSetToSphereCD,
 	PointSetToCapsuleCD,
@@ -40,7 +42,7 @@ public:
 	UCollisionInteraction(float F, float S, float R) : Friction(F), Stiffness(S), Restitution(R) { }
 
 	// The type of collision used in the interaction
-	CollisionInteractionType CollisionType = CollisionInteractionType::Auto;
+	ECollisionInteractionType CollisionType = ECollisionInteractionType::Auto;
 	
 	// The models that the collision interaction will be made between. Can be set in blueprint 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Collision Interaction")
@@ -64,5 +66,5 @@ protected:
 	/** Determines the type of collision using the set models
 	* @return CollisionInteractionType - The type of collision that was determined. Returns Auto type if collision type could not be found
 	*/
-	CollisionInteractionType GetAutoCollisionType(std::shared_ptr<imstk::Geometry> Geom1, std::shared_ptr<imstk::Geometry> Geom2);
+	ECollisionInteractionType GetAutoCollisionType(std::shared_ptr<imstk::Geometry> Geom1, std::shared_ptr<imstk::Geometry> Geom2);
 };

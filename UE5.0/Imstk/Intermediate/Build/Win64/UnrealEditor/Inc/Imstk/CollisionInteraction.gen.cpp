@@ -9,27 +9,27 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeCollisionInteraction() {}
 // Cross Module References
-	IMSTK_API UEnum* Z_Construct_UEnum_Imstk_CollisionInteractionType();
+	IMSTK_API UEnum* Z_Construct_UEnum_Imstk_ECollisionInteractionType();
 	UPackage* Z_Construct_UPackage__Script_Imstk();
 	IMSTK_API UClass* Z_Construct_UClass_UCollisionInteraction_NoRegister();
 	IMSTK_API UClass* Z_Construct_UClass_UCollisionInteraction();
 	IMSTK_API UClass* Z_Construct_UClass_UImstkInteraction();
 	IMSTK_API UClass* Z_Construct_UClass_UDynamicalModel_NoRegister();
 // End Cross Module References
-	static FEnumRegistrationInfo Z_Registration_Info_UEnum_CollisionInteractionType;
-	static UEnum* CollisionInteractionType_StaticEnum()
+	static FEnumRegistrationInfo Z_Registration_Info_UEnum_ECollisionInteractionType;
+	static UEnum* ECollisionInteractionType_StaticEnum()
 	{
-		if (!Z_Registration_Info_UEnum_CollisionInteractionType.OuterSingleton)
+		if (!Z_Registration_Info_UEnum_ECollisionInteractionType.OuterSingleton)
 		{
-			Z_Registration_Info_UEnum_CollisionInteractionType.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_Imstk_CollisionInteractionType, Z_Construct_UPackage__Script_Imstk(), TEXT("CollisionInteractionType"));
+			Z_Registration_Info_UEnum_ECollisionInteractionType.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_Imstk_ECollisionInteractionType, Z_Construct_UPackage__Script_Imstk(), TEXT("ECollisionInteractionType"));
 		}
-		return Z_Registration_Info_UEnum_CollisionInteractionType.OuterSingleton;
+		return Z_Registration_Info_UEnum_ECollisionInteractionType.OuterSingleton;
 	}
-	template<> IMSTK_API UEnum* StaticEnum<CollisionInteractionType>()
+	template<> IMSTK_API UEnum* StaticEnum<ECollisionInteractionType>()
 	{
-		return CollisionInteractionType_StaticEnum();
+		return ECollisionInteractionType_StaticEnum();
 	}
-	struct Z_Construct_UEnum_Imstk_CollisionInteractionType_Statics
+	struct Z_Construct_UEnum_Imstk_ECollisionInteractionType_Statics
 	{
 		static const UECodeGen_Private::FEnumeratorParam Enumerators[];
 #if WITH_METADATA
@@ -37,11 +37,13 @@ void EmptyLinkFunctionForGeneratedCodeCollisionInteraction() {}
 #endif
 		static const UECodeGen_Private::FEnumParams EnumParams;
 	};
-	const UECodeGen_Private::FEnumeratorParam Z_Construct_UEnum_Imstk_CollisionInteractionType_Statics::Enumerators[] = {
+	const UECodeGen_Private::FEnumeratorParam Z_Construct_UEnum_Imstk_ECollisionInteractionType_Statics::Enumerators[] = {
 		{ "Auto", (int64)Auto },
+		{ "ClosedSurfaceMeshToMeshCD", (int64)ClosedSurfaceMeshToMeshCD },
 		{ "SurfaceMeshToSurfaceMeshCD", (int64)SurfaceMeshToSurfaceMeshCD },
 		{ "MeshToMeshBruteForceCD", (int64)MeshToMeshBruteForceCD },
 		{ "SurfaceMeshToSphereCD", (int64)SurfaceMeshToSphereCD },
+		{ "SurfaceMeshToCapsuleCD", (int64)SurfaceMeshToCapsuleCD },
 		{ "SphereToSphereCD", (int64)SphereToSphereCD },
 		{ "PointSetToSphereCD", (int64)PointSetToSphereCD },
 		{ "PointSetToCapsuleCD", (int64)PointSetToCapsuleCD },
@@ -50,8 +52,9 @@ void EmptyLinkFunctionForGeneratedCodeCollisionInteraction() {}
 		{ "UnidirectionalPlaneToSphereCD", (int64)UnidirectionalPlaneToSphereCD },
 	};
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UEnum_Imstk_CollisionInteractionType_Statics::Enum_MetaDataParams[] = {
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UEnum_Imstk_ECollisionInteractionType_Statics::Enum_MetaDataParams[] = {
 		{ "Auto.Name", "Auto" },
+		{ "ClosedSurfaceMeshToMeshCD.Name", "ClosedSurfaceMeshToMeshCD" },
 		{ "Comment", "// Defines the different types of collisions. Values must have the same name as the collision in imstk\n" },
 		{ "MeshToMeshBruteForceCD.Name", "MeshToMeshBruteForceCD" },
 		{ "ModuleRelativePath", "Public/CollisionInteraction.h" },
@@ -60,31 +63,32 @@ void EmptyLinkFunctionForGeneratedCodeCollisionInteraction() {}
 		{ "PointSetToPlaneCD.Name", "PointSetToPlaneCD" },
 		{ "PointSetToSphereCD.Name", "PointSetToSphereCD" },
 		{ "SphereToSphereCD.Name", "SphereToSphereCD" },
+		{ "SurfaceMeshToCapsuleCD.Name", "SurfaceMeshToCapsuleCD" },
 		{ "SurfaceMeshToSphereCD.Name", "SurfaceMeshToSphereCD" },
 		{ "SurfaceMeshToSurfaceMeshCD.Name", "SurfaceMeshToSurfaceMeshCD" },
 		{ "ToolTip", "Defines the different types of collisions. Values must have the same name as the collision in imstk" },
 		{ "UnidirectionalPlaneToSphereCD.Name", "UnidirectionalPlaneToSphereCD" },
 	};
 #endif
-	const UECodeGen_Private::FEnumParams Z_Construct_UEnum_Imstk_CollisionInteractionType_Statics::EnumParams = {
+	const UECodeGen_Private::FEnumParams Z_Construct_UEnum_Imstk_ECollisionInteractionType_Statics::EnumParams = {
 		(UObject*(*)())Z_Construct_UPackage__Script_Imstk,
 		nullptr,
-		"CollisionInteractionType",
-		"CollisionInteractionType",
-		Z_Construct_UEnum_Imstk_CollisionInteractionType_Statics::Enumerators,
-		UE_ARRAY_COUNT(Z_Construct_UEnum_Imstk_CollisionInteractionType_Statics::Enumerators),
+		"ECollisionInteractionType",
+		"ECollisionInteractionType",
+		Z_Construct_UEnum_Imstk_ECollisionInteractionType_Statics::Enumerators,
+		UE_ARRAY_COUNT(Z_Construct_UEnum_Imstk_ECollisionInteractionType_Statics::Enumerators),
 		RF_Public|RF_Transient|RF_MarkAsNative,
 		EEnumFlags::None,
 		(uint8)UEnum::ECppForm::Regular,
-		METADATA_PARAMS(Z_Construct_UEnum_Imstk_CollisionInteractionType_Statics::Enum_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UEnum_Imstk_CollisionInteractionType_Statics::Enum_MetaDataParams))
+		METADATA_PARAMS(Z_Construct_UEnum_Imstk_ECollisionInteractionType_Statics::Enum_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UEnum_Imstk_ECollisionInteractionType_Statics::Enum_MetaDataParams))
 	};
-	UEnum* Z_Construct_UEnum_Imstk_CollisionInteractionType()
+	UEnum* Z_Construct_UEnum_Imstk_ECollisionInteractionType()
 	{
-		if (!Z_Registration_Info_UEnum_CollisionInteractionType.InnerSingleton)
+		if (!Z_Registration_Info_UEnum_ECollisionInteractionType.InnerSingleton)
 		{
-			UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_CollisionInteractionType.InnerSingleton, Z_Construct_UEnum_Imstk_CollisionInteractionType_Statics::EnumParams);
+			UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_ECollisionInteractionType.InnerSingleton, Z_Construct_UEnum_Imstk_ECollisionInteractionType_Statics::EnumParams);
 		}
-		return Z_Registration_Info_UEnum_CollisionInteractionType.InnerSingleton;
+		return Z_Registration_Info_UEnum_ECollisionInteractionType.InnerSingleton;
 	}
 	DEFINE_FUNCTION(UCollisionInteraction::execInit)
 	{
@@ -261,12 +265,12 @@ void EmptyLinkFunctionForGeneratedCodeCollisionInteraction() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FEnumRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CollisionInteraction_h_Statics::EnumInfo[] = {
-		{ CollisionInteractionType_StaticEnum, TEXT("CollisionInteractionType"), &Z_Registration_Info_UEnum_CollisionInteractionType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3125982140U) },
+		{ ECollisionInteractionType_StaticEnum, TEXT("ECollisionInteractionType"), &Z_Registration_Info_UEnum_ECollisionInteractionType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 2208274567U) },
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CollisionInteraction_h_Statics::ClassInfo[] = {
 		{ Z_Construct_UClass_UCollisionInteraction, UCollisionInteraction::StaticClass, TEXT("UCollisionInteraction"), &Z_Registration_Info_UClass_UCollisionInteraction, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UCollisionInteraction), 4099637194U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CollisionInteraction_h_3241244486(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CollisionInteraction_h_494993702(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CollisionInteraction_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CollisionInteraction_h_Statics::ClassInfo),
 		nullptr, 0,
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CollisionInteraction_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CollisionInteraction_h_Statics::EnumInfo));

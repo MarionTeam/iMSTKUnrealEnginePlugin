@@ -27,7 +27,7 @@ void UStaticModel::Init()
 	//Geom->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale()), imstk::Geometry::TransformType::ApplyToData);
 	Geom->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
 	Geom->updatePostTransformData();
-	Geom->translate(UMathUtil::ToImstkVec3(Owner->GetActorLocation()), imstk::Geometry::TransformType::ApplyToData);
+	Geom->translate(UMathUtil::ToImstkVec3(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 	
 	
 	//Geom->transform(UMathUtil::ToImstkMat4d(Owner->GetTransform().ToMatrixWithScale()), imstk::Geometry::TransformType::ApplyToData);

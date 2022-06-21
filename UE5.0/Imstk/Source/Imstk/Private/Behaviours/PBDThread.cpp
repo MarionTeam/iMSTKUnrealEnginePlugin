@@ -3,7 +3,7 @@
 
 #include "PBDThread.h"
 #include "ImstkSettings.h"
-#include "iMSTK-5.0/imstkPbdModel.h"
+#include "imstkPbdModel.h"
 
 
 void UPBDThread::InitializeComponent()
@@ -41,7 +41,7 @@ void UPBDThread::Init()
 	imstk::VecDataArray<double, 3>&Vertices = *VerticesPtr.get();
 	for (int i = 0; i < NumVerts; i++)
 	{
-		Vertices[i] = UMathUtil::ToImstkVec3(SplineComponent->GetWorldLocationAtSplinePoint(i));
+		Vertices[i] = UMathUtil::ToImstkVec3(SplineComponent->GetWorldLocationAtSplinePoint(i), true);
 	}
 	std::shared_ptr<imstk::VecDataArray<int, 2>> SegmentsPtr = std::make_shared<imstk::VecDataArray<int, 2>>();
 	imstk::VecDataArray<int, 2>& Segments = *SegmentsPtr.get();
@@ -65,8 +65,8 @@ void UPBDThread::Init()
 	
 
 	PbdConfig->m_uniformMassValue = Mass / NumVerts;
-	PbdConfig->m_gravity = UMathUtil::ToImstkVec3(SubsystemInstance->Gravity);
-	PbdConfig->m_dt = 0.01;
+	PbdConfig->m_gravity = UMathUtil::ToImstkVec3(SubsystemInstance->Gravity, true);
+	PbdConfig->m_dt = SubsystemInstance->TickInterval;
 
 	PbdConfig->m_iterations = 100;
 	PbdConfig->m_viscousDampingCoeff = ViscousDampingCoeff;
@@ -111,13 +111,13 @@ void UPBDThread::UpdateModel()
 	imstk::VecDataArray<double, 3>& Vertices = *VerticesPtr.get();
 	for (int i = 0; i < Vertices.size(); i++)
 	{
-		SplineComponent->SetWorldLocationAtSplinePoint(i, UMathUtil::ToUnrealFVec(Vertices[i]));
+		SplineComponent->SetWorldLocationAtSplinePoint(i, UMathUtil::ToUnrealFVec(Vertices[i], true));
 	}
 
 	if (UImstkSettings::IsDebugging()) {
 		if (GEngine) {
 			if (bPrintPositionInformation)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Owner->GetName() + ": " + UMathUtil::ToUnrealFVec(PbdObject->getVisualGeometry()->getCenter()).ToString());
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Owner->GetName() + ": " + UMathUtil::ToUnrealFVec(PbdObject->getVisualGeometry()->getCenter(), true).ToString());
 		}
 	}
 }

@@ -3,9 +3,9 @@
 
 #include "DeformableModel.h"
 
-#include "iMSTK-5.0/imstkPbdModel.h"
-#include "iMSTK-5.0/imstkSelectEnclosedPoints.h"
-#include "iMSTK-5.0/imstkTetrahedralMesh.h"
+#include "imstkPbdModel.h"
+#include "imstkSelectEnclosedPoints.h"
+#include "imstkTetrahedralMesh.h"
 
 // TODO: Normals get flipped seemingly at random. It seems to work as it is but kind of hard to predict
 //
@@ -85,11 +85,11 @@ void UDeformableModel::ProcessBoundaryConditions()
 		for (int32 i = 0; i < IndexBuffer->GetNumIndices(); i++) {
 			Indices.Add(IndexBuffer->GetIndex(i));
 		}
-		BoundaryMeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices), UMathUtil::ToImstkVecDataArray3i(Indices));
-		BoundaryMeshGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale()), imstk::Geometry::TransformType::ApplyToData);
+		BoundaryMeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
+		BoundaryMeshGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 		BoundaryMeshGeom->rotate(UMathUtil::ToImstkQuat(Actor->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
 		BoundaryMeshGeom->updatePostTransformData();
-		BoundaryMeshGeom->translate(UMathUtil::ToImstkVec3(Actor->GetActorLocation()), imstk::Geometry::TransformType::ApplyToData);
+		BoundaryMeshGeom->translate(UMathUtil::ToImstkVec3(Actor->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 
 		std::shared_ptr<imstk::SelectEnclosedPoints> EnclosedPoints = std::make_shared<imstk::SelectEnclosedPoints>();
 

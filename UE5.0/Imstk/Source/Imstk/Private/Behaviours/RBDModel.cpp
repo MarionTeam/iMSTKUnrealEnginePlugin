@@ -3,8 +3,8 @@
 
 #include "RBDModel.h"
 #include "ImstkSettings.h"
-#include "iMSTK-5.0/imstkRigidBodyModel2.h"
-#include "iMSTK-5.0/imstkRbdConstraint.h"
+#include "imstkRigidBodyModel2.h"
+#include "imstkRbdConstraint.h"
 #include "MathUtil.h"
 #include "Engine/GameEngine.h"
 
@@ -51,7 +51,7 @@ void URBDModel::Init()
 	RigidObject->getRigidBody()->m_mass = Mass;
 	//
 	// TODO: Add other starting values
-	RigidObject->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3(Owner->GetActorLocation()));
+	RigidObject->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3(Owner->GetActorLocation(), true));
 	RigidObject->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()));
 	RigidObject->getRigidBody()->setInertiaTensor(imstk::Mat3d::Identity());
 
@@ -87,7 +87,7 @@ void URBDModel::UpdatePosRot()
 	// get the position and rotation of the object in the scene and update the object in unreal
 	std::shared_ptr<imstk::RigidBody> RigidBody = RigidObject->getRigidBody();
 
-	FVector pos = UMathUtil::ToUnrealFVec(RigidBody->getPosition());
+	FVector pos = UMathUtil::ToUnrealFVec(RigidBody->getPosition(), true);
 	FQuat rot = UMathUtil::ToUnrealFQuat(RigidBody->getOrientation());
 
 	Owner->SetActorLocation(pos);
@@ -98,7 +98,7 @@ void URBDModel::UpdatePosRot()
 			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Owner->GetName() + " " + pos.ToString());
 
 			if (bPrintPositionInformation)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Owner->GetName() + ": " + UMathUtil::ToUnrealFVec(RigidObject->getCollidingGeometry()->getCenter()).ToString());
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Owner->GetName() + ": " + UMathUtil::ToUnrealFVec(RigidObject->getCollidingGeometry()->getCenter(), true).ToString());
 		}
 	}
 }

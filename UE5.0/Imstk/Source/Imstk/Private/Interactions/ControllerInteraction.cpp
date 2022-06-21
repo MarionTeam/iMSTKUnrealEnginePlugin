@@ -6,12 +6,12 @@
 #include "DeformableModel.h"
 #include "RBDModel.h"
 #include "StaticModel.h"
-#include "iMSTK-5.0/imstkPBDObjectCollision.h"
-#include "iMSTK-5.0/imstkRigidObjectCollision.h"
-#include "iMSTK-5.0/imstkPbdRigidObjectGrasping.h"
-#include "iMSTK-5.0/imstkPbdObjectGrasping.h"
-#include "iMSTK-5.0/imstkPbdObjectStitching.h"
-#include "iMSTK-5.0/imstkLineMesh.h"
+#include "imstkPBDObjectCollision.h"
+#include "imstkRigidObjectCollision.h"
+#include "imstkPbdRigidObjectGrasping.h"
+#include "imstkPbdObjectGrasping.h"
+#include "imstkPbdObjectStitching.h"
+#include "imstkLineMesh.h"
 //#include "iMSTK-5.0/imstkMeshToMeshBruteForceCD.h"
 #include "ImstkSubsystem.h"
 #include "ImstkSettings.h"
@@ -33,7 +33,7 @@ void UControllerInteraction::Init()
 		if (Controller->GraspType == EGraspType::VertexGrasp) {
 			ToolPicking = std::make_shared<imstk::PbdRigidObjectGrasping>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), Controller->GetToolObj());
 		}
-		else if (Controller->GraspType == EGraspType::RayPointGrasp) {
+		else if (Controller->GraspType == EGraspType::RayPointGrasp || Controller->GraspType == EGraspType::CellGrasp) {
 			ToolPicking = std::make_shared<imstk::PbdObjectGrasping>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject));
 		}
 		ToolPicking->setName("PbdObjectGrasping_" + Model1->ImstkCollidingObject->getName() + "_" + Controller->GetToolObj()->getName());
@@ -60,11 +60,11 @@ void UControllerInteraction::Init()
 	}
 
 	// Determine the collision type if set to auto
-	if (CollisionType == CollisionInteractionType::Auto)
+	if (CollisionType == ECollisionInteractionType::Auto)
 		CollisionType = GetAutoCollisionType(Controller->GetToolObj()->getCollidingGeometry(), Model1->GetImstkGeometry());
 
 	// If GetAutoCollisionType returns Auto, then collision type was not found. Therefore return
-	if (CollisionType == CollisionInteractionType::Auto)
+	if (CollisionType == ECollisionInteractionType::Auto)
 		return;
 
 	// Create interaction and add to scene
@@ -72,9 +72,10 @@ void UControllerInteraction::Init()
 	{
 		std::shared_ptr<imstk::RigidObjectCollision> Interaction = std::make_shared<imstk::RigidObjectCollision>(Controller->GetToolObj(), std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
 		Interaction->setFriction(Friction);
-		Interaction->setStiffness(Stiffness);
+		Interaction->setBaumgarteStabilization(Stiffness);
 		//std::dynamic_pointer_cast<imstk::MeshToMeshBruteForceCD>(Interaction->getCollisionDetection())->setGenerateEdgeEdgeContacts(true);
 		SubsystemInstance->ActiveScene->addInteraction(Interaction);
+		Controller->AddCollision(Interaction);
 	}
 	else if (Cast<UDeformableModel>(Model1))
 	{
@@ -84,6 +85,7 @@ void UControllerInteraction::Init()
 		// TODO: not sure if this is needed (says default is true), but its done in some of the examples
 		//std::dynamic_pointer_cast<imstk::MeshToMeshBruteForceCD>(Interaction->getCollisionDetection())->setGenerateEdgeEdgeContacts(true);
 		SubsystemInstance->ActiveScene->addInteraction(Interaction);
+		Controller->AddCollision(Interaction);
 	}
 	else {
 		if (GEngine)

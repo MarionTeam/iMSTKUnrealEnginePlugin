@@ -6,7 +6,7 @@
 #include "ImstkController.h"
 #include "DynamicalModel.h"
 
-#include "iMSTK-5.0/imstkPbdObject.h"
+#include "imstkPbdObject.h"
 
 #include "CustomController.generated.h"
 
@@ -47,6 +47,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "Imstk")
 		void BeginVertexGrasp();
+
+	UFUNCTION(BlueprintCallable, Category = "Imstk")
+		void BeginCellGrasp();
 
 	UFUNCTION(BlueprintCallable, Category = "Imstk")
 		void BeginRayPointGrasp(FVector RayStart, FVector RayDir);

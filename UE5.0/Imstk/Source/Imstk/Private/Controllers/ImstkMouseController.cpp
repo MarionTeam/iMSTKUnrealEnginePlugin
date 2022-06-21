@@ -5,10 +5,10 @@
 #include "MathUtil.h"
 #include "ImstkSubsystem.h"
 #include "RBDModel.h"
-#include "iMSTK-5.0/imstkLineMesh.h"
-#include "iMSTK-5.0/imstkRigidBodyModel2.h"
-#include "iMSTK-5.0/imstkRbdConstraint.h"
-#include "iMSTK-5.0/imstkCollisionUtils.h"
+#include "imstkLineMesh.h"
+#include "imstkRigidBodyModel2.h"
+#include "imstkRbdConstraint.h"
+#include "imstkCollisionUtils.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
@@ -35,8 +35,8 @@ void UImstkMouseController::InitController()
 	if (ToolGeometry == EToolGeometry::LineMeshTool) {
 		ToolGeom = std::make_shared<imstk::LineMesh>();
 		std::shared_ptr<imstk::VecDataArray<double, 3>> VertPtr = std::make_shared<imstk::VecDataArray<double, 3>>(2);
-		(*VertPtr)[0] = UMathUtil::ToImstkVec3(Vertex1);
-		(*VertPtr)[1] = UMathUtil::ToImstkVec3(Vertex2);
+		(*VertPtr)[0] = UMathUtil::ToImstkVec3(Vertex1, true);
+		(*VertPtr)[1] = UMathUtil::ToImstkVec3(Vertex2, true);
 		std::shared_ptr<imstk::VecDataArray<int, 2>> IndicesPtr = std::make_shared<imstk::VecDataArray<int, 2>>(1);
 		(*IndicesPtr)[0] = imstk::Vec2i(0, 1);
 		std::dynamic_pointer_cast<imstk::LineMesh>(ToolGeom)->initialize(VertPtr, IndicesPtr);
@@ -71,7 +71,7 @@ void UImstkMouseController::InitController()
 
 	ToolObj->getRigidBody()->m_mass = Mass;
 	ToolObj->getRigidBody()->m_intertiaTensor = imstk::Mat3d::Identity() * 10.0;
-	ToolObj->getRigidBody()->m_initPos = UMathUtil::ToImstkVec3(GetOwner()->GetActorLocation());
+	ToolObj->getRigidBody()->m_initPos = UMathUtil::ToImstkVec3(GetOwner()->GetActorLocation(), true);
 
 	SubsystemInstance->ActiveScene->addSceneObject(ToolObj);
 
@@ -85,7 +85,7 @@ void UImstkMouseController::UpdateImstkPos(FVector WorldPos, FVector WorldDir)
 
 		if (Plane) {
 			imstk::Vec3d IntersectPoint = imstk::Vec3d::Zero();
-			if (imstk::CollisionUtils::testRayToPlane(UMathUtil::ToImstkVec3(WorldPos), UMathUtil::ToImstkVec3(WorldDir), Plane->getPosition(), Plane->getNormal(), IntersectPoint))
+			if (imstk::CollisionUtils::testRayToPlane(UMathUtil::ToImstkVec3(WorldPos, true), UMathUtil::ToImstkVec3(WorldDir, true), Plane->getPosition(), Plane->getNormal(), IntersectPoint))
 			{
 				imstk::Vec3d fS = (IntersectPoint - ToolObj->getRigidBody()->getPosition()) * 2000; // Spring force
 				imstk::Vec3d fD = -ToolObj->getRigidBody()->getVelocity() * 100.0; // Spring damping
@@ -100,7 +100,7 @@ void UImstkMouseController::UpdateImstkPos(FVector WorldPos, FVector WorldDir)
 	}
 	else {
 		// Taken from PBDTissueContactExample
-		imstk::Vec3d fS = (UMathUtil::ToImstkVec3(WorldPos) - ToolObj->getRigidBody()->getPosition()) * 2000.0; // Spring force
+		imstk::Vec3d fS = (UMathUtil::ToImstkVec3(WorldPos, true) - ToolObj->getRigidBody()->getPosition()) * 2000.0; // Spring force
 		imstk::Vec3d fD = -ToolObj->getRigidBody()->getVelocity() * 100.0; // Spring damping
 		(*ToolObj->getRigidBody()->m_force) += (fS + fD);
 	}
@@ -108,7 +108,7 @@ void UImstkMouseController::UpdateImstkPos(FVector WorldPos, FVector WorldDir)
 
 void UImstkMouseController::UpdateUnrealPos()
 {
-	GetOwner()->SetActorLocation(UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition()));
+	GetOwner()->SetActorLocation(UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true));
 }
 
 void UImstkMouseController::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

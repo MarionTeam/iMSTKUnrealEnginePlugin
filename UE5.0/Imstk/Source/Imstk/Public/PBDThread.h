@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "DeformableModel.h"
 #include "Components/SplineComponent.h"
-#include "iMSTK-5.0/imstkLineMesh.h"
+#include "imstkLineMesh.h"
 #include "PBDThread.generated.h"
 
 /**
