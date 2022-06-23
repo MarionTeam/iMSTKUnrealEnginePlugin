@@ -275,7 +275,7 @@ struct FPointSetGeomStruct : public FGeometryTypeStruct
 			}
 
 			MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true));
-			MeshGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+			//MeshGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 			MeshGeom->updatePostTransformData();
 			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString(MeshGeom->getName().c_str()));
 			return MeshGeom;
@@ -291,7 +291,7 @@ struct FPointSetGeomStruct : public FGeometryTypeStruct
 			}
 
 			MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true));
-			MeshGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+			//MeshGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 			MeshGeom->updatePostTransformData();
 			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString(MeshGeom->getName().c_str()));
 			return MeshGeom;

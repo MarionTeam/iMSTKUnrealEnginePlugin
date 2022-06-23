@@ -42,7 +42,7 @@ void URBDModel::Init()
 	RigidObject = std::make_shared<imstk::RigidObject2>(TCHAR_TO_UTF8(*(Owner->GetName())));
 	std::shared_ptr<imstk::Geometry> Geom = GetImstkGeometry();
 
-	//Geom->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale()), imstk::Geometry::TransformType::ApplyToData);
+	Geom->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 
 	RigidObject->setDynamicalModel(SubsystemInstance->RigidBodyModel);
 	RigidObject->setPhysicsGeometry(Geom);

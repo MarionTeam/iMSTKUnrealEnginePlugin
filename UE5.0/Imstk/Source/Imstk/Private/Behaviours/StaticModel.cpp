@@ -24,7 +24,7 @@ void UStaticModel::Init()
 	std::shared_ptr<imstk::Geometry> Geom = GetImstkGeometry();
 
 	// Following steps must be done in this order to have rotation of the object around the center of the model
-	//Geom->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale()), imstk::Geometry::TransformType::ApplyToData);
+	Geom->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 	Geom->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
 	Geom->updatePostTransformData();
 	Geom->translate(UMathUtil::ToImstkVec3(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
