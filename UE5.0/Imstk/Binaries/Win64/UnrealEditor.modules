@@ -1,8 +1,0 @@
-{
-	"BuildId": "19505902",
-	"Modules": 
-	{
-		"Imstk": "UnrealEditor-Imstk.dll",
-		"ImstkEditor": "UnrealEditor-ImstkEditor.dll"
-	}
-}
