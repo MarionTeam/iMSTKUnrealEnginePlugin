@@ -76,7 +76,7 @@ void USuturingController::InitController()
 	// Fix the nodes on the string that will move with the needle
 	std::dynamic_pointer_cast<imstk::PbdModel>(Thread->PbdObject->getDynamicalModel())->getConfig()->m_fixedNodeIds.push_back(0);
 	std::dynamic_pointer_cast<imstk::PbdModel>(Thread->PbdObject->getDynamicalModel())->getConfig()->m_fixedNodeIds.push_back(1);
-	Needle->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3(GetComponentToWorld().GetLocation(), true));
+	Needle->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3d(GetComponentToWorld().GetLocation(), true));
 
 	Needle->getRigidBody()->m_intertiaTensor = imstk::Mat3d::Identity() * InertiaTensorMultiplier;
 	Needle->getRigidBody()->m_mass = Mass;
@@ -105,7 +105,7 @@ void USuturingController::MoveNeedleToLocation(FVector Location, FQuat Orientati
 void USuturingController::UpdateImstkPosRot(FVector Location, FQuat Orientation) {
 	if (!bForceTool) {
 		Needle->getRigidBody()->m_orientation = new imstk::Quatd(UMathUtil::ToImstkQuat(Orientation));
-		Needle->getRigidBody()->m_pos = new imstk::Vec3d(UMathUtil::ToImstkVec3(Location, true));
+		Needle->getRigidBody()->m_pos = new imstk::Vec3d(UMathUtil::ToImstkVec3d(Location, true));
 	}
 	else {
 		GhostMeshComp->SetWorldLocation(Location);
@@ -118,7 +118,7 @@ void USuturingController::UpdateImstkPosRot(FVector Location, FQuat Orientation)
 		imstk::Vec3d& currForce = *Needle->getRigidBody()->m_force;
 		imstk::Vec3d& currTorque = *Needle->getRigidBody()->m_torque;
 
-		const imstk::Vec3d& devicePos = UMathUtil::ToImstkVec3(Location, true);
+		const imstk::Vec3d& devicePos = UMathUtil::ToImstkVec3d(Location, true);
 		const imstk::Quatd& deviceOrientation = UMathUtil::ToImstkQuat(Orientation);
 		const imstk::Vec3d& deviceOffset = imstk::Vec3d(0.0, 0.0, 0.0);
 

@@ -46,7 +46,7 @@ void UImstkSubsystem::ImstkInit()
 	RigidBodyModel = std::make_shared<imstk::RigidBodyModel2>();
 
 	// Set up rigid body model using variables set in editor
-	RigidBodyModel->getConfig()->m_gravity = UMathUtil::ToImstkVec3(Gravity, true);
+	RigidBodyModel->getConfig()->m_gravity = UMathUtil::ToImstkVec3d(Gravity, true);
 	RigidBodyModel->getConfig()->m_maxNumIterations = RigidBodyMaxIterations;
 	RigidBodyModel->getConfig()->m_dt = TickInterval;
 

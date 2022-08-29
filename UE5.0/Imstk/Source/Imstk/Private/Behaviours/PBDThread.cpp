@@ -41,7 +41,7 @@ void UPBDThread::Init()
 	imstk::VecDataArray<double, 3>&Vertices = *VerticesPtr.get();
 	for (int i = 0; i < NumVerts; i++)
 	{
-		Vertices[i] = UMathUtil::ToImstkVec3(SplineComponent->GetWorldLocationAtSplinePoint(i), true);
+		Vertices[i] = UMathUtil::ToImstkVec3d(SplineComponent->GetWorldLocationAtSplinePoint(i), true);
 	}
 	std::shared_ptr<imstk::VecDataArray<int, 2>> SegmentsPtr = std::make_shared<imstk::VecDataArray<int, 2>>();
 	imstk::VecDataArray<int, 2>& Segments = *SegmentsPtr.get();
@@ -68,9 +68,9 @@ void UPBDThread::Init()
 
 	// If object has separate gravity and delta time than the rest of the scene
 	if (bIndividualGravity)
-		PbdConfig->m_gravity = UMathUtil::ToImstkVec3(Gravity, true);
+		PbdConfig->m_gravity = UMathUtil::ToImstkVec3d(Gravity, true);
 	else
-		PbdConfig->m_gravity = UMathUtil::ToImstkVec3(SubsystemInstance->Gravity, true);
+		PbdConfig->m_gravity = UMathUtil::ToImstkVec3d(SubsystemInstance->Gravity, true);
 
 	if (bIndividualDT)
 		PbdConfig->m_dt = IndividualDT;
@@ -137,7 +137,7 @@ void UPBDThread::MoveVertexToLocation(int VertIndex, FVector Pos)
 {
 	std::shared_ptr<imstk::LineMesh> Thread = std::dynamic_pointer_cast<imstk::LineMesh>(PbdObject->getPhysicsGeometry());
 
-	(*Thread->getVertexPositions())[VertIndex] = UMathUtil::ToImstkVec3(Pos, true);
+	(*Thread->getVertexPositions())[VertIndex] = UMathUtil::ToImstkVec3d(Pos, true);
 }
 
 void UPBDThread::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

@@ -20,11 +20,15 @@ public:
 	/** Converts Unreal FVector to Imstk Vec3d. Flips the Z and Y values and converts the scale of the vector from cm to m
 	* @return imstk::Vec3d
 	*/
-	static imstk::Vec3d ToImstkVec3(const FVector InputVec, const bool IsScaled);
+	static imstk::Vec3d ToImstkVec3d(const FVector InputVec, const bool IsScaled);
+
+	static imstk::Vec3i ToImstkVec3i(const FVector InputVec, const bool IsScaled);
 
 	/** Converts Imstk Vec3d to Unreal FVector. Flips the Z and Y values and converts the scale of the vector from m to cm
 	* @return FVector
 	*/
+	static FVector ToUnrealFVec(const imstk::Vec3i InputVec, const bool IsScaled);
+
 	static FVector ToUnrealFVec(const imstk::Vec3d InputVec, const bool IsScaled);
 
 	static FVector ToUnrealFVec(const imstk::Vec3f InputVec, const bool IsScaled);

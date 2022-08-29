@@ -116,7 +116,7 @@ void UControllerInteraction::Init()
 
 	if (Controller->ToolType == EToolType::LevelSetTool) {
 		if (Cast<ULevelSetModel>(Model1)) {
-			std::shared_ptr<imstk::RigidObjectLevelSetCollision> interaction = std::make_shared<imstk::RigidObjectLevelSetCollision>(Controller->GetToolObj(), ((ULevelSetModel*)Model1)->TESTObj);
+			std::shared_ptr<imstk::RigidObjectLevelSetCollision> interaction = std::make_shared<imstk::RigidObjectLevelSetCollision>(Controller->GetToolObj(), ((ULevelSetModel*)Model1)->LevelSetObj);
 			{
 				auto colHandlerA = std::dynamic_pointer_cast<imstk::RigidBodyCH>(interaction->getCollisionHandlingA());
 				colHandlerA->setUseFriction(false);

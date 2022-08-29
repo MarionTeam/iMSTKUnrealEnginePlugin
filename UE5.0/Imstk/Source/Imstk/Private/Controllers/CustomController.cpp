@@ -62,7 +62,7 @@ void UCustomController::InitController()
 		GetChildrenComponents(true, Components);
 		for (USceneComponent* Comp : Components) {
 			if (MeshComp = (UStaticMeshComponent*)Comp)
-				ToolGeom->scale(UMathUtil::ToImstkVec3(MeshComp->GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
+				ToolGeom->scale(UMathUtil::ToImstkVec3d(MeshComp->GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
 			break;
 		}
 	}
@@ -83,7 +83,7 @@ void UCustomController::InitController()
 
 	ToolObj->getRigidBody()->m_mass = Mass;
 	ToolObj->getRigidBody()->m_intertiaTensor = imstk::Mat3d::Identity() * InertiaTensorMultiplier;
-	ToolObj->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3(GetComponentLocation(), true));
+	ToolObj->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3d(GetComponentLocation(), true));
 	ToolObj->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(GetComponentRotation().Quaternion()));
 
 	SubsystemInstance->ActiveScene->addSceneObject(ToolObj);
@@ -99,14 +99,14 @@ void UCustomController::InitController()
 
 FVector UCustomController::UpdateImstkPosRot(FVector WorldPos, FQuat Orientation, FVector WorldDir, UDynamicalModel* PlaneActor)
 {
-	imstk::Vec3d Position = UMathUtil::ToImstkVec3(WorldPos, true);
+	imstk::Vec3d Position = UMathUtil::ToImstkVec3d(WorldPos, true);
 	if (!bForceTool) {
 		if (PlaneActor) {
 			std::shared_ptr<imstk::Plane> Plane = std::dynamic_pointer_cast<imstk::Plane>(PlaneActor->GetImstkGeometry());
 
 			if (Plane) {
 				imstk::Vec3d IntersectPoint = imstk::Vec3d::Zero();
-				if (imstk::CollisionUtils::testRayToPlane(UMathUtil::ToImstkVec3(WorldPos, true), UMathUtil::ToImstkVec3(WorldDir, true), Plane->getPosition(), Plane->getNormal(), IntersectPoint))
+				if (imstk::CollisionUtils::testRayToPlane(UMathUtil::ToImstkVec3d(WorldPos, true), UMathUtil::ToImstkVec3d(WorldDir, true), Plane->getPosition(), Plane->getNormal(), IntersectPoint))
 				{
 					Position = IntersectPoint;
 				}
@@ -135,7 +135,7 @@ FVector UCustomController::UpdateImstkPosRot(FVector WorldPos, FQuat Orientation
 		}
 
 		// TODO: update this to the force movement version in suturing controller
-		imstk::Vec3d fS = (UMathUtil::ToImstkVec3(WorldPos, true) - ToolObj->getRigidBody()->getPosition()) * SpringForce; // Spring force
+		imstk::Vec3d fS = (UMathUtil::ToImstkVec3d(WorldPos, true) - ToolObj->getRigidBody()->getPosition()) * SpringForce; // Spring force
 		imstk::Vec3d fD = -ToolObj->getRigidBody()->getVelocity() * SpringDamping; // Spring damping
 		(*ToolObj->getRigidBody()->m_force) += (fS + fD);
 
@@ -219,7 +219,7 @@ void UCustomController::BeginRayPointGrasp(FVector RayStart, FVector RayDir)
 	if (ToolPickings.Num() > 0) {
 		if (GraspType == EGraspType::RayPointGrasp) {
 			for (std::shared_ptr<imstk::PbdObjectGrasping> ToolPicking : ToolPickings) {
-				ToolPicking->beginRayPointGrasp(std::dynamic_pointer_cast<imstk::AnalyticalGeometry>(ToolObj->getCollidingGeometry()), UMathUtil::ToImstkVec3(RayStart, true), UMathUtil::ToImstkVec3(RayDir, true));
+				ToolPicking->beginRayPointGrasp(std::dynamic_pointer_cast<imstk::AnalyticalGeometry>(ToolObj->getCollidingGeometry()), UMathUtil::ToImstkVec3d(RayStart, true), UMathUtil::ToImstkVec3d(RayDir, true));
 			}
 		}
 	}

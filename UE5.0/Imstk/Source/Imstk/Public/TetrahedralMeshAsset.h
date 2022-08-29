@@ -18,12 +18,13 @@ class IMSTK_API UTetrahedralMeshAsset : public UObject
 
 public:
 	/** Converts the arrays from imstk to Unreal for Vertices and Indices of the tetrahedral mesh for serialization within the asset
+	* @param Input The tetrahedral mesh to extract info from
 	* @return None
 	*/
 	void SetTetrahedralMesh(std::shared_ptr<imstk::TetrahedralMesh> Input);
 
 	/** Converts the stored Unreal arrays and generates and returns an imstk tetrahedral mesh
-	* @return None
+	* @return The tetrahedral mesh generated from the stored vertices and indices
 	*/
 	std::shared_ptr<imstk::TetrahedralMesh> GetTetrahedralMesh();
 

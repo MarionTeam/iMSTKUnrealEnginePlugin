@@ -3,6 +3,7 @@
 
 #include "LevelSetModel.h"
 #include "imstkSurfaceMeshDistanceTransform.h"
+
 #include "imstkLevelSetModel.h"
 
 #include "imstkMeshIO.h"
@@ -11,6 +12,7 @@
 #include "imstkTaskGraph.h"
 #include "imstkImageData.h"
 #include "imstkSurfaceMesh.h"
+#include "imstkSurfaceMeshFlyingEdges.h"
 
 
 void ULevelSetModel::InitializeComponent()
@@ -21,24 +23,13 @@ void ULevelSetModel::InitializeComponent()
 		// Make the subsystem tick first to update the imstk scene before updating the model in unreal
 		AddTickPrerequisiteActor((AActor*)SubsystemInstance);
 
+		if (EditorMeshComp)
+			EditorMeshComp->DestroyComponent();
+
 		if (UProceduralMeshComponent* Comp = (UProceduralMeshComponent*)Owner->GetComponentByClass(UProceduralMeshComponent::StaticClass()))
 		{
 			MeshComp = Comp;
 		}
-		//if (UStaticMeshComponent* StaticMesh = (UStaticMeshComponent*)Owner->GetComponentByClass(UStaticMeshComponent::StaticClass()))
-		//{
-		//	// Create procedural mesh, convert static mesh to procedural and then disable static mesh
-		//	MeshComp = NewObject<UProceduralMeshComponent>(this);
-		//	// If including scale, scale gets applied twice
-		//	MeshComp->AttachToComponent(Owner->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-		//	MeshComp->RegisterComponent();
-
-		//	//if(!TetrahedralMesh)
-		//	// Currently using this even when there is a tetrahedral mesh to apply the materials to the procedural mesh
-		//	ConvertStaticToProceduralMesh(StaticMesh, MeshComp);
-
-		//	StaticMesh->SetVisibility(false);
-		//}
 		else
 		{
 			// No mesh attached error
@@ -69,72 +60,105 @@ void ULevelSetModel::Init()
 {
 	Super::Init();
 	if (GeomFilter.GeomType != EGeometryType::SurfaceMesh) {
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "LevelSetModels can only be SurfaceMeshes");
 		UE_LOG(LogTemp, Error, TEXT("LevelSetModels can only be SurfaceMeshes"));
 		return;
 	}
-	/*std::shared_ptr<imstk::SurfaceMesh> SurfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh> (GetCollidingGeometry());
+	if (!ImageData) {
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "LevelSetModels can only be SurfaceMeshes");
+		UE_LOG(LogTemp, Error, TEXT("ImageData not Assigned on LevelSetModel"));
+		return;
+	}
 
-	std::shared_ptr<imstk::SurfaceMeshDistanceTransform> ComputeSdf = std::make_shared<imstk::SurfaceMeshDistanceTransform>();
-	ComputeSdf->setInputMesh(SurfMesh);
-	ComputeSdf->setDimensions(50, 50, 50);
-	ComputeSdf->update();
-	std::shared_ptr<imstk::ImageData> InitLvlsetImage = ComputeSdf->getOutputImage();
+	LevelSetObj = std::make_shared<LevelSetObject>(MeshComp, ImageData, ImageMaterial);
+	SubsystemInstance->ActiveScene->addSceneObject(LevelSetObj);
+	ImstkCollidingObject = LevelSetObj;
 
-	std::shared_ptr<imstk::LevelSetModelConfig> Config = std::make_shared<imstk::LevelSetModelConfig>();
-	Config->m_sparseUpdate = false;
-	Config->m_dt = 0.003;
-	Config->m_constantVelocity = -1.0;
+	// Set the location of the component to 0,0,0 because of how the image data is positioned
+	MeshComp->SetWorldLocation(FVector::Zero());
 
-	std::shared_ptr<imstk::LevelSetModel> DynamicalModel = std::make_shared<imstk::LevelSetModel>();
-	DynamicalModel->setModelGeometry(InitLvlsetImage);
-	DynamicalModel->configure(Config);
-
-	LevelsetObj = std::make_shared<imstk::LevelSetDeformableObject>(TCHAR_TO_UTF8(*(Owner->GetName())));
-
-	LevelsetObj->setVisualGeometry(InitLvlsetImage);
-	LevelsetObj->setPhysicsGeometry(InitLvlsetImage);
-	LevelsetObj->setDynamicalModel(DynamicalModel);
-
-	LOG(WARNING) << "Imstk: " << InitLvlsetImage->getBounds();*/
-
-	TESTObj = std::make_shared<FemurObject>(MeshComp);
-	SubsystemInstance->ActiveScene->addSceneObject(TESTObj);
-	ImstkCollidingObject = TESTObj;
-
-
-	//LOG(INFO) << TCHAR_TO_UTF8(*MeshComp->GetProcMeshSection(97)->ProcVertexBuffer[0].Position.ToString());
 	Super::bIsInitialized = true;
 }
 
 void ULevelSetModel::UpdateModel()
 {
-	TESTObj->visualUpdate();
-
-	if (GEngine) {
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, UMathUtil::ToUnrealFVec(TESTObj->getCollidingGeometry()->getCenter()).ToString());
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "Unreal: " + MeshComp->GetProcMeshSection(0)->ProcVertexBuffer.Num());
-	}
-
-	//LOG(WARNING) << "Imstk: " << std::dynamic_pointer_cast<imstk::ImageData>(LevelsetObj->getVisualGeometry())->getVertexPositions()->size();
-	//LOG(WARNING) << "Unreal: "<< MeshComp->GetProcMeshSection(0)->ProcVertexBuffer.Num();
+	LevelSetObj->visualUpdate();
 }
 
+FMeshDataStruct ULevelSetModel::GenerateSurfaceMeshData(bool FlipNormals)
+{
+	MeshComp = (UProceduralMeshComponent*)GetOwner()->GetComponentByClass(UProceduralMeshComponent::StaticClass());
+
+	std::shared_ptr<imstk::SurfaceMeshFlyingEdges> SMFE = std::make_shared<imstk::SurfaceMeshFlyingEdges>();
+	std::shared_ptr<imstk::ImageData> LvlSetImage = ImageData->GetImageData();
+
+	// Scale the iMSTK level set model appropriately
+	const imstk::Vec3d& currSpacing = LvlSetImage->getSpacing();
+	const FVector UnrealScale = MeshComp->GetComponentScale(); // TODO: This is annoying since its an actor component and not a scene component so you can't scale the actual model. maybe transform this into a scene component
+	imstk::Vec3d scaledSpacing = imstk::Vec3d(currSpacing.x() * UnrealScale.X, currSpacing.y() * UnrealScale.Z, currSpacing.z() * UnrealScale.Y);
+	LvlSetImage->setSpacing(scaledSpacing);
+
+	// Extract the surface mesh of the model
+	SMFE->setInputImage(LvlSetImage);
+	SMFE->update();
+	std::shared_ptr<imstk::SurfaceMesh> SurfMesh = SMFE->getOutputMesh();
+	SurfMesh->computeVertexNormals();
+	if (FlipNormals)
+		SurfMesh->flipNormals();
+
+	// Assign mesh values to the struct and return
+	FMeshDataStruct MeshData = FMeshDataStruct();
+	MeshData.Verts = UMathUtil::ToUnrealFVecArray(SurfMesh->getVertexPositions(), true);
+	MeshData.Indices = UMathUtil::ToUnrealIntArray(SurfMesh->getTriangleIndices());
+	MeshData.Normals = UMathUtil::ToUnrealFVecArray(SurfMesh->getVertexNormals(), false);
+
+	return MeshData;
+}
+
+void ULevelSetModel::UnInit() 
+{
+	Super::UnInit();
+	LevelSetObj.reset();
+}
+
+//void ULevelSetModel::GenerateSurfaceMeshData() 
+//{
+//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "Creating mesh file");
+//	std::shared_ptr<imstk::SurfaceMeshFlyingEdges> SMFE = std::make_shared<imstk::SurfaceMeshFlyingEdges>();
+//
+//	SMFE->setInputImage(LevelSetObject->initLvlSetImage);
+//	SMFE->update();
+//	imstk::MeshIO::write(SMFE->getOutputMesh(), std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())) + "outputMesh.stl");
+//}
+//
+//void ULevelSetModel::GenerateLevelSetData()
+//{
+//	imstk::MeshIO::write(LevelSetObject->initLvlSetImage, std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())) + "outputMesh.mhd");
+//}
 
 
 
 
-FemurObject::FemurObject(UProceduralMeshComponent* ProcMeshComp) : LevelSetDeformableObject("Femur"),
+
+LevelSetObject::LevelSetObject(UProceduralMeshComponent* ProcMeshComp, UImageDataAsset* ImageData, UMaterial* Material) : LevelSetDeformableObject("LevelSetObject"),
 m_isoExtract(std::make_shared<imstk::LocalMarchingCubes>())
 {
 	MeshComp = ProcMeshComp;
-	std::shared_ptr<imstk::ImageData> initLvlSetImage = imstk::MeshIO::read<imstk::ImageData>("C:/WorkStuff/Imstk/Aug-2/install/data/legs/femurBoneSolid_SDF.nii")->cast(IMSTK_DOUBLE);
-	//const Vec3d& currSpacing = initLvlSetImage->getSpacing();
+	initLvlSetImage = ImageData->GetImageData();
 
-	//initLvlSetImage->setSpacing(imstk::Vec3d(0.5,0.5,0.5));
+	const imstk::Vec3d& currSpacing = initLvlSetImage->getSpacing();
+	const FVector UnrealScale = MeshComp->GetComponentScale(); // TODO: This is annoying since its an actor component and not a scene component so you can't scale the actual model. maybe transform this into a scene component
+
+	imstk::Vec3d scaledSpacing = imstk::Vec3d(currSpacing.x() * UnrealScale.X, currSpacing.y() * UnrealScale.Z, currSpacing.z() * UnrealScale.Y);
+	initLvlSetImage->setSpacing(scaledSpacing);
+
+	MeshComp->SetWorldScale3D(FVector(1, 1, 1));
 
 	// Note: Anistropic scaling would invalidate the SDF
-	//initLvlSetImage->setOrigin(UMathUtil::ToImstkVec3(MeshComp->GetOwner()->GetActorLocation(), true));
-	initLvlSetImage->setOrigin(imstk::Vec3d(0.0, 0.8, 1.5));
+	initLvlSetImage->setOrigin(UMathUtil::ToImstkVec3d(MeshComp->GetComponentLocation(), true));
+	//initLvlSetImage->setOrigin(imstk::Vec3d(0, 0, 0));
 
 	// Setup the Parameters
 	std::shared_ptr<imstk::LevelSetModelConfig> lvlSetConfig = std::make_shared<imstk::LevelSetModelConfig>();
@@ -147,7 +171,10 @@ m_isoExtract(std::make_shared<imstk::LocalMarchingCubes>())
 	// The chunks must divide the image dimensions-1 (image dim-1 must be divisible by # chunks)
 	m_isoExtract->setInputImage(initLvlSetImage);
 	m_isoExtract->setIsoValue(0.0);
-	m_isoExtract->setNumberOfChunks(imstk::Vec3i(32, 9, 9));
+	//m_isoExtract->setNumberOfChunks(imstk::Vec3i(32, 9, 9));
+
+	const imstk::Vec3i& Dimensions = initLvlSetImage->getDimensions();
+	m_isoExtract->setNumberOfChunks(imstk::Vec3i((Dimensions.x() - 1) / 10, (Dimensions.y() - 1) / 10, (Dimensions.z() - 1) / 10));
 	m_isoExtract->update();
 
 	if (m_useRandomChunkColors)
@@ -172,12 +199,12 @@ m_isoExtract(std::make_shared<imstk::LocalMarchingCubes>())
 	// Setup a custom task to forward the modified voxels of the level set model
 	// to the marching cubes before they're cleared
 	m_forwardModifiedVoxels = std::make_shared<imstk::TaskNode>(
-		std::bind(&FemurObject::updateModifiedVoxels, this), "Isosurface: SetModifiedVoxels");
+		std::bind(&LevelSetObject::updateModifiedVoxels, this), "Isosurface: SetModifiedVoxels");
 	m_taskGraph->addNode(m_forwardModifiedVoxels);
 }
 
 void
-FemurObject::visualUpdate()
+LevelSetObject::visualUpdate()
 {
 	// Update any chunks that contain a voxel which was set modified
 	m_isoExtract->update();
@@ -186,11 +213,11 @@ FemurObject::visualUpdate()
 	// You could just create all the chunks, but this saves some memory for internal/empty ones
 	createVisualModels();
 
-	//UpdateUnrealMesh();
+	UpdateUnrealMesh();
 }
 
 void
-FemurObject::createVisualModels()
+LevelSetObject::createVisualModels()
 {
 	const imstk::Vec3i& numChunks = m_isoExtract->getNumberOfChunks();
 	for (int i = 0; i < numChunks[0] * numChunks[1] * numChunks[2]; i++)
@@ -216,14 +243,13 @@ FemurObject::createVisualModels()
 			}
 
 			TArray<int32> Indices = UMathUtil::ToUnrealIntArray(surfMesh->getTriangleIndices());
-			/*for (int j = 0; j < surfMesh->getNumTriangles(); j++) {
-				imstk::Vec3i Triangle = surfMesh->getTriangleIndices(j);
-				Indices.Add(Triangle.x());
-				Indices.Add(Triangle.y());
-				Indices.Add(Triangle.z());
-			}*/
 
 			MeshComp->CreateMeshSection_LinearColor(i, Verts, Indices, Normals, UV0, VertColors, Tangents, false);
+
+			/*if (Material) {
+				auto* MaterialInstance = UMaterialInstanceDynamic::Create(Material, Material);
+				MeshComp->SetMaterial(i, Material);
+			}*/
 			addVisualModel(surfMeshModel);
 			m_chunksGenerated.insert(i);
 		}
@@ -231,20 +257,17 @@ FemurObject::createVisualModels()
 }
 
 void
-FemurObject::updateModifiedVoxels()
+LevelSetObject::updateModifiedVoxels()
 {
 	// Forward the level set's modified nodes to the isosurface extraction
 	for (auto i : getLevelSetModel()->getNodesToUpdate())
 	{
 		m_isoExtract->setModified(std::get<0>(i.second));
 	}
-	//m_isoExtract->update(); //THIS WILL CLEAR THE MODIFIED VOXELS
-
-	UpdateUnrealMesh();
 }
 
 void
-FemurObject::initGraphEdges(std::shared_ptr<imstk::TaskNode> source, std::shared_ptr<imstk::TaskNode> sink)
+LevelSetObject::initGraphEdges(std::shared_ptr<imstk::TaskNode> source, std::shared_ptr<imstk::TaskNode> sink)
 {
 	// Copy, sum, and connect the model graph to nest within this graph
 	m_taskGraph->addEdge(source, getUpdateNode());
@@ -261,9 +284,9 @@ FemurObject::initGraphEdges(std::shared_ptr<imstk::TaskNode> source, std::shared
 }
 
 void
-FemurObject::UpdateUnrealMesh()
+LevelSetObject::UpdateUnrealMesh()
 {
-		
+
 	std::unordered_map<int, imstk::Vec3i> modifiedChunks = m_isoExtract->getModifiedChunks();
 	for (auto i : modifiedChunks)
 	{
@@ -281,17 +304,15 @@ FemurObject::UpdateUnrealMesh()
 			TArray<FVector> Verts;
 			Verts = UMathUtil::ToUnrealFVecArray(surfMesh->getVertexPositions(), true);
 
-			if (Verts.Num() == MeshComp->GetProcMeshSection(i.first)->ProcVertexBuffer.Num() && surfMesh->getNumTriangles() * 3 == MeshComp->GetProcMeshSection(i.first)->ProcIndexBuffer.Num()) {
+			/*if (Verts.Num() == MeshComp->GetProcMeshSection(i.first)->ProcVertexBuffer.Num() && surfMesh->getNumTriangles() * 3 == MeshComp->GetProcMeshSection(i.first)->ProcIndexBuffer.Num()) {
 				MeshComp->UpdateMeshSection_LinearColor(i.first, Verts, Normals, UV0, VertColors, Tangents);
 			}
-			else {
-				TArray<int32> Indices = UMathUtil::ToUnrealIntArray(surfMesh->getTriangleIndices());
+			else {*/
+			TArray<int32> Indices = UMathUtil::ToUnrealIntArray(surfMesh->getTriangleIndices());
 
-				// THIS KIND OF WORKS BUT ONLY OUTLINES ALSO LESS PERFORMANT (MAYBE THIS IS HAPPENING BEFORE THE VERTICES ARE ACTUALLY UPDATED)
-				// The visuals are what is actually being brought into unreal, its not overlapping to cause the visuals
-				MeshComp->ClearMeshSection(i.first);
-				MeshComp->CreateMeshSection_LinearColor(i.first, Verts, Indices, Normals, UV0, VertColors, Tangents, false);
-			}
+			MeshComp->ClearMeshSection(i.first);
+			MeshComp->CreateMeshSection_LinearColor(i.first, Verts, Indices, Normals, UV0, VertColors, Tangents, false);
+			//}
 		}
 		else
 		{

@@ -20,15 +20,6 @@ void UTetrahedralMeshAsset::SetTetrahedralMesh(std::shared_ptr<imstk::Tetrahedra
 	
 	Indices = UMathUtil::ToUnrealUIntArray(Input->getTetrahedraIndices());
 
-	/*imstk::VecDataArray<int, 4> TetIndices = *Input->getTetrahedraIndices();
-	for (int i = 0; i < Input->getNumTetrahedra(); i++) {
-		imstk::Vec4i Tetrahedra = TetIndices[i];
-		Indices.Add(Tetrahedra[0]);
-		Indices.Add(Tetrahedra[1]);
-		Indices.Add(Tetrahedra[3]);
-		Indices.Add(Tetrahedra[2]);
-	}*/
-
 }
 
 std::shared_ptr<imstk::TetrahedralMesh> UTetrahedralMeshAsset::GetTetrahedralMesh() {

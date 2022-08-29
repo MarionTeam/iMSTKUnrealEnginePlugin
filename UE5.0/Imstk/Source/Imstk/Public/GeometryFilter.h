@@ -44,6 +44,20 @@ enum EGeometryType
 };
 
 USTRUCT(BlueprintType)
+struct FMeshDataStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+		TArray<FVector> Verts;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+		TArray<int32> Indices;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+		TArray<FVector> Normals;
+
+};
+
+USTRUCT(BlueprintType)
 struct FGeometryTypeStruct
 {
 	GENERATED_BODY()
@@ -51,7 +65,15 @@ struct FGeometryTypeStruct
 	/** Creates and returns Imstk geometry using parameters and editor values.
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
 	*/
-	std::shared_ptr<imstk::Geometry> Init() const {
+	virtual std::shared_ptr<imstk::Geometry> Init() const {
+		return nullptr;
+	}
+
+	virtual std::shared_ptr<imstk::Geometry> Init(UDynamicalModel* Model) const {
+		return nullptr;
+	}
+
+	virtual std::shared_ptr<imstk::Geometry> Init(UImstkController* Controller) const {
 		return nullptr;
 	}
 
@@ -73,13 +95,12 @@ struct FSphereGeomStruct : public FGeometryTypeStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, BlueprintReadWrite, Category = "General")
 		FVector GeometryOffset;
 
-	FSphereGeomStruct();
+	FSphereGeomStruct() { Radius = 1; GeometryOffset = FVector::ZeroVector; };
 
 	/** Creates an Imstk sphere using the provided parameters and editor values.
-	* @param Actor Owning actor in Unreal
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
 	*/
-	std::shared_ptr<imstk::Geometry> Init() const;
+	virtual std::shared_ptr<imstk::Geometry> Init() const override;
 
 	virtual FVector GetGeomScale() override;
 };
@@ -92,15 +113,19 @@ struct FSurfaceMeshGeomStruct : public FGeometryTypeStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
 		bool bFlipNormals;
 
-	FSurfaceMeshGeomStruct();
+	FSurfaceMeshGeomStruct() { bFlipNormals = false; };
 
 	/** Creates an Imstk surface mesh using the provided parameters and editor values.
-	* @param Actor Owning actor in Unreal
+	* @param Model The DynamicalModel in Unreal
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
 	*/
-	std::shared_ptr<imstk::Geometry> Init(UDynamicalModel* Model) const;
+	virtual std::shared_ptr<imstk::Geometry> Init(UDynamicalModel* Model) const override;
 
-	std::shared_ptr<imstk::Geometry> Init(UImstkController* Controller) const;
+	/** Creates an Imstk surface mesh using the provided parameters and editor values.
+	* @param Controller The Controller in Unreal
+	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
+	*/
+	virtual std::shared_ptr<imstk::Geometry> Init(UImstkController* Controller) const override;
 
 	virtual FVector GetGeomScale() override;
 };
@@ -117,13 +142,12 @@ struct FCapsuleGeomStruct : public FGeometryTypeStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
 		FVector GeometryOffset;
 
-	FCapsuleGeomStruct();
+	FCapsuleGeomStruct() { Radius = 1; Length = 1; GeometryOffset = FVector::ZeroVector; };
 
 	/** Creates an Imstk capsule using the provided parameters and editor values.
-	* @param Actor Owning actor in Unreal
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
 	*/
-	std::shared_ptr<imstk::Geometry> Init() const;
+	virtual std::shared_ptr<imstk::Geometry> Init() const override;
 
 	virtual FVector GetGeomScale() override;
 };
@@ -140,13 +164,12 @@ struct FCylinderGeomStruct : public FGeometryTypeStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
 		FVector GeometryOffset;
 
-	FCylinderGeomStruct();
+	FCylinderGeomStruct() { Radius = 1; Length = 1; GeometryOffset = FVector::ZeroVector; };
 
 	/** Creates an Imstk Cylinder using the provided parameters and editor values.
-	* @param Actor Owning actor in Unreal
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
 	*/
-	std::shared_ptr<imstk::Geometry> Init() const;
+	virtual std::shared_ptr<imstk::Geometry> Init() const override;
 
 	virtual FVector GetGeomScale() override;
 };
@@ -156,15 +179,19 @@ struct FPointSetGeomStruct : public FGeometryTypeStruct
 {
 	GENERATED_BODY()
 
-	FPointSetGeomStruct();
+	FPointSetGeomStruct() {};
 
-	/** Creates an Imstk point set using the provided parameters and editor values.
-	* @param Actor Owning actor in Unreal
+	/** Creates an Imstk surface mesh using the provided parameters and editor values.
+	* @param Model The DynamicalModel in Unreal
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
 	*/
-	std::shared_ptr<imstk::Geometry> Init(UDynamicalModel* Model) const;
+	virtual std::shared_ptr<imstk::Geometry> Init(UDynamicalModel* Model) const override;
 
-	std::shared_ptr<imstk::Geometry> Init(UImstkController* Controller) const;
+	/** Creates an Imstk surface mesh using the provided parameters and editor values.
+	* @param Controller The Controller in Unreal
+	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
+	*/
+	virtual std::shared_ptr<imstk::Geometry> Init(UImstkController* Controller) const override;
 
 	virtual FVector GetGeomScale() override;
 };
@@ -178,13 +205,12 @@ struct FOrientedBoxGeomStruct : public FGeometryTypeStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
 		FVector Extents;
 
-	FOrientedBoxGeomStruct();
+	FOrientedBoxGeomStruct() { Extents = FVector::ZeroVector; };
 
 	/** Creates an Imstk Oriented Box using the provided parameters and editor values.
-	* @param Actor Owning actor in Unreal
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
 	*/
-	std::shared_ptr<imstk::Geometry> Init() const;
+	virtual std::shared_ptr<imstk::Geometry> Init() const override;
 
 	virtual FVector GetGeomScale() override;
 };
@@ -194,18 +220,15 @@ struct FPlaneGeomStruct : public FGeometryTypeStruct
 {
 	GENERATED_BODY()
 
-		int EnumVal = 6;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
 		FVector Normal;
 
-	FPlaneGeomStruct();
+	FPlaneGeomStruct() { Normal = FVector::ZeroVector; };
 
 	/** Creates an Imstk Plane using the provided parameters and editor values.
-	* @param Actor Owning actor in Unreal
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
 	*/
-	std::shared_ptr<imstk::Geometry> Init() const;
+	virtual std::shared_ptr<imstk::Geometry> Init() const override;
 
 	virtual FVector GetGeomScale() override;
 };
@@ -214,19 +237,16 @@ USTRUCT(BlueprintType)
 struct FLineMeshGeomStruct : public FGeometryTypeStruct
 {
 	GENERATED_BODY()
-
-		int EnumVal = 6;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
 		TArray<FVector> Vertices;
 
-	FLineMeshGeomStruct();
+	FLineMeshGeomStruct() {};
 
 	/** Creates an Imstk Plane using the provided parameters and editor values.
-	* @param Actor Owning actor in Unreal
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
 	*/
-	std::shared_ptr<imstk::Geometry> Init() const;
+	virtual std::shared_ptr<imstk::Geometry> Init() const override;
 
 	virtual FVector GetGeomScale() override;
 };

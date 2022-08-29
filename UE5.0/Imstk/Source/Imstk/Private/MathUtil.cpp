@@ -5,11 +5,25 @@
 
 int UMathUtil::Scale = 100;
 
-imstk::Vec3d UMathUtil::ToImstkVec3(const FVector InputVec, const bool IsScaled)
+imstk::Vec3d UMathUtil::ToImstkVec3d(const FVector InputVec, const bool IsScaled)
 {
 	int Scaling = IsScaled ? Scale : 1;
 
 	return imstk::Vec3d(InputVec.X / Scaling, InputVec.Z / Scaling, InputVec.Y / Scaling);
+}
+
+imstk::Vec3i UMathUtil::ToImstkVec3i(const FVector InputVec, const bool IsScaled)
+{
+	int Scaling = IsScaled ? Scale : 1;
+
+	return imstk::Vec3i(InputVec.X / Scaling, InputVec.Z / Scaling, InputVec.Y / Scaling);
+}
+
+FVector UMathUtil::ToUnrealFVec(const imstk::Vec3i InputVec, const bool IsScaled)
+{
+	int Scaling = IsScaled ? Scale : 1;
+
+	return FVector(InputVec.x() * Scaling, InputVec.z() * Scaling, InputVec.y() * Scaling);
 }
 
 FVector UMathUtil::ToUnrealFVec(const imstk::Vec3d InputVec, const bool IsScaled)
@@ -41,7 +55,7 @@ std::shared_ptr<imstk::VecDataArray<double, 3>> UMathUtil::ToImstkVecDataArray3d
 {
 	std::shared_ptr<imstk::VecDataArray<double, 3>> Output = std::make_shared<imstk::VecDataArray<double, 3>>();
 	for (FVector Vector : InputArray) {
-		Output->push_back(ToImstkVec3(Vector, IsScaled));
+		Output->push_back(ToImstkVec3d(Vector, IsScaled));
 	}
 	return Output;
 }

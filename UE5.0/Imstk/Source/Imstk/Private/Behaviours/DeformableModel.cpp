@@ -74,10 +74,10 @@ void UDeformableModel::ProcessBoundaryConditions()
 		
 		// Create the geometry in iMSTK and make it reflect Unreal
 		BoundaryMeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
-		BoundaryMeshGeom->scale(UMathUtil::ToImstkVec3(Actor->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+		BoundaryMeshGeom->scale(UMathUtil::ToImstkVec3d(Actor->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 		BoundaryMeshGeom->rotate(UMathUtil::ToImstkQuat(Actor->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
 		BoundaryMeshGeom->updatePostTransformData();
-		BoundaryMeshGeom->translate(UMathUtil::ToImstkVec3(Actor->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+		BoundaryMeshGeom->translate(UMathUtil::ToImstkVec3d(Actor->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 
 		std::shared_ptr<imstk::SelectEnclosedPoints> EnclosedPoints = std::make_shared<imstk::SelectEnclosedPoints>();
 

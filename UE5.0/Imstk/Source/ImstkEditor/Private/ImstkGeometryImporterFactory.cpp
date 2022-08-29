@@ -3,6 +3,7 @@
 
 #include "ImstkGeometryImporterFactory.h"
 #include "TetrahedralMeshAsset.h"
+#include "ImageDataAsset.h"
 #include "RawMesh.h"
 #include "MathUtil.h"
 #include "MeshDescription.h"
@@ -20,7 +21,9 @@ UImstkGeometryImporterFactory::UImstkGeometryImporterFactory(const FObjectInitia
 	Formats.Add(FString(TEXT("ply;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatPly", "Ply File").ToString());
 	Formats.Add(FString(TEXT("veg;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatVeg", "Veg File").ToString());
 	Formats.Add(FString(TEXT("msh;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatVeg", "Msh File").ToString());
+	Formats.Add(FString(TEXT("nii;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatNii", "Nii File").ToString());
 	SupportedClass = UTetrahedralMeshAsset::StaticClass();
+	SupportedClass = UImageDataAsset::StaticClass();
 	bCreateNew = false;
 	bEditorImport = true;
 }
@@ -52,6 +55,21 @@ UObject* UImstkGeometryImporterFactory::FactoryCreateFile(UClass* InClass, UObje
 	else if (ImportedPointSet->getTypeName() == "SurfaceMesh")
 	{
 		SurfaceMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(ImportedPointSet);
+
+
+	}
+	else if (ImportedPointSet->getTypeName() == "ImageData")
+	{
+		std::shared_ptr<imstk::ImageData> ImageData = std::dynamic_pointer_cast<imstk::ImageData>(ImportedPointSet)->cast(IMSTK_DOUBLE);
+
+		FString Str = InName.ToString();
+		Str.Append("_ImageData");
+		FName ImageDataAssetName = FName(*Str);
+		UImageDataAsset* ImageDataAsset = NewObject<UImageDataAsset>(InParent, InClass, ImageDataAssetName, Flags);
+		
+		ImageDataAsset->SetImageData(ImageData);
+
+		return ImageDataAsset;
 	}
 	else
 	{
@@ -80,43 +98,12 @@ UObject* UImstkGeometryImporterFactory::FactoryCreateFile(UClass* InClass, UObje
 		TArray<UMaterialInterface*> MeshMaterials;
 		MeshMaterials.Add(UMaterial::GetDefaultMaterial(MD_Surface));
 
-
-		// TEST MESH FOR A BASIC TRIANGLE
-		/*RawMesh.VertexPositions.Add(FVector(0, 0, 0));
-		RawMesh.VertexPositions.Add(FVector(1, 0, 0));
-		RawMesh.VertexPositions.Add(FVector(1, 1, 0));
-
-		RawMesh.WedgeIndices.Add(0);
-		RawMesh.WedgeIndices.Add(1);
-		RawMesh.WedgeIndices.Add(2);
-
-		RawMesh.WedgeTexCoords->Add(FVector2D(0, 0));
-		RawMesh.WedgeTexCoords->Add(FVector2D(0, 0));
-		RawMesh.WedgeTexCoords->Add(FVector2D(0, 0));
-		RawMesh.FaceMaterialIndices.Add(0);
-		RawMesh.FaceSmoothingMasks.Add(0);
-		RawMesh.WedgeTangentX.Add(FVector(0, 0, 0));
-		RawMesh.WedgeTangentX.Add(FVector(0, 0, 0));
-		RawMesh.WedgeTangentX.Add(FVector(0, 0, 0));
-		RawMesh.WedgeTangentY.Add(FVector(0, 0, 0));
-		RawMesh.WedgeTangentY.Add(FVector(0, 0, 0));
-		RawMesh.WedgeTangentY.Add(FVector(0, 0, 0));
-		RawMesh.WedgeTangentZ.Add(FVector(0, 0, 0));
-		RawMesh.WedgeTangentZ.Add(FVector(0, 0, 0));
-		RawMesh.WedgeTangentZ.Add(FVector(0, 0, 0));*/
-
 		imstk::VecDataArray<double, 3>& Vertices = *SurfaceMesh->getVertexPositions();
 		for (int i = 0; i < Vertices.size(); i++) {
 			//RawMesh.VertexPositions.Add(FVector3f(UMathUtil::ToUnrealFVec(Vertices[i], false)));
 			// Avoid using Math util function to maintain vertex positions on import
 			RawMesh.VertexPositions.Add(FVector3f(Vertices[i].x(), Vertices[i].z(), Vertices[i].y()));
 		}
-
-		//imstk::VecDataArray<int, 3>& Indices = *SurfaceMesh->getTriangleIndices();
-		//UE_LOG(LogTemp, Log, TEXT("Is indices null: %s"), (SurfaceMesh->getTriangleIndices() == nullptr ? TEXT("true") : TEXT("false")));
-		//SurfaceMesh->flipNormals();
-		//imstk::VecDataArray<double, 3>& Tangents = *SurfaceMesh->getCellTangents().get();
-		//UE_LOG(LogTemp, Warning, TEXT("Tangents: %s"), (SurfaceMesh->getCellTangents() == nullptr ? TEXT("true") : TEXT("false")));
 
 		// TODO: THIS IS UNTESTED (not sure which of the files contain texture information)
 		std::shared_ptr<imstk::VecDataArray<float, 2>> ImstkTCoordsPtr = SurfaceMesh->getVertexTCoords();
@@ -146,26 +133,6 @@ UObject* UImstkGeometryImporterFactory::FactoryCreateFile(UClass* InClass, UObje
 			RawMesh.WedgeTangentZ.Add(FVector3f::ZeroVector);
 			RawMesh.WedgeTangentZ.Add(FVector3f::ZeroVector);
 			RawMesh.WedgeTangentZ.Add(FVector3f::ZeroVector);
-
-
-
-			/*FVector TangentXX = UMathUtil::ToUnrealFVec((*Tangents)[Indices.x()], false);
-			FVector TangentXY = UMathUtil::ToUnrealFVec((*Tangents)[Indices.y()], false);
-			FVector TangentXZ = UMathUtil::ToUnrealFVec((*Tangents)[Indices.z()], false);
-
-			RawMesh.WedgeTangentX.Add(TangentXX);
-			RawMesh.WedgeTangentX.Add(TangentXY);
-			RawMesh.WedgeTangentX.Add(TangentXZ);
-
-			FVector TangentZX = UMathUtil::ToUnrealFVec((*Normals)[Indices.x()], false);
-			FVector TangentZY = UMathUtil::ToUnrealFVec((*Normals)[Indices.y()], false);
-			FVector TangentZZ = UMathUtil::ToUnrealFVec((*Normals)[Indices.z()], false);
-
-			RawMesh.WedgeTangentZ.Add(TangentZX);
-			RawMesh.WedgeTangentZ.Add(TangentZY);
-			RawMesh.WedgeTangentZ.Add(TangentZZ);
-
-			FVector TangentYX = (TangentXX ^ TangentZX).GetSafeNormal();*/
 
 			if (!ImstkTCoordsPtr) {
 				RawMesh.WedgeTexCoords->Add(FVector2f(0, 0));

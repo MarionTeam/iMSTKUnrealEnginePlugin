@@ -42,14 +42,14 @@ void URBDModel::Init()
 	RigidObject = std::make_shared<imstk::RigidObject2>(TCHAR_TO_UTF8(*(Owner->GetName())));
 	std::shared_ptr<imstk::Geometry> Geom = GetImstkGeometry();
 
-	Geom->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+	Geom->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 
 	// Configure rigid object
 	std::shared_ptr<imstk::RigidBodyModel2> RigidBodyModel = std::make_shared<imstk::RigidBodyModel2>();
 
 	// Set up rigid body model using the subsystem and individual values if set
 	if (bIndividualGravity)
-		RigidBodyModel->getConfig()->m_gravity = UMathUtil::ToImstkVec3(Gravity, true);
+		RigidBodyModel->getConfig()->m_gravity = UMathUtil::ToImstkVec3d(Gravity, true);
 	else
 		RigidBodyModel->getConfig()->m_gravity = SubsystemInstance->RigidBodyModel->getConfig()->m_gravity;
 	
@@ -70,7 +70,7 @@ void URBDModel::Init()
 
 	
 
-	RigidObject->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3(Owner->GetActorLocation(), true));
+	RigidObject->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true));
 	RigidObject->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()));
 	RigidObject->getRigidBody()->setInertiaTensor(imstk::Mat3d::Identity());
 

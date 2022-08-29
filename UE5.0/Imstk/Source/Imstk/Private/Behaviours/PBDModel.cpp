@@ -102,9 +102,9 @@ void UPBDModel::Init()
 
 	// If the object should have separate gravity from the rest of the scene
 	if (bIndividualGravity)
-		PbdConfig->m_gravity = UMathUtil::ToImstkVec3(Gravity, true);
+		PbdConfig->m_gravity = UMathUtil::ToImstkVec3d(Gravity, true);
 	else
-		PbdConfig->m_gravity = UMathUtil::ToImstkVec3(SubsystemInstance->Gravity, true);
+		PbdConfig->m_gravity = UMathUtil::ToImstkVec3d(SubsystemInstance->Gravity, true);
 
 	PbdConfig->m_iterations = 5;
 	PbdConfig->m_viscousDampingCoeff = ViscousDampingCoeff;
@@ -130,9 +130,9 @@ void UPBDModel::Init()
 			return;
 		}
 
-		Geom->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+		Geom->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 		Geom->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
-		Geom->translate(UMathUtil::ToImstkVec3(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+		Geom->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 		Geom->updatePostTransformData();
 		PbdObject->setCollidingGeometry(Geom);
 		PbdObject->setVisualGeometry(Geom);
@@ -147,9 +147,9 @@ void UPBDModel::Init()
 		std::shared_ptr<imstk::TetrahedralMesh> TetMesh = TetrahedralMesh->GetTetrahedralMesh();
 		//std::shared_ptr<imstk::TetrahedralMesh> TetMesh = imstk::MeshIO::read<imstk::TetrahedralMesh>("D:\\Temp\\heart_volume.vtk");
 
-		TetMesh->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+		TetMesh->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 		TetMesh->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
-		TetMesh->translate(UMathUtil::ToImstkVec3(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+		TetMesh->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 		TetMesh->updatePostTransformData();
 
 		std::shared_ptr<imstk::SurfaceMesh> SurfMesh;
@@ -171,9 +171,9 @@ void UPBDModel::Init()
 		}
 		else {
 			SurfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(GetImstkGeometry());
-			SurfMesh->scale(UMathUtil::ToImstkVec3(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+			SurfMesh->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 			SurfMesh->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
-			SurfMesh->translate(UMathUtil::ToImstkVec3(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+			SurfMesh->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 			SurfMesh->updatePostTransformData();
 		}
 

@@ -8,15 +8,24 @@
 #include "UObject/ScriptMacros.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+struct FMeshDataStruct;
 #ifdef IMSTK_LevelSetModel_generated_h
 #error "LevelSetModel.generated.h already included, missing '#pragma once' in LevelSetModel.h"
 #endif
 #define IMSTK_LevelSetModel_generated_h
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_SPARSE_DATA
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_RPC_WRAPPERS
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_RPC_WRAPPERS_NO_PURE_DECLS
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_INCLASS_NO_PURE_DECLS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_SPARSE_DATA
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_RPC_WRAPPERS \
+ \
+	DECLARE_FUNCTION(execGenerateSurfaceMeshData);
+
+
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_RPC_WRAPPERS_NO_PURE_DECLS \
+ \
+	DECLARE_FUNCTION(execGenerateSurfaceMeshData);
+
+
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesULevelSetModel(); \
 	friend struct Z_Construct_UClass_ULevelSetModel_Statics; \
@@ -25,7 +34,7 @@ public: \
 	DECLARE_SERIALIZER(ULevelSetModel)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_INCLASS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_INCLASS \
 private: \
 	static void StaticRegisterNativesULevelSetModel(); \
 	friend struct Z_Construct_UClass_ULevelSetModel_Statics; \
@@ -34,7 +43,7 @@ public: \
 	DECLARE_SERIALIZER(ULevelSetModel)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_STANDARD_CONSTRUCTORS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_STANDARD_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API ULevelSetModel(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
 	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(ULevelSetModel) \
@@ -47,7 +56,7 @@ private: \
 public:
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_ENHANCED_CONSTRUCTORS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API ULevelSetModel() { }; \
 private: \
@@ -60,25 +69,25 @@ public: \
 	DEFINE_DEFAULT_CONSTRUCTOR_CALL(ULevelSetModel)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_64_PROLOG
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_GENERATED_BODY_LEGACY \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_72_PROLOG
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_SPARSE_DATA \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_RPC_WRAPPERS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_INCLASS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_STANDARD_CONSTRUCTORS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_SPARSE_DATA \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_RPC_WRAPPERS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_INCLASS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_STANDARD_CONSTRUCTORS \
 public: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_GENERATED_BODY \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_SPARSE_DATA \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_INCLASS_NO_PURE_DECLS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_67_ENHANCED_CONSTRUCTORS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_SPARSE_DATA \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_INCLASS_NO_PURE_DECLS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_75_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

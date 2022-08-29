@@ -4,14 +4,12 @@
 #include "GeometryFilter.h"
 #include "ImstkController.h"
 
-FSphereGeomStruct::FSphereGeomStruct() {}
-
 std::shared_ptr<imstk::Geometry> FSphereGeomStruct::Init() const
 {
 	std::shared_ptr<imstk::Sphere> SphereGeom = std::make_shared<imstk::Sphere>();
 
 	SphereGeom->setRadius(Radius / UMathUtil::GetScale());
-	SphereGeom->setPosition(UMathUtil::ToImstkVec3(GeometryOffset, true));
+	SphereGeom->setPosition(UMathUtil::ToImstkVec3d(GeometryOffset, true));
 	SphereGeom->updatePostTransformData();
 	return SphereGeom;
 }
@@ -19,8 +17,6 @@ std::shared_ptr<imstk::Geometry> FSphereGeomStruct::Init() const
 FVector FSphereGeomStruct::GetGeomScale() {
 	return FVector(Radius / 50, Radius / 50, Radius / 50);
 }
-
-FSurfaceMeshGeomStruct::FSurfaceMeshGeomStruct() {}
 
 std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UDynamicalModel* Model) const {
 	std::shared_ptr<imstk::SurfaceMesh> MeshGeom = std::make_shared<imstk::SurfaceMesh>();
@@ -169,15 +165,13 @@ FVector FSurfaceMeshGeomStruct::GetGeomScale() {
 }
 
 
-FCapsuleGeomStruct::FCapsuleGeomStruct() {}
-
 std::shared_ptr<imstk::Geometry> FCapsuleGeomStruct::Init() const {
 	std::shared_ptr<imstk::Capsule> CapsuleGeom = std::make_shared<imstk::Capsule>();
 
 	CapsuleGeom->setPosition(imstk::Vec3d(0, (Length / UMathUtil::GetScale()) / 2, 0));
 	CapsuleGeom->setRadius(Radius / UMathUtil::GetScale());
 	CapsuleGeom->setLength(Length / UMathUtil::GetScale());
-	CapsuleGeom->setPosition(UMathUtil::ToImstkVec3(GeometryOffset, true));
+	CapsuleGeom->setPosition(UMathUtil::ToImstkVec3d(GeometryOffset, true));
 	CapsuleGeom->updatePostTransformData();
 	return CapsuleGeom;
 }
@@ -186,14 +180,13 @@ FVector FCapsuleGeomStruct::GetGeomScale() {
 	return FVector(Radius / 25, Radius / 25, Length / 100);
 }
 
-FCylinderGeomStruct::FCylinderGeomStruct() {}
 
 std::shared_ptr<imstk::Geometry> FCylinderGeomStruct::Init() const {
 	std::shared_ptr<imstk::Cylinder> CylinderGeom = std::make_shared<imstk::Cylinder>();
 
 	CylinderGeom->setRadius(Radius / UMathUtil::GetScale());
 	CylinderGeom->setLength(Length / UMathUtil::GetScale());
-	CylinderGeom->setPosition(UMathUtil::ToImstkVec3(GeometryOffset, true));
+	CylinderGeom->setPosition(UMathUtil::ToImstkVec3d(GeometryOffset, true));
 	CylinderGeom->updatePostTransformData();
 	return CylinderGeom;
 }
@@ -202,7 +195,6 @@ FVector FCylinderGeomStruct::GetGeomScale() {
 	return FVector(Radius / 25, Radius / 25, Length / 100);
 }
 
-FPointSetGeomStruct::FPointSetGeomStruct() {}
 
 std::shared_ptr<imstk::Geometry> FPointSetGeomStruct::Init(UDynamicalModel* Model) const {
 	std::shared_ptr<imstk::PointSet> MeshGeom = std::make_shared<imstk::PointSet>();
@@ -297,11 +289,10 @@ FVector FPointSetGeomStruct::GetGeomScale() {
 	return FVector::ZeroVector;
 }
 
-FOrientedBoxGeomStruct::FOrientedBoxGeomStruct() {}
 
 std::shared_ptr<imstk::Geometry> FOrientedBoxGeomStruct::Init() const {
 	std::shared_ptr<imstk::OrientedBox> BoxGeom = std::make_shared<imstk::OrientedBox>();
-	BoxGeom->setExtents(UMathUtil::ToImstkVec3(Extents, true));
+	BoxGeom->setExtents(UMathUtil::ToImstkVec3d(Extents, true));
 	return BoxGeom;
 }
 
@@ -309,11 +300,10 @@ FVector FOrientedBoxGeomStruct::GetGeomScale() {
 	return FVector::ZeroVector;
 }
 
-FPlaneGeomStruct::FPlaneGeomStruct() {}
 
 std::shared_ptr<imstk::Geometry> FPlaneGeomStruct::Init() const {
 	std::shared_ptr<imstk::Plane> PlaneGeom = std::make_shared<imstk::Plane>();
-	PlaneGeom->setNormal(UMathUtil::ToImstkVec3(Normal, false));
+	PlaneGeom->setNormal(UMathUtil::ToImstkVec3d(Normal, false));
 	return PlaneGeom;
 }
 
@@ -321,7 +311,6 @@ FVector FPlaneGeomStruct::GetGeomScale() {
 	return FVector::ZeroVector;
 }
 
-FLineMeshGeomStruct::FLineMeshGeomStruct() {}
 
 std::shared_ptr<imstk::Geometry> FLineMeshGeomStruct::Init() const {
 	std::shared_ptr<imstk::LineMesh> LineMeshGeom = std::make_shared<imstk::LineMesh>();

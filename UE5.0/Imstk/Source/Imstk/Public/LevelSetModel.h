@@ -5,89 +5,127 @@
 #include "CoreMinimal.h"
 #include "DynamicalModel.h"
 #include "ProceduralMeshComponent.h"
+#include "ImageDataAsset.h"
 #include "imstkLevelSetDeformableObject.h"
 
 #include "imstkLocalMarchingCubes.h"
 #include "LevelSetModel.generated.h"
 
-class FemurObject : public imstk::LevelSetDeformableObject
+/** \file LevelSetModel.h
+ *  \brief Generates a level set deformable model using the ImageDataAsset provided
+ *  \details Contains LevelSetObject class and ULevelSetModel class
+ */
+
+class LevelSetObject : public imstk::LevelSetDeformableObject
 {
 public:
-    FemurObject(UProceduralMeshComponent* ProcMeshComp);
-    ~FemurObject() override = default;
+	LevelSetObject(UProceduralMeshComponent* ProcMeshComp, UImageDataAsset* ImageData, UMaterial* Material);
+	~LevelSetObject() override = default;
 
 public:
-    ///
-    /// \brief Update the isosurface before rendering, the isosurface
-    /// is not used for simulation so we can afford to update it
-    /// less frequently
-    ///
-    void visualUpdate() override;
+	///
+	/// \brief Update the isosurface before rendering, the isosurface
+	/// is not used for simulation so we can afford to update it
+	/// less frequently
+	///
+	void visualUpdate() override;
 
-    ///
-    /// \brief Creates visual models for any chunk that has non-zero vertices
-    /// and is not already generated
-    ///
-    void createVisualModels();
+	///
+	/// \brief Creates visual models for any chunk that has non-zero vertices
+	/// and is not already generated
+	///
+	void createVisualModels();
 
-    void setUseRandomChunkColors(const bool useRandom) { m_useRandomChunkColors = useRandom; }
-    bool getUseRandomChunkColors() const { return m_useRandomChunkColors; }
+	void setUseRandomChunkColors(const bool useRandom) { m_useRandomChunkColors = useRandom; }
+	bool getUseRandomChunkColors() const { return m_useRandomChunkColors; }
 
-    void UpdateUnrealMesh();
-
-protected:
-    ///
-    /// \brief Forwards/copies the levelsets list of modified voxels to the isosurface
-    /// extraction filters list of modified voxels
-    ///
-    void updateModifiedVoxels();
-
-    ///
-    /// \brief Setup connectivity of task graph
-    ///
-    virtual void initGraphEdges(std::shared_ptr<imstk::TaskNode> source, std::shared_ptr<imstk::TaskNode> sink) override;
+	void UpdateUnrealMesh();
 
 protected:
-    std::shared_ptr<imstk::LocalMarchingCubes> m_isoExtract;
-    std::unordered_set<int>   m_chunksGenerated;               // Lazy generation of chunks
-    std::shared_ptr<imstk::TaskNode> m_forwardModifiedVoxels;
-    bool m_useRandomChunkColors = false;
+	///
+	/// \brief Forwards/copies the levelsets list of modified voxels to the isosurface
+	/// extraction filters list of modified voxels
+	///
+	void updateModifiedVoxels();
 
-    // TODO: NEED TO DELETE
-    UProceduralMeshComponent* MeshComp;
+	///
+	/// \brief Setup connectivity of task graph
+	///
+	virtual void initGraphEdges(std::shared_ptr<imstk::TaskNode> source, std::shared_ptr<imstk::TaskNode> sink) override;
+
+public:
+	std::shared_ptr<imstk::ImageData> initLvlSetImage;
+protected:
+	std::shared_ptr<imstk::LocalMarchingCubes> m_isoExtract;
+	std::unordered_set<int>   m_chunksGenerated;               // Lazy generation of chunks
+	std::shared_ptr<imstk::TaskNode> m_forwardModifiedVoxels;
+	bool m_useRandomChunkColors = false;
+
+	UPROPERTY()
+		UProceduralMeshComponent* MeshComp;
+	UPROPERTY()
+		UMaterial* Material;
 };
 
 
-/**
- *
- */
+
 UCLASS(ClassGroup = (Imstk), meta = (BlueprintSpawnableComponent))
 class IMSTK_API ULevelSetModel : public UDynamicalModel
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
-    // Called every frame
-    virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-    // Called when the game starts or when spawned
-    virtual void BeginPlay() override;
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
-    virtual void InitializeComponent() override;
+	virtual void InitializeComponent() override;
 
-    /** Initializes the rigid object that is defined in editor through the geometry filter
-    * @return None
-    */
-    virtual void Init() override;
-    std::shared_ptr<FemurObject> TESTObj;
+	/** Initializes the rigid object that is defined in editor through the geometry filter
+	* @return None
+	*/
+	virtual void Init() override;
+
+	// Image data asset to generate the iMSTK object from
+	UPROPERTY(EditAnywhere, Category = "General")
+		UImageDataAsset* ImageData;
+
+	// The material to be set on each section of the mesh (TODO)
+	UPROPERTY(EditAnywhere, Category = "General")
+		UMaterial* ImageMaterial;
+
+	// The iMSTK LevelSet Object
+	std::shared_ptr<LevelSetObject> LevelSetObj;
+
+	/** Generates the data for the surface mesh. Can be called in the blueprint to obtain vertices, indices and normals for the mesh
+	* @return the MeshDataStruct containing information regarding the surface mesh of the levelset
+	*/
+	UFUNCTION(BlueprintCallable, Category = "iMSTKTEST")
+		FMeshDataStruct GenerateSurfaceMeshData(bool FlipNormals = false);
+
+	/*UFUNCTION(BlueprintCallable, Category = "iMSTKTEST")
+		void GenerateSurfaceMeshData();
+
+	UFUNCTION(BlueprintCallable, Category = "iMSTKTEST")
+		void GenerateLevelSetData();*/
 
 protected:
-    UPROPERTY()
-        UProceduralMeshComponent* MeshComp;
+	// The mesh component that will be generated to represent the LevelSet during runtime
+	UPROPERTY()
+		UProceduralMeshComponent* MeshComp;
 
-    void UpdateModel();
+	// The mesh component to represent the LevelSet when using the editor. Will be disabled upon starting the game
+	UPROPERTY(BlueprintReadWrite, Category = "General")
+		UProceduralMeshComponent* EditorMeshComp;
 
-    std::shared_ptr<imstk::LevelSetDeformableObject> LevelsetObj;
+	/** Updates the visuals for the LevelSet model
+	* @return none
+	*/
+	void UpdateModel();
 
+public:
+	virtual void UnInit() override;
 };
 
