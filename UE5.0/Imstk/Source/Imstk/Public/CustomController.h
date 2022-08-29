@@ -121,7 +121,7 @@ protected:
 		int MaxNumConstraints = 40;
 
 	// Inertia tensor of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "ToolSettings")
 		float InertiaTensorMultiplier = 1.0;
 
 	// Moves the tool using force rather than moving directly to the position given
