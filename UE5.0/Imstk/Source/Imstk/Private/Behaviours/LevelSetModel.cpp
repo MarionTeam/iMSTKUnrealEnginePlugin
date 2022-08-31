@@ -2,11 +2,11 @@
 
 
 #include "LevelSetModel.h"
-#include "imstkSurfaceMeshDistanceTransform.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
+#include "imstkSurfaceMeshDistanceTransform.h"
 #include "imstkLevelSetModel.h"
 
-#include "imstkMeshIO.h"
 #include "imstkVisualModel.h"
 #include "imstkSignedDistanceField.h"
 #include "imstkTaskGraph.h"
@@ -146,6 +146,7 @@ LevelSetObject::LevelSetObject(UProceduralMeshComponent* ProcMeshComp, UImageDat
 m_isoExtract(std::make_shared<imstk::LocalMarchingCubes>())
 {
 	MeshComp = ProcMeshComp;
+	this->Material = Material;
 	initLvlSetImage = ImageData->GetImageData();
 
 	const imstk::Vec3d& currSpacing = initLvlSetImage->getSpacing();
@@ -230,6 +231,10 @@ LevelSetObject::createVisualModels()
 			surfMeshModel->setGeometry(m_isoExtract->getOutput(i));
 
 			TArray<FVector2D> UV0;
+			/*for (int j = 0; j < surfMesh->getNumVertices(); j++) {
+				UV0.Add(FVector2D(FMath::FRand(), FMath::FRand()));
+			}*/
+
 			TArray<FLinearColor> VertColors;
 			TArray<FProcMeshTangent> Tangents;
 			imstk::VecDataArray<double, 3>& ImstkNorms = *surfMesh->getVertexNormals();
@@ -246,10 +251,10 @@ LevelSetObject::createVisualModels()
 
 			MeshComp->CreateMeshSection_LinearColor(i, Verts, Indices, Normals, UV0, VertColors, Tangents, false);
 
-			/*if (Material) {
+			if (Material) {
 				auto* MaterialInstance = UMaterialInstanceDynamic::Create(Material, Material);
-				MeshComp->SetMaterial(i, Material);
-			}*/
+				MeshComp->SetMaterial(i, MaterialInstance);
+			}
 			addVisualModel(surfMeshModel);
 			m_chunksGenerated.insert(i);
 		}
@@ -293,6 +298,10 @@ LevelSetObject::UpdateUnrealMesh()
 		auto surfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(m_isoExtract->getOutput(i.first));
 		if (surfMesh->getNumVertices() > 0) {
 			TArray<FVector2D> UV0;
+			/*for (int j = 0; j < surfMesh->getNumVertices(); j++) {
+				UV0.Add(FVector2D(FMath::FRand(), FMath::FRand()));
+			}*/
+
 			TArray<FLinearColor> VertColors;
 			TArray<FProcMeshTangent> Tangents;
 			imstk::VecDataArray<double, 3>& ImstkNorms = *surfMesh->getVertexNormals();
@@ -313,6 +322,10 @@ LevelSetObject::UpdateUnrealMesh()
 			MeshComp->ClearMeshSection(i.first);
 			MeshComp->CreateMeshSection_LinearColor(i.first, Verts, Indices, Normals, UV0, VertColors, Tangents, false);
 			//}
+			if (Material) {
+				auto* MaterialInstance = UMaterialInstanceDynamic::Create(Material, Material);
+				MeshComp->SetMaterial(i.first, MaterialInstance);
+			}
 		}
 		else
 		{
