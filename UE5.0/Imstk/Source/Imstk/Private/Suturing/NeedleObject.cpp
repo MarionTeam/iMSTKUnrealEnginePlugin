@@ -2,6 +2,7 @@
 
 #include "NeedleObject.h"
 #include "Interfaces/IPluginManager.h"
+#include "MathUtil.h"
 #include "imstkIsometricMap.h"
 #include "imstkLineMesh.h"
 #include "imstkMeshIO.h"
@@ -13,7 +14,7 @@
 #include "imstkVisualModel.h"
 #include "imstkCollisionUtils.h"
 
-NeedleObject::NeedleObject(std::shared_ptr<imstk::RigidBodyModel2> rbdModel) : imstk::RigidObject2("Needle")
+NeedleObject::NeedleObject(std::shared_ptr<imstk::RigidBodyModel2> rbdModel, USceneComponent* Comp) : imstk::RigidObject2("Needle")
 {
 	FString ContentDir = IPluginManager::Get().FindPlugin((TEXT("Imstk")))->GetContentDir();
 
@@ -22,6 +23,8 @@ NeedleObject::NeedleObject(std::shared_ptr<imstk::RigidBodyModel2> rbdModel) : i
 
 	const imstk::Mat4d rot = imstk::mat4dRotation(imstk::Rotd(-PI_2, imstk::Vec3d(0.0, 1.0, 0.0))) *
 		imstk::mat4dRotation(imstk::Rotd(-0.6, imstk::Vec3d(1.0, 0.0, 0.0)));
+
+	sutureMesh->setScaling(UMathUtil::ToImstkVec3d(Comp->GetComponentScale(), false));
 
 	sutureMesh->transform(rot, imstk::Geometry::TransformType::ApplyToData);
 	sutureLineMesh->transform(rot, imstk::Geometry::TransformType::ApplyToData);

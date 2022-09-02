@@ -241,7 +241,7 @@ struct FLineMeshGeomStruct : public FGeometryTypeStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
 		TArray<FVector> Vertices;
 
-	FLineMeshGeomStruct() {};
+	FLineMeshGeomStruct() { Vertices = TArray<FVector>(); };
 
 	/** Creates an Imstk Plane using the provided parameters and editor values.
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry

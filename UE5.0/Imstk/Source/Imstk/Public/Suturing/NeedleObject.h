@@ -26,7 +26,7 @@ public:
 		INSERTED
 	};
 
-	NeedleObject(std::shared_ptr<imstk::RigidBodyModel2> rbdModel);
+	NeedleObject(std::shared_ptr<imstk::RigidBodyModel2> rbdModel, USceneComponent* Comp);
 	virtual ~NeedleObject() = default;
 
 	IMSTK_TYPE_NAME(NeedleObject)

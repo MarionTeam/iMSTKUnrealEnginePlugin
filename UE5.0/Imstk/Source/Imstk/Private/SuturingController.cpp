@@ -35,7 +35,7 @@ void USuturingController::InitController()
 	}
 
 	Super::InitController();
-	Needle = std::make_shared<NeedleObject>(SubsystemInstance->RigidBodyModel);
+	Needle = std::make_shared<NeedleObject>(SubsystemInstance->RigidBodyModel, this);
 	Needle->setForceThreshold(ForceThreshold);
 	// Create unreal visuals for the needle
 	{
@@ -83,6 +83,8 @@ void USuturingController::InitController()
 
 	ToolObj = Needle;
 	SubsystemInstance->ActiveScene->addSceneObject(ToolObj);
+
+	Super::bIsInitialized = true;
 }
 
 void USuturingController::SetThread(UPBDThread* Input)
@@ -111,6 +113,8 @@ void USuturingController::UpdateImstkPosRot(FVector Location, FQuat Orientation)
 		GhostMeshComp->SetWorldLocation(Location);
 		GhostMeshComp->SetWorldRotation(Orientation);
 		
+
+		// From imstkRigidObjectController
 		const imstk::Vec3d& currPos = Needle->getRigidBody()->getPosition();
 		const imstk::Quatd& currOrientation = Needle->getRigidBody()->getOrientation();
 		const imstk::Vec3d& currVelocity = Needle->getRigidBody()->getVelocity();
@@ -122,27 +126,24 @@ void USuturingController::UpdateImstkPosRot(FVector Location, FQuat Orientation)
 		const imstk::Quatd& deviceOrientation = UMathUtil::ToImstkQuat(Orientation);
 		const imstk::Vec3d& deviceOffset = imstk::Vec3d(0.0, 0.0, 0.0);
 
-		double m_linearKd = LinearKd;                             ///< Damping coefficient, linear
-		double m_angularKd = AngularKd;                                  ///< Damping coefficient, rotational
 		imstk::Vec3d  m_linearKs = imstk::Vec3d(LinearKs, LinearKs, LinearKs); ///< Spring coefficient, linear
 		imstk::Vec3d  m_angularKs = imstk::Vec3d(AngularKs, AngularKs, AngularKs);       ///< Spring coefficient, rotational
-		// If using critical damping automatically compute kd
-		{
-			const double mass = Needle->getRigidBody()->getMass();
-			const double linearKs = m_linearKs.maxCoeff();
-			m_linearKd = 2.0 * std::sqrt(mass * linearKs);
+		//{
+		//	const double mass = Needle->getRigidBody()->getMass();
+		//	const double linearKs = m_linearKs.maxCoeff();
+		//	LinearKd = 2.0 * std::sqrt(mass * linearKs);
 
-			const imstk::Mat3d inertia = Needle->getRigidBody()->getIntertiaTensor();
-			// Currently kd is not a 3d vector though it could be.
-			// So here we make an approximation. Either:
-			//  - Use one colums eigenvalue (maxCoeff)
-			//  - cbrt(eigenvalue0*eigenvalue1*eigenvalue2). (det)
-			// Both may behave weird on anistropic inertia tensors
-			//const double inertiaScale = inertia.eigenvalues().real().maxCoeff();
-			const double inertiaScale = std::cbrt(inertia.determinant());
-			const double angularKs = m_angularKs.maxCoeff();
-			m_angularKd = 2.0 * std::sqrt(inertiaScale * angularKs);
-		}
+		//	const imstk::Mat3d inertia = Needle->getRigidBody()->getIntertiaTensor();
+		//	// Currently kd is not a 3d vector though it could be.
+		//	// So here we make an approximation. Either:
+		//	//  - Use one colums eigenvalue (maxCoeff)
+		//	//  - cbrt(eigenvalue0*eigenvalue1*eigenvalue2). (det)
+		//	// Both may behave weird on anistropic inertia tensors
+		//	//const double inertiaScale = inertia.eigenvalues().real().maxCoeff();
+		//	const double inertiaScale = std::cbrt(inertia.determinant());
+		//	const double angularKs = m_angularKs.maxCoeff();
+		//	AngularKd = 2.0 * std::sqrt(inertiaScale * angularKs);
+		//}
 
 		// If kd > 2 * sqrt(mass * ks); The system is overdamped (may be intentional)
 		// If kd < 2 * sqrt(mass * ks); The system is underdamped (never intended)
@@ -159,19 +160,26 @@ void USuturingController::UpdateImstkPosRot(FVector Location, FQuat Orientation)
 
 			// Compute force
 			m_fS = m_linearKs.cwiseProduct(devicePos - currPos - deviceOffset);
-			m_fD = m_linearKd * (-currVelocity - currAngularVelocity.cross(deviceOffset));
+			m_fD = LinearKd * (-currVelocity - currAngularVelocity.cross(deviceOffset));
 			imstk::Vec3d force = m_fS + m_fD;
 
 			// Compute torque
 			const imstk::Quatd dq = deviceOrientation * currOrientation.inverse();
 			const imstk::Rotd  angleAxes = imstk::Rotd(dq);
 			m_tS = deviceOffset.cross(force) + m_angularKs.cwiseProduct(angleAxes.axis() * angleAxes.angle());
-			m_tD = m_angularKd * -currAngularVelocity;
+			m_tD = AngularKd * -currAngularVelocity;
 			imstk::Vec3d torque = m_tS + m_tD;
 
 			currForce += (force * 0.00005);
 			currTorque += (torque * 0.00005);
 		}
+
+		// TODO: update this to the force movement version in suturing controller
+		//imstk::Vec3d fS = (UMathUtil::ToImstkVec3d(Location, true) - Needle->getRigidBody()->getPosition()) * SpringForce; // Spring force
+		//imstk::Vec3d fD = -Needle->getRigidBody()->getVelocity() * SpringDamping; // Spring damping
+		//(*Needle->getRigidBody()->m_force) += (fS + fD);
+
+		//Needle->getRigidBody()->m_orientation = new imstk::Quatd(UMathUtil::ToImstkQuat(Orientation));
 		
 	}
 

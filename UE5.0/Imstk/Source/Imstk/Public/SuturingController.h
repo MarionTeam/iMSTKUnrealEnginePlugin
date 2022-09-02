@@ -46,6 +46,13 @@ public:
 		double AngularKd = 300;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "ToolSettings")
 		double ForceScaling = 0.00001;
+
+	// Spring force of the force applied to the tool
+	//UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "ToolSettings")
+	//	float SpringForce = 10000;
+	//// Spring damping of the force applied to the tool
+	//UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "ToolSettings")
+	//	float SpringDamping = 100;
 	
 	// Material of the ghost model for the needle
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "ToolSettings")
