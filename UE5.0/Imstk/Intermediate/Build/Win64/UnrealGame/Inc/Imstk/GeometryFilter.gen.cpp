@@ -944,7 +944,7 @@ template<> IMSTK_API UScriptStruct* StaticStruct<FGeometryFilter>()
 		{ "ModuleRelativePath", "Public/GeometryFilter.h" },
 	};
 #endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_SphereStruct = { "SphereStruct", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, SphereStruct), Z_Construct_UScriptStruct_FSphereGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_SphereStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_SphereStruct_MetaData)) }; // 3879012486
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_SphereStruct = { "SphereStruct", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, SphereStruct), Z_Construct_UScriptStruct_FSphereGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_SphereStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_SphereStruct_MetaData)) }; // 3879012486
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_MeshStruct_MetaData[] = {
 		{ "Category", "General" },
@@ -953,7 +953,7 @@ template<> IMSTK_API UScriptStruct* StaticStruct<FGeometryFilter>()
 		{ "ModuleRelativePath", "Public/GeometryFilter.h" },
 	};
 #endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_MeshStruct = { "MeshStruct", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, MeshStruct), Z_Construct_UScriptStruct_FSurfaceMeshGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_MeshStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_MeshStruct_MetaData)) }; // 17117586
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_MeshStruct = { "MeshStruct", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, MeshStruct), Z_Construct_UScriptStruct_FSurfaceMeshGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_MeshStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_MeshStruct_MetaData)) }; // 17117586
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CapsuleStruct_MetaData[] = {
 		{ "Category", "General" },
@@ -962,7 +962,7 @@ template<> IMSTK_API UScriptStruct* StaticStruct<FGeometryFilter>()
 		{ "ModuleRelativePath", "Public/GeometryFilter.h" },
 	};
 #endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CapsuleStruct = { "CapsuleStruct", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, CapsuleStruct), Z_Construct_UScriptStruct_FCapsuleGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CapsuleStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CapsuleStruct_MetaData)) }; // 2861642361
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CapsuleStruct = { "CapsuleStruct", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, CapsuleStruct), Z_Construct_UScriptStruct_FCapsuleGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CapsuleStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CapsuleStruct_MetaData)) }; // 2861642361
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CylinderStruct_MetaData[] = {
 		{ "Category", "General" },
@@ -971,7 +971,7 @@ template<> IMSTK_API UScriptStruct* StaticStruct<FGeometryFilter>()
 		{ "ModuleRelativePath", "Public/GeometryFilter.h" },
 	};
 #endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CylinderStruct = { "CylinderStruct", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, CylinderStruct), Z_Construct_UScriptStruct_FCylinderGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CylinderStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CylinderStruct_MetaData)) }; // 3341961288
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CylinderStruct = { "CylinderStruct", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, CylinderStruct), Z_Construct_UScriptStruct_FCylinderGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CylinderStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_CylinderStruct_MetaData)) }; // 3341961288
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PointSetStruct_MetaData[] = {
 		{ "Category", "General" },
@@ -980,7 +980,7 @@ template<> IMSTK_API UScriptStruct* StaticStruct<FGeometryFilter>()
 		{ "ModuleRelativePath", "Public/GeometryFilter.h" },
 	};
 #endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PointSetStruct = { "PointSetStruct", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, PointSetStruct), Z_Construct_UScriptStruct_FPointSetGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PointSetStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PointSetStruct_MetaData)) }; // 3919939220
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PointSetStruct = { "PointSetStruct", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, PointSetStruct), Z_Construct_UScriptStruct_FPointSetGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PointSetStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PointSetStruct_MetaData)) }; // 3919939220
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_OrientedBoxStruct_MetaData[] = {
 		{ "Category", "General" },
@@ -989,7 +989,7 @@ template<> IMSTK_API UScriptStruct* StaticStruct<FGeometryFilter>()
 		{ "ModuleRelativePath", "Public/GeometryFilter.h" },
 	};
 #endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_OrientedBoxStruct = { "OrientedBoxStruct", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, OrientedBoxStruct), Z_Construct_UScriptStruct_FOrientedBoxGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_OrientedBoxStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_OrientedBoxStruct_MetaData)) }; // 1045054720
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_OrientedBoxStruct = { "OrientedBoxStruct", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, OrientedBoxStruct), Z_Construct_UScriptStruct_FOrientedBoxGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_OrientedBoxStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_OrientedBoxStruct_MetaData)) }; // 1045054720
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PlaneStruct_MetaData[] = {
 		{ "Category", "General" },
@@ -998,7 +998,7 @@ template<> IMSTK_API UScriptStruct* StaticStruct<FGeometryFilter>()
 		{ "ModuleRelativePath", "Public/GeometryFilter.h" },
 	};
 #endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PlaneStruct = { "PlaneStruct", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, PlaneStruct), Z_Construct_UScriptStruct_FPlaneGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PlaneStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PlaneStruct_MetaData)) }; // 1030131400
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PlaneStruct = { "PlaneStruct", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, PlaneStruct), Z_Construct_UScriptStruct_FPlaneGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PlaneStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_PlaneStruct_MetaData)) }; // 1030131400
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_LineMeshStruct_MetaData[] = {
 		{ "Category", "General" },
@@ -1007,7 +1007,7 @@ template<> IMSTK_API UScriptStruct* StaticStruct<FGeometryFilter>()
 		{ "ModuleRelativePath", "Public/GeometryFilter.h" },
 	};
 #endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_LineMeshStruct = { "LineMeshStruct", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, LineMeshStruct), Z_Construct_UScriptStruct_FLineMeshGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_LineMeshStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_LineMeshStruct_MetaData)) }; // 471779539
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_LineMeshStruct = { "LineMeshStruct", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FGeometryFilter, LineMeshStruct), Z_Construct_UScriptStruct_FLineMeshGeomStruct, METADATA_PARAMS(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_LineMeshStruct_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_LineMeshStruct_MetaData)) }; // 471779539
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FGeometryFilter_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_GeomType,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewProp_SphereStruct,
@@ -1059,9 +1059,9 @@ template<> IMSTK_API UScriptStruct* StaticStruct<FGeometryFilter>()
 		{ FOrientedBoxGeomStruct::StaticStruct, Z_Construct_UScriptStruct_FOrientedBoxGeomStruct_Statics::NewStructOps, TEXT("OrientedBoxGeomStruct"), &Z_Registration_Info_UScriptStruct_OrientedBoxGeomStruct, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FOrientedBoxGeomStruct), 1045054720U) },
 		{ FPlaneGeomStruct::StaticStruct, Z_Construct_UScriptStruct_FPlaneGeomStruct_Statics::NewStructOps, TEXT("PlaneGeomStruct"), &Z_Registration_Info_UScriptStruct_PlaneGeomStruct, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPlaneGeomStruct), 1030131400U) },
 		{ FLineMeshGeomStruct::StaticStruct, Z_Construct_UScriptStruct_FLineMeshGeomStruct_Statics::NewStructOps, TEXT("LineMeshGeomStruct"), &Z_Registration_Info_UScriptStruct_LineMeshGeomStruct, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FLineMeshGeomStruct), 471779539U) },
-		{ FGeometryFilter::StaticStruct, Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewStructOps, TEXT("GeometryFilter"), &Z_Registration_Info_UScriptStruct_GeometryFilter, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FGeometryFilter), 76715730U) },
+		{ FGeometryFilter::StaticStruct, Z_Construct_UScriptStruct_FGeometryFilter_Statics::NewStructOps, TEXT("GeometryFilter"), &Z_Registration_Info_UScriptStruct_GeometryFilter, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FGeometryFilter), 3953847503U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_GeometryFilter_h_1596122225(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_GeometryFilter_h_2115647728(TEXT("/Script/Imstk"),
 		nullptr, 0,
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_GeometryFilter_h_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_GeometryFilter_h_Statics::ScriptStructInfo),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_GeometryFilter_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_GeometryFilter_h_Statics::EnumInfo));

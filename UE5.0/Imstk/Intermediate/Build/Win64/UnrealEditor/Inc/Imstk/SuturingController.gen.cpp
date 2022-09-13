@@ -415,9 +415,9 @@ void EmptyLinkFunctionForGeneratedCodeSuturingController() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_SuturingController_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_USuturingController, USuturingController::StaticClass, TEXT("USuturingController"), &Z_Registration_Info_UClass_USuturingController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(USuturingController), 548920935U) },
+		{ Z_Construct_UClass_USuturingController, USuturingController::StaticClass, TEXT("USuturingController"), &Z_Registration_Info_UClass_USuturingController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(USuturingController), 825333063U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_SuturingController_h_1806676605(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_SuturingController_h_1524291806(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_SuturingController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_SuturingController_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

@@ -18,14 +18,16 @@ class IMSTK_API UPBDThread : public UDeformableModel
 
 
 public:
+	UPBDThread();
+
 	// Zeros the tangents for the spine in Unreal 
     // TODO: maybe remove this option
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "General|Advanced")
 		bool bZeroTangents = false;
 
-	UPROPERTY(EditAnywhere, Category = "Constraints")
+	UPROPERTY(EditAnywhere, Category = "General|Advanced|Constraints")
 		bool bUseBendConstraint = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseBendConstraint", EditConditionHides), Category = "Constraints")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseBendConstraint", EditConditionHides), Category = "General|Advanced|Constraints")
 		float BendStiffness = 0.0;
 
 	// Spline component attached to the Actor

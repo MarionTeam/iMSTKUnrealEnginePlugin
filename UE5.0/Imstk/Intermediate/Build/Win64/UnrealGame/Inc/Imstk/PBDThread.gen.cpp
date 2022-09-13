@@ -125,7 +125,7 @@ void EmptyLinkFunctionForGeneratedCodePBDThread() {}
 #endif
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDThread_Statics::NewProp_bZeroTangents_MetaData[] = {
-		{ "Category", "General" },
+		{ "Category", "General|Advanced" },
 		{ "Comment", "// Zeros the tangents for the spine in Unreal \n// TODO: maybe remove this option\n" },
 		{ "ModuleRelativePath", "Public/PBDThread.h" },
 		{ "ToolTip", "Zeros the tangents for the spine in Unreal\nTODO: maybe remove this option" },
@@ -138,7 +138,7 @@ void EmptyLinkFunctionForGeneratedCodePBDThread() {}
 	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UPBDThread_Statics::NewProp_bZeroTangents = { "bZeroTangents", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UPBDThread), &Z_Construct_UClass_UPBDThread_Statics::NewProp_bZeroTangents_SetBit, METADATA_PARAMS(Z_Construct_UClass_UPBDThread_Statics::NewProp_bZeroTangents_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDThread_Statics::NewProp_bZeroTangents_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDThread_Statics::NewProp_bUseBendConstraint_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "ModuleRelativePath", "Public/PBDThread.h" },
 	};
 #endif
@@ -149,7 +149,7 @@ void EmptyLinkFunctionForGeneratedCodePBDThread() {}
 	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UPBDThread_Statics::NewProp_bUseBendConstraint = { "bUseBendConstraint", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UPBDThread), &Z_Construct_UClass_UPBDThread_Statics::NewProp_bUseBendConstraint_SetBit, METADATA_PARAMS(Z_Construct_UClass_UPBDThread_Statics::NewProp_bUseBendConstraint_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDThread_Statics::NewProp_bUseBendConstraint_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDThread_Statics::NewProp_BendStiffness_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "EditCondition", "bUseBendConstraint" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/PBDThread.h" },
@@ -207,9 +207,9 @@ void EmptyLinkFunctionForGeneratedCodePBDThread() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDThread_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPBDThread, UPBDThread::StaticClass, TEXT("UPBDThread"), &Z_Registration_Info_UClass_UPBDThread, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPBDThread), 1579950164U) },
+		{ Z_Construct_UClass_UPBDThread, UPBDThread::StaticClass, TEXT("UPBDThread"), &Z_Registration_Info_UClass_UPBDThread, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPBDThread), 1772321125U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDThread_h_2999177662(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDThread_h_3102200793(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDThread_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDThread_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

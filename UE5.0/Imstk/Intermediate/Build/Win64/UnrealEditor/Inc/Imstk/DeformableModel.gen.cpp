@@ -173,7 +173,7 @@ void EmptyLinkFunctionForGeneratedCodeDeformableModel() {}
 	const UECodeGen_Private::FDoublePropertyParams Z_Construct_UClass_UDeformableModel_Statics::NewProp_Mass = { "Mass", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Double, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UDeformableModel, Mass), METADATA_PARAMS(Z_Construct_UClass_UDeformableModel_Statics::NewProp_Mass_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UDeformableModel_Statics::NewProp_Mass_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UDeformableModel_Statics::NewProp_ViscousDampingCoeff_MetaData[] = {
-		{ "Category", "General" },
+		{ "Category", "General|Advanced" },
 		{ "Comment", "// Viscous damping coefficient of the PBDModel\n" },
 		{ "ModuleRelativePath", "Public/DeformableModel.h" },
 		{ "ToolTip", "Viscous damping coefficient of the PBDModel" },
@@ -182,7 +182,7 @@ void EmptyLinkFunctionForGeneratedCodeDeformableModel() {}
 	const UECodeGen_Private::FDoublePropertyParams Z_Construct_UClass_UDeformableModel_Statics::NewProp_ViscousDampingCoeff = { "ViscousDampingCoeff", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Double, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UDeformableModel, ViscousDampingCoeff), METADATA_PARAMS(Z_Construct_UClass_UDeformableModel_Statics::NewProp_ViscousDampingCoeff_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UDeformableModel_Statics::NewProp_ViscousDampingCoeff_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UDeformableModel_Statics::NewProp_ModelIterations_MetaData[] = {
-		{ "Category", "General" },
+		{ "Category", "General|Advanced" },
 		{ "Comment", "// Number of iterations of the PBDModel\n" },
 		{ "ModuleRelativePath", "Public/DeformableModel.h" },
 		{ "ToolTip", "Number of iterations of the PBDModel" },
@@ -191,7 +191,7 @@ void EmptyLinkFunctionForGeneratedCodeDeformableModel() {}
 	const UECodeGen_Private::FUnsizedIntPropertyParams Z_Construct_UClass_UDeformableModel_Statics::NewProp_ModelIterations = { "ModelIterations", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UDeformableModel, ModelIterations), METADATA_PARAMS(Z_Construct_UClass_UDeformableModel_Statics::NewProp_ModelIterations_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UDeformableModel_Statics::NewProp_ModelIterations_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UDeformableModel_Statics::NewProp_ContactStiffness_MetaData[] = {
-		{ "Category", "General" },
+		{ "Category", "General|Advanced" },
 		{ "Comment", "// Contact stiffness of the PBDmodel\n" },
 		{ "ModuleRelativePath", "Public/DeformableModel.h" },
 		{ "ToolTip", "Contact stiffness of the PBDmodel" },
@@ -200,7 +200,7 @@ void EmptyLinkFunctionForGeneratedCodeDeformableModel() {}
 	const UECodeGen_Private::FDoublePropertyParams Z_Construct_UClass_UDeformableModel_Statics::NewProp_ContactStiffness = { "ContactStiffness", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Double, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UDeformableModel, ContactStiffness), METADATA_PARAMS(Z_Construct_UClass_UDeformableModel_Statics::NewProp_ContactStiffness_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UDeformableModel_Statics::NewProp_ContactStiffness_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseDistanceConstraint_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "ModuleRelativePath", "Public/DeformableModel.h" },
 	};
 #endif
@@ -211,7 +211,7 @@ void EmptyLinkFunctionForGeneratedCodeDeformableModel() {}
 	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseDistanceConstraint = { "bUseDistanceConstraint", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UDeformableModel), &Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseDistanceConstraint_SetBit, METADATA_PARAMS(Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseDistanceConstraint_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseDistanceConstraint_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UDeformableModel_Statics::NewProp_DistanceConstraint_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "EditCondition", "bUseDistanceConstraint" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/DeformableModel.h" },
@@ -220,7 +220,7 @@ void EmptyLinkFunctionForGeneratedCodeDeformableModel() {}
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UDeformableModel_Statics::NewProp_DistanceConstraint = { "DistanceConstraint", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UDeformableModel, DistanceConstraint), METADATA_PARAMS(Z_Construct_UClass_UDeformableModel_Statics::NewProp_DistanceConstraint_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UDeformableModel_Statics::NewProp_DistanceConstraint_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseConstantDensityConstraint_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "Comment", "/*UPROPERTY(EditAnywhere, meta = (EditCondition = \"TetrahedralMesh == nullptr\", EditConditionHides), Category = \"Constraints\")\n\x09\x09""bool bUseDihedralConstraint = false;\n\x09UPROPERTY(EditAnywhere, meta = (EditCondition = \"bUseDihedralConstraint && TetrahedralMesh == nullptr\", EditConditionHides), Category = \"Constraints\")\n\x09\x09""float DihedralConstraint = 0.0;\n\n\x09UPROPERTY(EditAnywhere, meta = (EditCondition = \"TetrahedralMesh != nullptr\", EditConditionHides), Category = \"Constraints\")\n\x09\x09""bool bUseVolumeConstraint = false;\n\x09UPROPERTY(EditAnywhere, meta = (EditCondition = \"bUseVolumeConstraint && TetrahedralMesh != nullptr\", EditConditionHides), Category = \"Constraints\")\n\x09\x09""float VolumeConstraint = 0.0;\n\n\x09UPROPERTY(EditAnywhere, meta = (EditCondition = \"TetrahedralMesh != nullptr\", EditConditionHides), Category = \"Constraints\")\n\x09\x09""bool bUseFEMConstraint = false;\n\x09UPROPERTY(EditAnywhere, meta = (EditCondition = \"bUseFEMConstraint && TetrahedralMesh != nullptr\", EditConditionHides), Category = \"Constraints\")\n\x09\x09""float YoungsModulus = 0.0;\n\x09UPROPERTY(EditAnywhere, meta = (EditCondition = \"bUseFEMConstraint && TetrahedralMesh != nullptr\", EditConditionHides), Category = \"Constraints\")\n\x09\x09""float PossionsRatio = 0.0;\n\x09UPROPERTY(EditAnywhere, meta = (EditCondition = \"bUseFEMConstraint && TetrahedralMesh != nullptr\", EditConditionHides), Category = \"Constraints\")\n\x09\x09TEnumAsByte<FemConstraintMaterial> MaterialType = FemConstraintMaterial::StVK;*/" },
 		{ "ModuleRelativePath", "Public/DeformableModel.h" },
 		{ "ToolTip", "UPROPERTY(EditAnywhere, meta = (EditCondition = \"TetrahedralMesh == nullptr\", EditConditionHides), Category = \"Constraints\")\n               bool bUseDihedralConstraint = false;\n       UPROPERTY(EditAnywhere, meta = (EditCondition = \"bUseDihedralConstraint && TetrahedralMesh == nullptr\", EditConditionHides), Category = \"Constraints\")\n               float DihedralConstraint = 0.0;\n\n       UPROPERTY(EditAnywhere, meta = (EditCondition = \"TetrahedralMesh != nullptr\", EditConditionHides), Category = \"Constraints\")\n               bool bUseVolumeConstraint = false;\n       UPROPERTY(EditAnywhere, meta = (EditCondition = \"bUseVolumeConstraint && TetrahedralMesh != nullptr\", EditConditionHides), Category = \"Constraints\")\n               float VolumeConstraint = 0.0;\n\n       UPROPERTY(EditAnywhere, meta = (EditCondition = \"TetrahedralMesh != nullptr\", EditConditionHides), Category = \"Constraints\")\n               bool bUseFEMConstraint = false;\n       UPROPERTY(EditAnywhere, meta = (EditCondition = \"bUseFEMConstraint && TetrahedralMesh != nullptr\", EditConditionHides), Category = \"Constraints\")\n               float YoungsModulus = 0.0;\n       UPROPERTY(EditAnywhere, meta = (EditCondition = \"bUseFEMConstraint && TetrahedralMesh != nullptr\", EditConditionHides), Category = \"Constraints\")\n               float PossionsRatio = 0.0;\n       UPROPERTY(EditAnywhere, meta = (EditCondition = \"bUseFEMConstraint && TetrahedralMesh != nullptr\", EditConditionHides), Category = \"Constraints\")\n               TEnumAsByte<FemConstraintMaterial> MaterialType = FemConstraintMaterial::StVK;" },
@@ -233,7 +233,7 @@ void EmptyLinkFunctionForGeneratedCodeDeformableModel() {}
 	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseConstantDensityConstraint = { "bUseConstantDensityConstraint", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UDeformableModel), &Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseConstantDensityConstraint_SetBit, METADATA_PARAMS(Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseConstantDensityConstraint_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseConstantDensityConstraint_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UDeformableModel_Statics::NewProp_ConstantDensityConstraint_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "EditCondition", "bUseConstantDensityConstraint" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/DeformableModel.h" },
@@ -242,7 +242,7 @@ void EmptyLinkFunctionForGeneratedCodeDeformableModel() {}
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UDeformableModel_Statics::NewProp_ConstantDensityConstraint = { "ConstantDensityConstraint", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UDeformableModel, ConstantDensityConstraint), METADATA_PARAMS(Z_Construct_UClass_UDeformableModel_Statics::NewProp_ConstantDensityConstraint_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UDeformableModel_Statics::NewProp_ConstantDensityConstraint_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseAreaConstraint_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "ModuleRelativePath", "Public/DeformableModel.h" },
 	};
 #endif
@@ -253,7 +253,7 @@ void EmptyLinkFunctionForGeneratedCodeDeformableModel() {}
 	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseAreaConstraint = { "bUseAreaConstraint", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UDeformableModel), &Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseAreaConstraint_SetBit, METADATA_PARAMS(Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseAreaConstraint_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UDeformableModel_Statics::NewProp_bUseAreaConstraint_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UDeformableModel_Statics::NewProp_AreaConstraint_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "EditCondition", "bUseAreaConstraint" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/DeformableModel.h" },
@@ -350,9 +350,9 @@ void EmptyLinkFunctionForGeneratedCodeDeformableModel() {}
 		{ FemConstraintMaterial_StaticEnum, TEXT("FemConstraintMaterial"), &Z_Registration_Info_UEnum_FemConstraintMaterial, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 2062938130U) },
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_DeformableModel_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UDeformableModel, UDeformableModel::StaticClass, TEXT("UDeformableModel"), &Z_Registration_Info_UClass_UDeformableModel, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UDeformableModel), 3894065575U) },
+		{ Z_Construct_UClass_UDeformableModel, UDeformableModel::StaticClass, TEXT("UDeformableModel"), &Z_Registration_Info_UClass_UDeformableModel, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UDeformableModel), 3384861837U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_DeformableModel_h_4053956954(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_DeformableModel_h_3225472022(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_DeformableModel_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_DeformableModel_h_Statics::ClassInfo),
 		nullptr, 0,
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_DeformableModel_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_DeformableModel_h_Statics::EnumInfo));

@@ -14,6 +14,63 @@
 
 #include "Engine/GameEngine.h"
 
+UPBDModel::UPBDModel() : UDeformableModel()
+{
+	GeomFilter.GeomType = EGeometryType::SurfaceMesh;
+
+	// Default constraint values for cloth
+	bUseDistanceConstraint = true;
+	DistanceConstraint = 100;
+	bUseConstantDensityConstraint = false;
+	bUseAreaConstraint = false;
+
+	bUseDihedralConstraint = true;
+	DihedralConstraint = 100;
+	bUseVolumeConstraint = false;
+
+	bUseFEMConstraint = false;
+}
+
+void UPBDModel::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
+{
+	GeomFilter.GeomType = EGeometryType::SurfaceMesh;
+
+	FName PropertyName = (PropertyChangedEvent.Property != NULL) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UPBDModel, Preset)) {
+		switch (Preset)
+		{
+		case 0:
+			bUseDistanceConstraint = false;
+			bUseConstantDensityConstraint = false;
+			bUseAreaConstraint = false;
+
+			bUseDihedralConstraint = false;
+			bUseVolumeConstraint = false;
+
+			bUseFEMConstraint = true;
+			MaterialType = FemConstraintMaterial::StVK;
+			YoungsModulus = 50;
+			PossionsRatio = 0.4;
+			break;
+		case 1:
+			bUseDistanceConstraint = true;
+			DistanceConstraint = 100;
+			bUseConstantDensityConstraint = false;
+			bUseAreaConstraint = false;
+
+			bUseDihedralConstraint = true;
+			DihedralConstraint = 100;
+			bUseVolumeConstraint = false;
+
+			bUseFEMConstraint = false;
+			break;
+		default:
+			return;
+		}
+	}
+}
+
 // Called when the game starts or when spawned
 void UPBDModel::BeginPlay()
 {
@@ -133,6 +190,8 @@ void UPBDModel::Init()
 		Geom->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 		Geom->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
 		Geom->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+		std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom)->computeUVSeamVertexGroups();
+
 		Geom->updatePostTransformData();
 		PbdObject->setCollidingGeometry(Geom);
 		PbdObject->setVisualGeometry(Geom);

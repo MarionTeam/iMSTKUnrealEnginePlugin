@@ -21,6 +21,11 @@ public:
 
 	virtual void InitializeComponent() override;
 
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent);
+
+	UPROPERTY(EditAnywhere, Category = "General")
+		TEnumAsByte<EDefaultModelPreset> Preset = EDefaultModelPreset::SurfaceMeshPreset;
+
 	/** Initializes the static colliding object in imstk and adds it to the scene
 	* @return None
 	*/

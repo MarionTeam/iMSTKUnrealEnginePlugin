@@ -9,14 +9,68 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 // Cross Module References
+	IMSTK_API UEnum* Z_Construct_UEnum_Imstk_EPBDModelPresets();
+	UPackage* Z_Construct_UPackage__Script_Imstk();
 	IMSTK_API UClass* Z_Construct_UClass_UPBDModel_NoRegister();
 	IMSTK_API UClass* Z_Construct_UClass_UPBDModel();
 	IMSTK_API UClass* Z_Construct_UClass_UDeformableModel();
-	UPackage* Z_Construct_UPackage__Script_Imstk();
 	IMSTK_API UClass* Z_Construct_UClass_UTetrahedralMeshAsset_NoRegister();
 	IMSTK_API UEnum* Z_Construct_UEnum_Imstk_FemConstraintMaterial();
 	PROCEDURALMESHCOMPONENT_API UClass* Z_Construct_UClass_UProceduralMeshComponent_NoRegister();
 // End Cross Module References
+	static FEnumRegistrationInfo Z_Registration_Info_UEnum_EPBDModelPresets;
+	static UEnum* EPBDModelPresets_StaticEnum()
+	{
+		if (!Z_Registration_Info_UEnum_EPBDModelPresets.OuterSingleton)
+		{
+			Z_Registration_Info_UEnum_EPBDModelPresets.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_Imstk_EPBDModelPresets, Z_Construct_UPackage__Script_Imstk(), TEXT("EPBDModelPresets"));
+		}
+		return Z_Registration_Info_UEnum_EPBDModelPresets.OuterSingleton;
+	}
+	template<> IMSTK_API UEnum* StaticEnum<EPBDModelPresets>()
+	{
+		return EPBDModelPresets_StaticEnum();
+	}
+	struct Z_Construct_UEnum_Imstk_EPBDModelPresets_Statics
+	{
+		static const UECodeGen_Private::FEnumeratorParam Enumerators[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FEnumParams EnumParams;
+	};
+	const UECodeGen_Private::FEnumeratorParam Z_Construct_UEnum_Imstk_EPBDModelPresets_Statics::Enumerators[] = {
+		{ "VolumetricTissuePreset", (int64)VolumetricTissuePreset },
+		{ "ClothPreset", (int64)ClothPreset },
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UEnum_Imstk_EPBDModelPresets_Statics::Enum_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "ClothPreset.Name", "ClothPreset" },
+		{ "ModuleRelativePath", "Public/PBDModel.h" },
+		{ "VolumetricTissuePreset.Name", "VolumetricTissuePreset" },
+	};
+#endif
+	const UECodeGen_Private::FEnumParams Z_Construct_UEnum_Imstk_EPBDModelPresets_Statics::EnumParams = {
+		(UObject*(*)())Z_Construct_UPackage__Script_Imstk,
+		nullptr,
+		"EPBDModelPresets",
+		"EPBDModelPresets",
+		Z_Construct_UEnum_Imstk_EPBDModelPresets_Statics::Enumerators,
+		UE_ARRAY_COUNT(Z_Construct_UEnum_Imstk_EPBDModelPresets_Statics::Enumerators),
+		RF_Public|RF_Transient|RF_MarkAsNative,
+		EEnumFlags::None,
+		(uint8)UEnum::ECppForm::Regular,
+		METADATA_PARAMS(Z_Construct_UEnum_Imstk_EPBDModelPresets_Statics::Enum_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UEnum_Imstk_EPBDModelPresets_Statics::Enum_MetaDataParams))
+	};
+	UEnum* Z_Construct_UEnum_Imstk_EPBDModelPresets()
+	{
+		if (!Z_Registration_Info_UEnum_EPBDModelPresets.InnerSingleton)
+		{
+			UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_EPBDModelPresets.InnerSingleton, Z_Construct_UEnum_Imstk_EPBDModelPresets_Statics::EnumParams);
+		}
+		return Z_Registration_Info_UEnum_EPBDModelPresets.InnerSingleton;
+	}
 	void UPBDModel::StaticRegisterNativesUPBDModel()
 	{
 	}
@@ -76,6 +130,10 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 		static void NewProp_bGenerateSurfaceFromTetrahedral_SetBit(void* Obj);
 		static const UECodeGen_Private::FBoolPropertyParams NewProp_bGenerateSurfaceFromTetrahedral;
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_Preset_MetaData[];
+#endif
+		static const UECodeGen_Private::FBytePropertyParams NewProp_Preset;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_MeshComp_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_MeshComp;
@@ -108,7 +166,7 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPBDModel_Statics::NewProp_TetrahedralMesh = { "TetrahedralMesh", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UPBDModel, TetrahedralMesh), Z_Construct_UClass_UTetrahedralMeshAsset_NoRegister, METADATA_PARAMS(Z_Construct_UClass_UPBDModel_Statics::NewProp_TetrahedralMesh_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDModel_Statics::NewProp_TetrahedralMesh_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseDihedralConstraint_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "EditCondition", "TetrahedralMesh == nullptr" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/PBDModel.h" },
@@ -121,7 +179,7 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseDihedralConstraint = { "bUseDihedralConstraint", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UPBDModel), &Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseDihedralConstraint_SetBit, METADATA_PARAMS(Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseDihedralConstraint_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseDihedralConstraint_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDModel_Statics::NewProp_DihedralConstraint_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "EditCondition", "bUseDihedralConstraint && TetrahedralMesh == nullptr" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/PBDModel.h" },
@@ -130,7 +188,7 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UPBDModel_Statics::NewProp_DihedralConstraint = { "DihedralConstraint", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UPBDModel, DihedralConstraint), METADATA_PARAMS(Z_Construct_UClass_UPBDModel_Statics::NewProp_DihedralConstraint_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDModel_Statics::NewProp_DihedralConstraint_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseVolumeConstraint_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "EditCondition", "TetrahedralMesh != nullptr" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/PBDModel.h" },
@@ -143,7 +201,7 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseVolumeConstraint = { "bUseVolumeConstraint", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UPBDModel), &Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseVolumeConstraint_SetBit, METADATA_PARAMS(Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseVolumeConstraint_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseVolumeConstraint_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDModel_Statics::NewProp_VolumeConstraint_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "EditCondition", "bUseVolumeConstraint && TetrahedralMesh != nullptr" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/PBDModel.h" },
@@ -152,7 +210,7 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UPBDModel_Statics::NewProp_VolumeConstraint = { "VolumeConstraint", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UPBDModel, VolumeConstraint), METADATA_PARAMS(Z_Construct_UClass_UPBDModel_Statics::NewProp_VolumeConstraint_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDModel_Statics::NewProp_VolumeConstraint_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseFEMConstraint_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "EditCondition", "TetrahedralMesh != nullptr" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/PBDModel.h" },
@@ -165,7 +223,7 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseFEMConstraint = { "bUseFEMConstraint", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UPBDModel), &Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseFEMConstraint_SetBit, METADATA_PARAMS(Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseFEMConstraint_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDModel_Statics::NewProp_bUseFEMConstraint_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDModel_Statics::NewProp_YoungsModulus_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "EditCondition", "bUseFEMConstraint && TetrahedralMesh != nullptr" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/PBDModel.h" },
@@ -174,7 +232,7 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UPBDModel_Statics::NewProp_YoungsModulus = { "YoungsModulus", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UPBDModel, YoungsModulus), METADATA_PARAMS(Z_Construct_UClass_UPBDModel_Statics::NewProp_YoungsModulus_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDModel_Statics::NewProp_YoungsModulus_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDModel_Statics::NewProp_PossionsRatio_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "EditCondition", "bUseFEMConstraint && TetrahedralMesh != nullptr" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/PBDModel.h" },
@@ -183,7 +241,7 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UPBDModel_Statics::NewProp_PossionsRatio = { "PossionsRatio", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UPBDModel, PossionsRatio), METADATA_PARAMS(Z_Construct_UClass_UPBDModel_Statics::NewProp_PossionsRatio_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDModel_Statics::NewProp_PossionsRatio_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDModel_Statics::NewProp_MaterialType_MetaData[] = {
-		{ "Category", "Constraints" },
+		{ "Category", "General|Advanced|Constraints" },
 		{ "EditCondition", "bUseFEMConstraint && TetrahedralMesh != nullptr" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/PBDModel.h" },
@@ -206,6 +264,13 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 	}
 	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UPBDModel_Statics::NewProp_bGenerateSurfaceFromTetrahedral = { "bGenerateSurfaceFromTetrahedral", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UPBDModel), &Z_Construct_UClass_UPBDModel_Statics::NewProp_bGenerateSurfaceFromTetrahedral_SetBit, METADATA_PARAMS(Z_Construct_UClass_UPBDModel_Statics::NewProp_bGenerateSurfaceFromTetrahedral_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDModel_Statics::NewProp_bGenerateSurfaceFromTetrahedral_MetaData)) };
 #if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDModel_Statics::NewProp_Preset_MetaData[] = {
+		{ "Category", "General" },
+		{ "ModuleRelativePath", "Public/PBDModel.h" },
+	};
+#endif
+	const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_UPBDModel_Statics::NewProp_Preset = { "Preset", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UPBDModel, Preset), Z_Construct_UEnum_Imstk_EPBDModelPresets, METADATA_PARAMS(Z_Construct_UClass_UPBDModel_Statics::NewProp_Preset_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UPBDModel_Statics::NewProp_Preset_MetaData)) }; // 3789127421
+#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPBDModel_Statics::NewProp_MeshComp_MetaData[] = {
 		{ "Comment", "// Procedural mesh component attached to the actor (will be generated if one is not attached)\n" },
 		{ "EditInline", "true" },
@@ -225,6 +290,7 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDModel_Statics::NewProp_PossionsRatio,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDModel_Statics::NewProp_MaterialType,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDModel_Statics::NewProp_bGenerateSurfaceFromTetrahedral,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDModel_Statics::NewProp_Preset,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPBDModel_Statics::NewProp_MeshComp,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UPBDModel_Statics::StaticCppClassTypeInfo = {
@@ -260,13 +326,17 @@ void EmptyLinkFunctionForGeneratedCodePBDModel() {}
 	DEFINE_VTABLE_PTR_HELPER_CTOR(UPBDModel);
 	struct Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_Statics
 	{
+		static const FEnumRegisterCompiledInInfo EnumInfo[];
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
-	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPBDModel, UPBDModel::StaticClass, TEXT("UPBDModel"), &Z_Registration_Info_UClass_UPBDModel, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPBDModel), 3407809905U) },
+	const FEnumRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_Statics::EnumInfo[] = {
+		{ EPBDModelPresets_StaticEnum, TEXT("EPBDModelPresets"), &Z_Registration_Info_UEnum_EPBDModelPresets, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3789127421U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_2082425441(TEXT("/Script/Imstk"),
+	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_Statics::ClassInfo[] = {
+		{ Z_Construct_UClass_UPBDModel, UPBDModel::StaticClass, TEXT("UPBDModel"), &Z_Registration_Info_UClass_UPBDModel, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPBDModel), 3843754626U) },
+	};
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_2904224451(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_Statics::ClassInfo),
 		nullptr, 0,
-		nullptr, 0);
+		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_PBDModel_h_Statics::EnumInfo));
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

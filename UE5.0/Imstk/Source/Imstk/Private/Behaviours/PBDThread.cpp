@@ -28,6 +28,17 @@ void UPBDThread::InitializeComponent()
 
 }
 
+UPBDThread::UPBDThread() : UDeformableModel()
+{
+	bUseDistanceConstraint = true;
+	DistanceConstraint = 50;
+
+	bUseBendConstraint = true;
+	BendStiffness = 0.2;
+
+	Mass = 0.0001;
+}
+
 void UPBDThread::Init()
 {
 	Super::Init();

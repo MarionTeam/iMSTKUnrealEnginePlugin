@@ -9,6 +9,20 @@
 #include "imstkCollidingObject.h"
 #include "DynamicalModel.generated.h"
 
+UENUM(BlueprintType)
+enum EDefaultModelPreset
+{
+	SurfaceMeshPreset,
+	SpherePreset,
+	CapsulePreset,
+	CylinderPreset,
+	PointSetPreset,
+	OrientedBoxPreset,
+	PlanePreset,
+	LineMeshPreset
+};
+
+
 /** \file DynamicalModel.h
  *  \brief Abstract class to model any object that is added to the Imstk scene
  *  \details Contains a geometry filter to convert between Unreal and Imstk objects
@@ -18,10 +32,6 @@ class IMSTK_API UDynamicalModel : public UImstkBehaviour
 {
 	GENERATED_BODY()
 public:
-	// Geometry of the model
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Geometry")
-		FGeometryFilter GeomFilter;
-
 	/** Creates and returns the geometry of the model
 	* @return std::shared_ptr<imstk::Geometry> - The colliding geometry created by the Geometry filter
 	*/
@@ -33,16 +43,20 @@ public:
 	virtual void InitializeComponent() override;
 
 	// Set the object to have separate gravity from the rest of the scene in iMSTK
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "General|Advanced")
 		bool bIndividualGravity = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIndividualGravity == true", EditConditionHides), Category = "General")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIndividualGravity == true", EditConditionHides), Category = "General|Advanced")
 		FVector Gravity;
 
 	// Set the object to have a separate time step from the rest of the scene in iMSTK
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "General|Advanced")
 		bool bIndividualDT = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIndividualDT == true", EditConditionHides, ClampMin = "0"), Category = "General")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIndividualDT == true", EditConditionHides, ClampMin = "0"), Category = "General|Advanced")
 		double IndividualDT = 0.01;
+
+	// Geometry of the model
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced|Geometry")
+		FGeometryFilter GeomFilter;
 
 protected:
 	// References to the owning object

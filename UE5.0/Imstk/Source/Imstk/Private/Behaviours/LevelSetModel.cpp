@@ -89,6 +89,10 @@ void ULevelSetModel::UpdateModel()
 
 FMeshDataStruct ULevelSetModel::GenerateSurfaceMeshData(bool FlipNormals)
 {
+	FMeshDataStruct MeshData = FMeshDataStruct();
+	if (!ImageData)
+		return MeshData;
+
 	MeshComp = (UProceduralMeshComponent*)GetOwner()->GetComponentByClass(UProceduralMeshComponent::StaticClass());
 
 	std::shared_ptr<imstk::SurfaceMeshFlyingEdges> SMFE = std::make_shared<imstk::SurfaceMeshFlyingEdges>();
@@ -109,7 +113,6 @@ FMeshDataStruct ULevelSetModel::GenerateSurfaceMeshData(bool FlipNormals)
 		SurfMesh->flipNormals();
 
 	// Assign mesh values to the struct and return
-	FMeshDataStruct MeshData = FMeshDataStruct();
 	MeshData.Verts = UMathUtil::ToUnrealFVecArray(SurfMesh->getVertexPositions(), true);
 	MeshData.Indices = UMathUtil::ToUnrealIntArray(SurfMesh->getTriangleIndices());
 	MeshData.Normals = UMathUtil::ToUnrealFVecArray(SurfMesh->getVertexNormals(), false);

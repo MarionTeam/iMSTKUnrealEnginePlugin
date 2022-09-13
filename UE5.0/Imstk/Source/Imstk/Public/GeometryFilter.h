@@ -261,7 +261,7 @@ struct FGeometryFilter
 		TEnumAsByte<EGeometryType> GeomType;
 
 	// Structs for each shape that can be created in Imstk
-protected:
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::Sphere", EditConditionHides), Category = "General")
 		FSphereGeomStruct SphereStruct;
 

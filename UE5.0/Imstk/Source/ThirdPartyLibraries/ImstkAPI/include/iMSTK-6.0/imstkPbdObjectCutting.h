@@ -39,6 +39,8 @@ public:
     ///
     void apply();
 
+    void setCutEpsilon(float input);
+
 protected:
     ///
     /// \brief Add new vertices to pbdObj
@@ -73,5 +75,7 @@ protected:
 
     std::shared_ptr<std::unordered_set<size_t>> m_removeConstraintVertices = std::make_shared<std::unordered_set<size_t>>();
     std::shared_ptr<std::unordered_set<size_t>> m_addConstraintVertices    = std::make_shared<std::unordered_set<size_t>>();
+
+    float m_cutEpsilon = 1.0;
 };
 } // namespace imstk

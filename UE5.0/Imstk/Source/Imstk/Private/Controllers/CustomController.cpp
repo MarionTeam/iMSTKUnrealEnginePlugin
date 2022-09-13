@@ -19,6 +19,60 @@
 
 #include "DrawDebugHelpers.h"
 
+void UCustomController::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
+{
+	FName PropertyName = (PropertyChangedEvent.Property != NULL) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCustomController, Preset)) {
+		switch (Preset)
+		{
+		case 0:
+			ToolGeomFilter.GeomType = EGeometryType::Capsule;
+			ToolGeomFilter.CapsuleStruct.Radius = 12.5;
+			ToolGeomFilter.CapsuleStruct.Length = 50;
+			ToolType = EToolType::CollidingTool;
+			break;
+		case 1:
+			ToolGeomFilter.GeomType = EGeometryType::Capsule;
+			ToolGeomFilter.CapsuleStruct.Radius = 12.5;
+			ToolGeomFilter.CapsuleStruct.Length = 50;
+			ToolType = EToolType::GraspingTool;
+			GraspStiffness = 1.0;
+			GraspType = EGraspType::CellGrasp;
+			GraspCollisionType = ECollisionInteractionType::PointSetToCapsuleCD;
+			bForceTool = true;
+			break;
+		case 2:
+			ToolGeomFilter.GeomType = EGeometryType::SurfaceMesh;
+			ToolType = EToolType::CuttingTool;
+			break;
+		case 3:
+			ToolGeomFilter.GeomType = EGeometryType::LineMesh;
+			ToolGeomFilter.LineMeshStruct.Vertices.Empty();
+			ToolGeomFilter.LineMeshStruct.Vertices.Add(FVector(0, 0, 0));
+			ToolGeomFilter.LineMeshStruct.Vertices.Add(FVector(0, 0, 50));
+			ToolType = EToolType::StitchingTool;
+			break;
+		case 4:
+			ToolGeomFilter.GeomType = EGeometryType::SurfaceMesh;
+			ToolType = EToolType::LevelSetTool;
+			bForceTool = true;
+			SpringForce = 1000;
+			SpringDamping = 10;
+			break;
+		default:
+			return;
+		}
+	}
+}
+UCustomController::UCustomController() : UImstkController()
+{
+	ToolGeomFilter.GeomType = EGeometryType::Capsule;
+	ToolGeomFilter.CapsuleStruct.Radius = 12.5;
+	ToolGeomFilter.CapsuleStruct.Length = 50;
+	ToolType = EToolType::CollidingTool;
+}
+
 // Called before Begin Play
 void UCustomController::InitializeComponent()
 {

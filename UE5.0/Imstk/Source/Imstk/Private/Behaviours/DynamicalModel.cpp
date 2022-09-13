@@ -4,6 +4,7 @@
 #include "DynamicalModel.h"
 #include "KismetProceduralMeshLibrary.h"
 
+
 void UDynamicalModel::InitializeComponent()
 {
 	Super::InitializeComponent();
@@ -43,7 +44,7 @@ void UDynamicalModel::ConvertStaticToProceduralMesh(UStaticMeshComponent* Static
 	UKismetProceduralMeshLibrary::CopyProceduralMeshFromStaticMeshComponent(StaticMesh, 0, ProcMesh, false);
 }
 
-FVector UDynamicalModel::GetGeomScale() 
+FVector UDynamicalModel::GetGeomScale()
 {
 	return GeomFilter.GetGeomScale();
 }

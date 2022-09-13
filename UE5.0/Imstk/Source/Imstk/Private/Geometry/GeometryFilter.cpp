@@ -333,7 +333,7 @@ FVector FLineMeshGeomStruct::GetGeomScale() {
 
 FGeometryFilter::FGeometryFilter() {
 	// Default to sphere
-	GeomType = EGeometryType::Sphere;
+	GeomType = EGeometryType::SurfaceMesh;
 }
 
 std::shared_ptr<imstk::Geometry> FGeometryFilter::Init(UDynamicalModel* Model)

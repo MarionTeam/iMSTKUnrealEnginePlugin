@@ -38,20 +38,20 @@ public:
 		double Mass = 1.0;
 
 	// Viscous damping coefficient of the PBDModel
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "General|Advanced")
 		double ViscousDampingCoeff = 0.01;
 
 	// Number of iterations of the PBDModel
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "General|Advanced")
 		int ModelIterations = 1;
 
 	// Contact stiffness of the PBDmodel
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "General|Advanced")
 		double ContactStiffness = 1.0;
 
-	UPROPERTY(EditAnywhere, Category = "Constraints")
+	UPROPERTY(EditAnywhere, Category = "General|Advanced|Constraints")
 		bool bUseDistanceConstraint = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseDistanceConstraint", EditConditionHides), Category = "Constraints")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseDistanceConstraint", EditConditionHides), Category = "General|Advanced|Constraints")
 		float DistanceConstraint = 0.0;
 
 	/*UPROPERTY(EditAnywhere, meta = (EditCondition = "TetrahedralMesh == nullptr", EditConditionHides), Category = "Constraints")
@@ -73,14 +73,14 @@ public:
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseFEMConstraint && TetrahedralMesh != nullptr", EditConditionHides), Category = "Constraints")
 		TEnumAsByte<FemConstraintMaterial> MaterialType = FemConstraintMaterial::StVK;*/
 
-	UPROPERTY(EditAnywhere, Category = "Constraints")
+	UPROPERTY(EditAnywhere, Category = "General|Advanced|Constraints")
 		bool bUseConstantDensityConstraint = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseConstantDensityConstraint", EditConditionHides), Category = "Constraints")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseConstantDensityConstraint", EditConditionHides), Category = "General|Advanced|Constraints")
 		float ConstantDensityConstraint = 0.0;
 
-	UPROPERTY(EditAnywhere, Category = "Constraints")
+	UPROPERTY(EditAnywhere, Category = "General|Advanced|Constraints")
 		bool bUseAreaConstraint = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseAreaConstraint", EditConditionHides), Category = "Constraints")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseAreaConstraint", EditConditionHides), Category = "General|Advanced|Constraints")
 		float AreaConstraint = 0.0;
 
 	/** Fixes the listed vertices on the PBDModel. If assigned, the boundary conditions will be ignored*/

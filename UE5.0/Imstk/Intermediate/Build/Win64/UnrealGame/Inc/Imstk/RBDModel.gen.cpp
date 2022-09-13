@@ -13,6 +13,7 @@ void EmptyLinkFunctionForGeneratedCodeRBDModel() {}
 	IMSTK_API UClass* Z_Construct_UClass_URBDModel();
 	IMSTK_API UClass* Z_Construct_UClass_UDynamicalModel();
 	UPackage* Z_Construct_UPackage__Script_Imstk();
+	IMSTK_API UEnum* Z_Construct_UEnum_Imstk_EDefaultModelPreset();
 // End Cross Module References
 	void URBDModel::StaticRegisterNativesURBDModel()
 	{
@@ -32,6 +33,10 @@ void EmptyLinkFunctionForGeneratedCodeRBDModel() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_Mass_MetaData[];
 #endif
 		static const UECodeGen_Private::FDoublePropertyParams NewProp_Mass;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_Preset_MetaData[];
+#endif
+		static const UECodeGen_Private::FBytePropertyParams NewProp_Preset;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UECodeGen_Private::FClassParams ClassParams;
@@ -59,8 +64,16 @@ void EmptyLinkFunctionForGeneratedCodeRBDModel() {}
 	};
 #endif
 	const UECodeGen_Private::FDoublePropertyParams Z_Construct_UClass_URBDModel_Statics::NewProp_Mass = { "Mass", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Double, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(URBDModel, Mass), METADATA_PARAMS(Z_Construct_UClass_URBDModel_Statics::NewProp_Mass_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_URBDModel_Statics::NewProp_Mass_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_URBDModel_Statics::NewProp_Preset_MetaData[] = {
+		{ "Category", "General" },
+		{ "ModuleRelativePath", "Public/RBDModel.h" },
+	};
+#endif
+	const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_URBDModel_Statics::NewProp_Preset = { "Preset", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(URBDModel, Preset), Z_Construct_UEnum_Imstk_EDefaultModelPreset, METADATA_PARAMS(Z_Construct_UClass_URBDModel_Statics::NewProp_Preset_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_URBDModel_Statics::NewProp_Preset_MetaData)) }; // 2990222660
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_URBDModel_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_URBDModel_Statics::NewProp_Mass,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_URBDModel_Statics::NewProp_Preset,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_URBDModel_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<URBDModel>::IsAbstract,
@@ -98,9 +111,9 @@ void EmptyLinkFunctionForGeneratedCodeRBDModel() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_RBDModel_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_URBDModel, URBDModel::StaticClass, TEXT("URBDModel"), &Z_Registration_Info_UClass_URBDModel, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(URBDModel), 4013918762U) },
+		{ Z_Construct_UClass_URBDModel, URBDModel::StaticClass, TEXT("URBDModel"), &Z_Registration_Info_UClass_URBDModel, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(URBDModel), 4132054341U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_RBDModel_h_3545294933(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_RBDModel_h_3415176381(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_RBDModel_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_RBDModel_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

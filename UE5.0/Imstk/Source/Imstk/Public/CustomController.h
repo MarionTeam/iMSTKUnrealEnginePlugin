@@ -10,6 +10,16 @@
 
 #include "CustomController.generated.h"
 
+UENUM(BlueprintType)
+enum EControllerPreset
+{
+	CollidingPreset,
+	GraspingPreset,
+	CuttingPreset,
+	StitchingPreset,
+	LevelSetPreset
+};
+
 /** \file CustomController.h
  *  \brief Customizable controller to move an object within the iMSTK scene
  *  \details
@@ -20,6 +30,13 @@ class IMSTK_API UCustomController : public UImstkController
 	GENERATED_BODY()
 
 public:
+	UCustomController();
+
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent);
+
+	UPROPERTY(EditAnywhere, Category = "General")
+		TEnumAsByte<EControllerPreset> Preset = EControllerPreset::CollidingPreset;
+
 	virtual void InitializeComponent() override;
 
 	/** Initializes the controller in imstk
@@ -100,36 +117,36 @@ protected:
 		void BeginCut();
 
 	// Mass of the object in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
 		float Mass = 0.2;
 
 	//TODO: set default values for these
 	// Velocity damping of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
 		float VelocityDamping = 1.0;
 
 	// Angular velocity damping of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
 		float AngularVelocityDamping = 1.0;
 
 	// Maximum iterations of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
 		int MaxNumIterations = 8;
 
 	// Maximum constraints of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
 		int MaxNumConstraints = 40;
 
 	// Inertia tensor of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "General|Advanced")
 		float InertiaTensorMultiplier = 1.0;
 
 	// Moves the tool using force rather than moving directly to the position given
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
 		bool bForceTool = false;
 
 	// Material of the ghost models 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "General|Advanced")
 		UMaterial* GhostMaterial;
 
 
@@ -141,11 +158,11 @@ protected:
 		void SetGhostComponents(USceneComponent* SceneComponent, TArray<UStaticMeshComponent*> StaticMeshComponents);
 
 	// Spring force of the force applied to the tool
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "General|Advanced")
 		float SpringForce = 10000;
 
 	// Spring damping of the force applied to the tool
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "General|Advanced")
 		float SpringDamping = 100;
 
 	// Prints the position of the object to the screen

@@ -27,7 +27,7 @@ enum EToolGeometry
 };
 
 // Type of grasp for the tool
-UENUM()
+UENUM(BlueprintType)
 enum EGraspType
 {
 	RayPointGrasp,
@@ -36,7 +36,7 @@ enum EGraspType
 };
 
 // Type of tool
-UENUM()
+UENUM(BlueprintType)
 enum EToolType
 {
 	GraspingTool,
@@ -102,24 +102,27 @@ public:
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
 		TEnumAsByte<EToolGeometry> ToolGeometry;*/
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
 		FGeometryFilter ToolGeomFilter;
 
 	// Type of tool. Determines the action performed by the tool
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
 		TEnumAsByte<EToolType> ToolType;
 
 	// Type of grasp performed by the tool
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "General|Advanced")
 		TEnumAsByte<EGraspType> GraspType;
 
 	// Stiffness of the grasp performed by the tool
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "General|Advanced")
 		float GraspStiffness = 1.0;
 
 	// TODO: Do not pick auto! Change to remove auto from collision types?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GraspType == EGraspType::CellGrasp && ToolType == EToolType::GraspingTool", EditConditionHides), Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GraspType == EGraspType::CellGrasp && ToolType == EToolType::GraspingTool", EditConditionHides), Category = "General|Advanced")
 		TEnumAsByte<ECollisionInteractionType> GraspCollisionType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::CuttingTool", EditConditionHides), Category = "General|Advanced")
+		float CutEpsilon = 1.0;
 
 	/** Setter for the static mesh component. Required to be set in the construction of the blueprint for surface mesh tools.
 	* @param InputMeshComp Static mesh component to be set

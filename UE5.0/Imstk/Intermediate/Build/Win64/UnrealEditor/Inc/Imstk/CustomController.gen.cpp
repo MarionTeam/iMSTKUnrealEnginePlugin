@@ -9,10 +9,11 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 // Cross Module References
+	IMSTK_API UEnum* Z_Construct_UEnum_Imstk_EControllerPreset();
+	UPackage* Z_Construct_UPackage__Script_Imstk();
 	IMSTK_API UClass* Z_Construct_UClass_UCustomController_NoRegister();
 	IMSTK_API UClass* Z_Construct_UClass_UCustomController();
 	IMSTK_API UClass* Z_Construct_UClass_UImstkController();
-	UPackage* Z_Construct_UPackage__Script_Imstk();
 	COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
 	COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FQuat();
 	IMSTK_API UClass* Z_Construct_UClass_UDynamicalModel_NoRegister();
@@ -20,6 +21,65 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	ENGINE_API UClass* Z_Construct_UClass_UStaticMeshComponent_NoRegister();
 	ENGINE_API UClass* Z_Construct_UClass_UMaterial_NoRegister();
 // End Cross Module References
+	static FEnumRegistrationInfo Z_Registration_Info_UEnum_EControllerPreset;
+	static UEnum* EControllerPreset_StaticEnum()
+	{
+		if (!Z_Registration_Info_UEnum_EControllerPreset.OuterSingleton)
+		{
+			Z_Registration_Info_UEnum_EControllerPreset.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_Imstk_EControllerPreset, Z_Construct_UPackage__Script_Imstk(), TEXT("EControllerPreset"));
+		}
+		return Z_Registration_Info_UEnum_EControllerPreset.OuterSingleton;
+	}
+	template<> IMSTK_API UEnum* StaticEnum<EControllerPreset>()
+	{
+		return EControllerPreset_StaticEnum();
+	}
+	struct Z_Construct_UEnum_Imstk_EControllerPreset_Statics
+	{
+		static const UECodeGen_Private::FEnumeratorParam Enumerators[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FEnumParams EnumParams;
+	};
+	const UECodeGen_Private::FEnumeratorParam Z_Construct_UEnum_Imstk_EControllerPreset_Statics::Enumerators[] = {
+		{ "CollidingPreset", (int64)CollidingPreset },
+		{ "GraspingPreset", (int64)GraspingPreset },
+		{ "CuttingPreset", (int64)CuttingPreset },
+		{ "StitchingPreset", (int64)StitchingPreset },
+		{ "LevelSetPreset", (int64)LevelSetPreset },
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UEnum_Imstk_EControllerPreset_Statics::Enum_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "CollidingPreset.Name", "CollidingPreset" },
+		{ "CuttingPreset.Name", "CuttingPreset" },
+		{ "GraspingPreset.Name", "GraspingPreset" },
+		{ "LevelSetPreset.Name", "LevelSetPreset" },
+		{ "ModuleRelativePath", "Public/CustomController.h" },
+		{ "StitchingPreset.Name", "StitchingPreset" },
+	};
+#endif
+	const UECodeGen_Private::FEnumParams Z_Construct_UEnum_Imstk_EControllerPreset_Statics::EnumParams = {
+		(UObject*(*)())Z_Construct_UPackage__Script_Imstk,
+		nullptr,
+		"EControllerPreset",
+		"EControllerPreset",
+		Z_Construct_UEnum_Imstk_EControllerPreset_Statics::Enumerators,
+		UE_ARRAY_COUNT(Z_Construct_UEnum_Imstk_EControllerPreset_Statics::Enumerators),
+		RF_Public|RF_Transient|RF_MarkAsNative,
+		EEnumFlags::None,
+		(uint8)UEnum::ECppForm::Regular,
+		METADATA_PARAMS(Z_Construct_UEnum_Imstk_EControllerPreset_Statics::Enum_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UEnum_Imstk_EControllerPreset_Statics::Enum_MetaDataParams))
+	};
+	UEnum* Z_Construct_UEnum_Imstk_EControllerPreset()
+	{
+		if (!Z_Registration_Info_UEnum_EControllerPreset.InnerSingleton)
+		{
+			UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_EControllerPreset.InnerSingleton, Z_Construct_UEnum_Imstk_EControllerPreset_Statics::EnumParams);
+		}
+		return Z_Registration_Info_UEnum_EControllerPreset.InnerSingleton;
+	}
 	DEFINE_FUNCTION(UCustomController::execSetGhostComponents)
 	{
 		P_GET_OBJECT(USceneComponent,Z_Param_SceneComponent);
@@ -464,6 +524,10 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
 #endif
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_Preset_MetaData[];
+#endif
+		static const UECodeGen_Private::FBytePropertyParams NewProp_Preset;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_Mass_MetaData[];
 #endif
 		static const UECodeGen_Private::FFloatPropertyParams NewProp_Mass;
@@ -549,8 +613,15 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	};
 #endif
 #if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_Preset_MetaData[] = {
+		{ "Category", "General" },
+		{ "ModuleRelativePath", "Public/CustomController.h" },
+	};
+#endif
+	const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_Preset = { "Preset", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, Preset), Z_Construct_UEnum_Imstk_EControllerPreset, METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_Preset_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_Preset_MetaData)) }; // 1497589548
+#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_Mass_MetaData[] = {
-		{ "Category", "ToolSettings" },
+		{ "Category", "General" },
 		{ "Comment", "// Mass of the object in iMSTK\n" },
 		{ "ModuleRelativePath", "Public/CustomController.h" },
 		{ "ToolTip", "Mass of the object in iMSTK" },
@@ -559,7 +630,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_Mass = { "Mass", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, Mass), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_Mass_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_Mass_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_VelocityDamping_MetaData[] = {
-		{ "Category", "ToolSettings" },
+		{ "Category", "General|Advanced" },
 		{ "Comment", "//TODO: set default values for these\n// Velocity damping of the tool's rigid body in iMSTK\n" },
 		{ "ModuleRelativePath", "Public/CustomController.h" },
 		{ "ToolTip", "TODO: set default values for these\n Velocity damping of the tool's rigid body in iMSTK" },
@@ -568,7 +639,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_VelocityDamping = { "VelocityDamping", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, VelocityDamping), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_VelocityDamping_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_VelocityDamping_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_AngularVelocityDamping_MetaData[] = {
-		{ "Category", "ToolSettings" },
+		{ "Category", "General|Advanced" },
 		{ "Comment", "// Angular velocity damping of the tool's rigid body in iMSTK\n" },
 		{ "ModuleRelativePath", "Public/CustomController.h" },
 		{ "ToolTip", "Angular velocity damping of the tool's rigid body in iMSTK" },
@@ -577,7 +648,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_AngularVelocityDamping = { "AngularVelocityDamping", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, AngularVelocityDamping), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_AngularVelocityDamping_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_AngularVelocityDamping_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_MaxNumIterations_MetaData[] = {
-		{ "Category", "ToolSettings" },
+		{ "Category", "General|Advanced" },
 		{ "Comment", "// Maximum iterations of the tool's rigid body in iMSTK\n" },
 		{ "ModuleRelativePath", "Public/CustomController.h" },
 		{ "ToolTip", "Maximum iterations of the tool's rigid body in iMSTK" },
@@ -586,7 +657,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	const UECodeGen_Private::FUnsizedIntPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_MaxNumIterations = { "MaxNumIterations", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, MaxNumIterations), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_MaxNumIterations_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_MaxNumIterations_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_MaxNumConstraints_MetaData[] = {
-		{ "Category", "ToolSettings" },
+		{ "Category", "General|Advanced" },
 		{ "Comment", "// Maximum constraints of the tool's rigid body in iMSTK\n" },
 		{ "ModuleRelativePath", "Public/CustomController.h" },
 		{ "ToolTip", "Maximum constraints of the tool's rigid body in iMSTK" },
@@ -595,7 +666,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	const UECodeGen_Private::FUnsizedIntPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_MaxNumConstraints = { "MaxNumConstraints", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, MaxNumConstraints), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_MaxNumConstraints_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_MaxNumConstraints_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_InertiaTensorMultiplier_MetaData[] = {
-		{ "Category", "ToolSettings" },
+		{ "Category", "General|Advanced" },
 		{ "ClampMin", "0.01" },
 		{ "Comment", "// Inertia tensor of the tool's rigid body in iMSTK\n" },
 		{ "ModuleRelativePath", "Public/CustomController.h" },
@@ -605,7 +676,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_InertiaTensorMultiplier = { "InertiaTensorMultiplier", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, InertiaTensorMultiplier), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_InertiaTensorMultiplier_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_InertiaTensorMultiplier_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_bForceTool_MetaData[] = {
-		{ "Category", "ToolSettings" },
+		{ "Category", "General|Advanced" },
 		{ "Comment", "// Moves the tool using force rather than moving directly to the position given\n" },
 		{ "ModuleRelativePath", "Public/CustomController.h" },
 		{ "ToolTip", "Moves the tool using force rather than moving directly to the position given" },
@@ -618,7 +689,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_bForceTool = { "bForceTool", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UCustomController), &Z_Construct_UClass_UCustomController_Statics::NewProp_bForceTool_SetBit, METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_bForceTool_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_bForceTool_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_GhostMaterial_MetaData[] = {
-		{ "Category", "ToolSettings" },
+		{ "Category", "General|Advanced" },
 		{ "Comment", "// Material of the ghost models \n" },
 		{ "EditCondition", "bForceTool" },
 		{ "EditConditionHides", "" },
@@ -629,7 +700,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_GhostMaterial = { "GhostMaterial", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, GhostMaterial), Z_Construct_UClass_UMaterial_NoRegister, METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_GhostMaterial_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_GhostMaterial_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_SpringForce_MetaData[] = {
-		{ "Category", "ToolSettings" },
+		{ "Category", "General|Advanced" },
 		{ "Comment", "// Spring force of the force applied to the tool\n" },
 		{ "EditCondition", "bForceTool" },
 		{ "EditConditionHides", "" },
@@ -640,7 +711,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_SpringForce = { "SpringForce", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, SpringForce), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_SpringForce_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_SpringForce_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_SpringDamping_MetaData[] = {
-		{ "Category", "ToolSettings" },
+		{ "Category", "General|Advanced" },
 		{ "Comment", "// Spring damping of the force applied to the tool\n" },
 		{ "EditCondition", "bForceTool" },
 		{ "EditConditionHides", "" },
@@ -682,6 +753,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 #endif
 	const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_GhostMeshes = { "GhostMeshes", nullptr, (EPropertyFlags)0x0020088000000008, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, GhostMeshes), EArrayPropertyFlags::None, METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_GhostMeshes_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_GhostMeshes_MetaData)) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UCustomController_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_Preset,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_Mass,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_VelocityDamping,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_AngularVelocityDamping,
@@ -730,13 +802,17 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 	DEFINE_VTABLE_PTR_HELPER_CTOR(UCustomController);
 	struct Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics
 	{
+		static const FEnumRegisterCompiledInInfo EnumInfo[];
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
-	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UCustomController, UCustomController::StaticClass, TEXT("UCustomController"), &Z_Registration_Info_UClass_UCustomController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UCustomController), 1068967625U) },
+	const FEnumRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::EnumInfo[] = {
+		{ EControllerPreset_StaticEnum, TEXT("EControllerPreset"), &Z_Registration_Info_UEnum_EControllerPreset, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1497589548U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_90350038(TEXT("/Script/Imstk"),
+	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo[] = {
+		{ Z_Construct_UClass_UCustomController, UCustomController::StaticClass, TEXT("UCustomController"), &Z_Registration_Info_UClass_UCustomController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UCustomController), 1448825422U) },
+	};
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_1973367235(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo),
 		nullptr, 0,
-		nullptr, 0);
+		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::EnumInfo));
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

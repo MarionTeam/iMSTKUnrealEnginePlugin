@@ -103,6 +103,7 @@ void UControllerInteraction::Init()
 		if (Cast<UDeformableModel>(Model1)) {
 			std::shared_ptr<imstk::PbdObjectCutting> Cutting = std::make_shared<imstk::PbdObjectCutting>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), Controller->GetToolObj());
 			//SubsystemInstance->ActiveScene->addInteraction(Cutting);
+			Cutting->setCutEpsilon(Controller->CutEpsilon);
 			Controller->AddCutting(Cutting);
 			return;
 		}

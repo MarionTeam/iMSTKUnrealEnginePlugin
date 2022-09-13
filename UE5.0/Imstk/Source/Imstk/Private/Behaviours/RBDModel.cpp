@@ -8,6 +8,50 @@
 #include "MathUtil.h"
 #include "Engine/GameEngine.h"
 
+void URBDModel::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
+{
+	FName PropertyName = (PropertyChangedEvent.Property != NULL) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(URBDModel, Preset)) {
+		switch (Preset)
+		{
+		case 0:
+			GeomFilter.GeomType = EGeometryType::SurfaceMesh;
+			break;
+		case 1:
+			GeomFilter.GeomType = EGeometryType::Sphere;
+			GeomFilter.SphereStruct.Radius = 50;
+			break;
+		case 2:
+			GeomFilter.GeomType = EGeometryType::Capsule;
+			GeomFilter.CapsuleStruct.Radius = 12.5;
+			GeomFilter.CapsuleStruct.Length = 50;
+			break;
+		case 3:
+			GeomFilter.GeomType = EGeometryType::Cylinder;
+			GeomFilter.CylinderStruct.Radius = 12.5;
+			GeomFilter.CylinderStruct.Length = 50;
+			break;
+		case 4:
+			GeomFilter.GeomType = EGeometryType::PointSet;
+			break;
+		case 5:
+			GeomFilter.GeomType = EGeometryType::OrientedBox;
+			GeomFilter.OrientedBoxStruct.Extents = FVector(50, 50, 50);
+			break;
+		case 6:
+			GeomFilter.GeomType = EGeometryType::Plane;
+			GeomFilter.PlaneStruct.Normal = FVector(0, 1, 0);
+			break;
+		case 7:
+			GeomFilter.GeomType = EGeometryType::LineMesh;
+			break;
+		default:
+			return;
+		}
+	}
+}
+
 // Called before Begin Play
 void URBDModel::InitializeComponent()
 {
