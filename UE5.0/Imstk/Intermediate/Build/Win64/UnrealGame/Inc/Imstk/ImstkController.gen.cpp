@@ -499,6 +499,10 @@ void EmptyLinkFunctionForGeneratedCodeImstkController() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_CutEpsilon_MetaData[];
 #endif
 		static const UECodeGen_Private::FFloatPropertyParams NewProp_CutEpsilon;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_VelocityScaling_MetaData[];
+#endif
+		static const UECodeGen_Private::FFloatPropertyParams NewProp_VelocityScaling;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UECodeGen_Private::FClassParams ClassParams;
@@ -601,6 +605,16 @@ void EmptyLinkFunctionForGeneratedCodeImstkController() {}
 	};
 #endif
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UImstkController_Statics::NewProp_CutEpsilon = { "CutEpsilon", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UImstkController, CutEpsilon), METADATA_PARAMS(Z_Construct_UClass_UImstkController_Statics::NewProp_CutEpsilon_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UImstkController_Statics::NewProp_CutEpsilon_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UImstkController_Statics::NewProp_VelocityScaling_MetaData[] = {
+		{ "Category", "General|Advanced" },
+		{ "ClampMin", "0.01" },
+		{ "EditCondition", "ToolType == EToolType::LevelSetTool" },
+		{ "EditConditionHides", "" },
+		{ "ModuleRelativePath", "Public/ImstkController.h" },
+	};
+#endif
+	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UImstkController_Statics::NewProp_VelocityScaling = { "VelocityScaling", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UImstkController, VelocityScaling), METADATA_PARAMS(Z_Construct_UClass_UImstkController_Statics::NewProp_VelocityScaling_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UImstkController_Statics::NewProp_VelocityScaling_MetaData)) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UImstkController_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkController_Statics::NewProp_SubsystemInstance,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkController_Statics::NewProp_MeshComp,
@@ -610,6 +624,7 @@ void EmptyLinkFunctionForGeneratedCodeImstkController() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkController_Statics::NewProp_GraspStiffness,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkController_Statics::NewProp_GraspCollisionType,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkController_Statics::NewProp_CutEpsilon,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UImstkController_Statics::NewProp_VelocityScaling,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UImstkController_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UImstkController>::IsAbstract,
@@ -653,9 +668,9 @@ void EmptyLinkFunctionForGeneratedCodeImstkController() {}
 		{ EToolType_StaticEnum, TEXT("EToolType"), &Z_Registration_Info_UEnum_EToolType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3850520258U) },
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UImstkController, UImstkController::StaticClass, TEXT("UImstkController"), &Z_Registration_Info_UClass_UImstkController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UImstkController), 2904587702U) },
+		{ Z_Construct_UClass_UImstkController, UImstkController::StaticClass, TEXT("UImstkController"), &Z_Registration_Info_UClass_UImstkController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UImstkController), 3755996868U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_2958928691(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_2205568696(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_Statics::ClassInfo),
 		nullptr, 0,
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_Statics::EnumInfo));

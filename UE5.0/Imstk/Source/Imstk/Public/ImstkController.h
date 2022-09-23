@@ -124,6 +124,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::CuttingTool", EditConditionHides), Category = "General|Advanced")
 		float CutEpsilon = 1.0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::LevelSetTool", EditConditionHides, ClampMin = "0.01"), Category = "General|Advanced")
+		float VelocityScaling = 1.0;
+
 	/** Setter for the static mesh component. Required to be set in the construction of the blueprint for surface mesh tools.
 	* @param InputMeshComp Static mesh component to be set
 	* @return None

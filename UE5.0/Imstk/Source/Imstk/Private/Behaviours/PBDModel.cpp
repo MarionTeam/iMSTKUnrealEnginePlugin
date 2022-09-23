@@ -106,9 +106,8 @@ void UPBDModel::InitializeComponent()
 		}
 		else
 		{
-			if (GEngine) {
+			if (GEngine) 
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Error Initializing : " + Owner->GetName() + ".No mesh component attached to actor");
-			}
 			// No mesh attached error
 			UE_LOG(LogTemp, Error, TEXT("Error Initializing: %s. No mesh component attached to actor"), *Owner->GetName());
 			// TODO: Dont think removing works here since this occurs before the behaviours are set

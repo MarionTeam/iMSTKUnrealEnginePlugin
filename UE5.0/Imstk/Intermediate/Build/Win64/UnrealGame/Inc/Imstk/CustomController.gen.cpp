@@ -809,9 +809,9 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 		{ EControllerPreset_StaticEnum, TEXT("EControllerPreset"), &Z_Registration_Info_UEnum_EControllerPreset, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1497589548U) },
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UCustomController, UCustomController::StaticClass, TEXT("UCustomController"), &Z_Registration_Info_UClass_UCustomController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UCustomController), 1448825422U) },
+		{ Z_Construct_UClass_UCustomController, UCustomController::StaticClass, TEXT("UCustomController"), &Z_Registration_Info_UClass_UCustomController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UCustomController), 176253025U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_1973367235(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_1952121216(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo),
 		nullptr, 0,
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::EnumInfo));

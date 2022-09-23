@@ -124,7 +124,7 @@ void UControllerInteraction::Init()
 				colHandlerA->setBaumgarteStabilization(0.5); // inelastic collision
 
 				auto colHandlerB = std::dynamic_pointer_cast<imstk::LevelSetCH>(interaction->getCollisionHandlingB());
-				colHandlerB->setLevelSetVelocityScaling(1);
+				colHandlerB->setLevelSetVelocityScaling(Controller->VelocityScaling);
 				colHandlerB->setKernel(3, 1.0);
 				//colHandlerB->setLevelSetVelocityScaling(0.0); // Can't push the levelset
 				colHandlerB->setUseProportionalVelocity(true);

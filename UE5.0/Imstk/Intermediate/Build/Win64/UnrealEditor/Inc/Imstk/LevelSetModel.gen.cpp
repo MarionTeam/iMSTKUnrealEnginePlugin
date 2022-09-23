@@ -15,6 +15,8 @@ void EmptyLinkFunctionForGeneratedCodeLevelSetModel() {}
 	UPackage* Z_Construct_UPackage__Script_Imstk();
 	IMSTK_API UScriptStruct* Z_Construct_UScriptStruct_FMeshDataStruct();
 	IMSTK_API UClass* Z_Construct_UClass_UImageDataAsset_NoRegister();
+	COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FIntVector();
+	ENGINE_API UClass* Z_Construct_UClass_AActor_NoRegister();
 	ENGINE_API UClass* Z_Construct_UClass_UMaterial_NoRegister();
 	PROCEDURALMESHCOMPONENT_API UClass* Z_Construct_UClass_UProceduralMeshComponent_NoRegister();
 // End Cross Module References
@@ -96,6 +98,18 @@ void EmptyLinkFunctionForGeneratedCodeLevelSetModel() {}
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_ImageData;
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_Dimensions_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_Dimensions;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_BoundingActor_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_BoundingActor;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_NumChunks_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_NumChunks;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_ImageMaterial_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_ImageMaterial;
@@ -136,6 +150,31 @@ void EmptyLinkFunctionForGeneratedCodeLevelSetModel() {}
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ULevelSetModel_Statics::NewProp_ImageData = { "ImageData", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(ULevelSetModel, ImageData), Z_Construct_UClass_UImageDataAsset_NoRegister, METADATA_PARAMS(Z_Construct_UClass_ULevelSetModel_Statics::NewProp_ImageData_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_ULevelSetModel_Statics::NewProp_ImageData_MetaData)) };
 #if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_ULevelSetModel_Statics::NewProp_Dimensions_MetaData[] = {
+		{ "Category", "General" },
+		{ "EditCondition", "ImageData == nullptr" },
+		{ "EditConditionHides", "" },
+		{ "ModuleRelativePath", "Public/LevelSetModel.h" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_ULevelSetModel_Statics::NewProp_Dimensions = { "Dimensions", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(ULevelSetModel, Dimensions), Z_Construct_UScriptStruct_FIntVector, METADATA_PARAMS(Z_Construct_UClass_ULevelSetModel_Statics::NewProp_Dimensions_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_ULevelSetModel_Statics::NewProp_Dimensions_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_ULevelSetModel_Statics::NewProp_BoundingActor_MetaData[] = {
+		{ "Category", "General" },
+		{ "EditCondition", "ImageData == nullptr" },
+		{ "EditConditionHides", "" },
+		{ "ModuleRelativePath", "Public/LevelSetModel.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ULevelSetModel_Statics::NewProp_BoundingActor = { "BoundingActor", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(ULevelSetModel, BoundingActor), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(Z_Construct_UClass_ULevelSetModel_Statics::NewProp_BoundingActor_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_ULevelSetModel_Statics::NewProp_BoundingActor_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_ULevelSetModel_Statics::NewProp_NumChunks_MetaData[] = {
+		{ "Category", "General" },
+		{ "ModuleRelativePath", "Public/LevelSetModel.h" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_ULevelSetModel_Statics::NewProp_NumChunks = { "NumChunks", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(ULevelSetModel, NumChunks), Z_Construct_UScriptStruct_FIntVector, METADATA_PARAMS(Z_Construct_UClass_ULevelSetModel_Statics::NewProp_NumChunks_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_ULevelSetModel_Statics::NewProp_NumChunks_MetaData)) };
+#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_ULevelSetModel_Statics::NewProp_ImageMaterial_MetaData[] = {
 		{ "Category", "General" },
 		{ "Comment", "// The material to be set on each section of the mesh (TODO)\n" },
@@ -165,6 +204,9 @@ void EmptyLinkFunctionForGeneratedCodeLevelSetModel() {}
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ULevelSetModel_Statics::NewProp_EditorMeshComp = { "EditorMeshComp", nullptr, (EPropertyFlags)0x002008000008000c, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(ULevelSetModel, EditorMeshComp), Z_Construct_UClass_UProceduralMeshComponent_NoRegister, METADATA_PARAMS(Z_Construct_UClass_ULevelSetModel_Statics::NewProp_EditorMeshComp_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_ULevelSetModel_Statics::NewProp_EditorMeshComp_MetaData)) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_ULevelSetModel_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ULevelSetModel_Statics::NewProp_ImageData,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ULevelSetModel_Statics::NewProp_Dimensions,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ULevelSetModel_Statics::NewProp_BoundingActor,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ULevelSetModel_Statics::NewProp_NumChunks,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ULevelSetModel_Statics::NewProp_ImageMaterial,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ULevelSetModel_Statics::NewProp_MeshComp,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ULevelSetModel_Statics::NewProp_EditorMeshComp,
@@ -205,9 +247,9 @@ void EmptyLinkFunctionForGeneratedCodeLevelSetModel() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_ULevelSetModel, ULevelSetModel::StaticClass, TEXT("ULevelSetModel"), &Z_Registration_Info_UClass_ULevelSetModel, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ULevelSetModel), 1420047245U) },
+		{ Z_Construct_UClass_ULevelSetModel, ULevelSetModel::StaticClass, TEXT("ULevelSetModel"), &Z_Registration_Info_UClass_ULevelSetModel, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ULevelSetModel), 758966247U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_2388252649(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_3880396614(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_LevelSetModel_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

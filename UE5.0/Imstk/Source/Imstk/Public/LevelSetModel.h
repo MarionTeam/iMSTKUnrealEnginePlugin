@@ -19,7 +19,8 @@
 class LevelSetObject : public imstk::LevelSetDeformableObject
 {
 public:
-	LevelSetObject(UProceduralMeshComponent* ProcMeshComp, UImageDataAsset* ImageData, UMaterial* Material);
+	LevelSetObject(UProceduralMeshComponent* ProcMeshComp, UImageDataAsset* ImageData, ULevelSetModel* LevelSetModel, UMaterial* Material);
+	LevelSetObject(UProceduralMeshComponent* ProcMeshComp, std::shared_ptr<imstk::SurfaceMesh> SurfMesh, ULevelSetModel* LevelSetModel, UMaterial* Material);
 	~LevelSetObject() override = default;
 
 public:
@@ -54,7 +55,7 @@ protected:
 	virtual void initGraphEdges(std::shared_ptr<imstk::TaskNode> source, std::shared_ptr<imstk::TaskNode> sink) override;
 
 public:
-	std::shared_ptr<imstk::ImageData> initLvlSetImage;
+	std::shared_ptr<imstk::ImageData> InitLvlSetImage;
 protected:
 	std::shared_ptr<imstk::LocalMarchingCubes> m_isoExtract;
 	std::unordered_set<int>   m_chunksGenerated;               // Lazy generation of chunks
@@ -92,6 +93,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "General")
 		UImageDataAsset* ImageData;
 
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "ImageData == nullptr", EditConditionHides), Category = "General")
+		FIntVector Dimensions = FIntVector(1, 1, 1);
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "ImageData == nullptr", EditConditionHides), Category = "General")
+		AActor* BoundingActor;
+
+	UPROPERTY(EditAnywhere, Category = "General")
+		FIntVector NumChunks = FIntVector(1, 1, 1);
+
 	// The material to be set on each section of the mesh (TODO)
 	UPROPERTY(EditAnywhere, Category = "General")
 		UMaterial* ImageMaterial;
@@ -105,11 +115,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "iMSTKTEST")
 		FMeshDataStruct GenerateSurfaceMeshData(bool FlipNormals = false);
 
-	/*UFUNCTION(BlueprintCallable, Category = "iMSTKTEST")
-		void GenerateSurfaceMeshData();
 
-	UFUNCTION(BlueprintCallable, Category = "iMSTKTEST")
-		void GenerateLevelSetData();*/
+	FVector3f MinBounds;
+	FVector3f MaxBounds;
 
 protected:
 	// The mesh component that will be generated to represent the LevelSet during runtime
@@ -119,6 +127,10 @@ protected:
 	// The mesh component to represent the LevelSet when using the editor. Will be disabled upon starting the game
 	UPROPERTY(BlueprintReadWrite, Category = "General")
 		UProceduralMeshComponent* EditorMeshComp;
+
+	std::shared_ptr<imstk::SurfaceMesh> GetSurfaceMeshFromStatic();
+
+	void FindBounds();
 
 	/** Updates the visuals for the LevelSet model
 	* @return none

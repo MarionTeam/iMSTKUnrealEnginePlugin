@@ -49,6 +49,8 @@ void UDeformableModel::ProcessBoundaryConditions()
 		
 		UStaticMeshComponent* BoundaryMeshComp = (UStaticMeshComponent*)Actor->GetComponentByClass(UStaticMeshComponent::StaticClass());
 		if (!BoundaryMeshComp) {
+			if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "No Mesh attached to Bounding Actor for " + Owner->GetName());
 			UE_LOG(LogTemp, Error, TEXT("No Mesh attached to Boundary Condition Actor for %s"), *Owner->GetName());
 			continue;
 		}

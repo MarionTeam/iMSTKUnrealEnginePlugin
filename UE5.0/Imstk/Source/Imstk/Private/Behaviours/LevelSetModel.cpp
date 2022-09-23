@@ -14,13 +14,16 @@
 #include "imstkSurfaceMesh.h"
 #include "imstkSurfaceMeshFlyingEdges.h"
 
+#include "imstkMeshIO.h"
+#include "imstkCleanMesh.h"
+
 
 void ULevelSetModel::InitializeComponent()
 {
 	Super::InitializeComponent();
 	// Check if game is in play mode (required because InitializeComponent() is run when creating a blueprint of the object)
 	if (GetWorld() && GetWorld()->GetGameInstance()) {
-		// Make the subsystem tick first to update the imstk scene before updating the model in unreal
+		// Make the subsystem tick first to update the imstk scene before updating the Model in unreal
 		AddTickPrerequisiteActor((AActor*)SubsystemInstance);
 
 		if (EditorMeshComp)
@@ -32,9 +35,16 @@ void ULevelSetModel::InitializeComponent()
 		}
 		else
 		{
+			MeshComp = NewObject<UProceduralMeshComponent>(this);
+			// If including scale, scale gets applied twice
+			MeshComp->AttachToComponent(Owner->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+			MeshComp->RegisterComponent();
+
 			// No mesh attached error
-			UE_LOG(LogTemp, Error, TEXT("Error Initializing: %s. No mesh component attached to actor"), *Owner->GetName());
-			SubsystemInstance->AllBehaviours.Remove(this);
+			/*if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "Error Initializing: " + Owner->GetName() + ". No procedural mesh component attached to actor");
+			UE_LOG(LogTemp, Error, TEXT("Error Initializing: %s. No procedural mesh component attached to actor"), *Owner->GetName());
+			SubsystemInstance->AllBehaviours.Remove(this);*/
 		}
 	}
 
@@ -66,18 +76,28 @@ void ULevelSetModel::Init()
 		return;
 	}
 	if (!ImageData) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "LevelSetModels can only be SurfaceMeshes");
-		UE_LOG(LogTemp, Error, TEXT("ImageData not Assigned on LevelSetModel"));
-		return;
-	}
+		std::shared_ptr<imstk::SurfaceMesh> MeshGeom = GetSurfaceMeshFromStatic();
+		if (!MeshGeom) {
+			if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "Error Initializing: " + Owner->GetName() + " No static mesh attached to actor");
+			UE_LOG(LogTemp, Error, TEXT("Error Initializing: %s. No static mesh attached to actor"), *Owner->GetName());
+			return;
+		}
 
-	LevelSetObj = std::make_shared<LevelSetObject>(MeshComp, ImageData, ImageMaterial);
+		if (BoundingActor)
+			FindBounds();
+
+		LevelSetObj = std::make_shared<LevelSetObject>(MeshComp, MeshGeom, this, ImageMaterial);
+	}
+	else {
+		LevelSetObj = std::make_shared<LevelSetObject>(MeshComp, ImageData, this, ImageMaterial);
+	}
 	SubsystemInstance->ActiveScene->addSceneObject(LevelSetObj);
 	ImstkCollidingObject = LevelSetObj;
 
 	// Set the location of the component to 0,0,0 because of how the image data is positioned
 	MeshComp->SetWorldLocation(FVector::Zero());
+	MeshComp->SetWorldRotation(FRotator::ZeroRotator);
 
 	Super::bIsInitialized = true;
 }
@@ -85,6 +105,88 @@ void ULevelSetModel::Init()
 void ULevelSetModel::UpdateModel()
 {
 	LevelSetObj->visualUpdate();
+}
+
+void ULevelSetModel::FindBounds()
+{
+	UStaticMeshComponent* BoundaryMeshComp = (UStaticMeshComponent*)BoundingActor->GetComponentByClass(UStaticMeshComponent::StaticClass());
+	if (!BoundaryMeshComp) {
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "No Mesh attached to Bounding Actor for " + Owner->GetName());
+		UE_LOG(LogTemp, Error, TEXT("No Mesh attached to Bounding Actor for %s"), *Owner->GetName());
+		return;
+	}
+	UStaticMesh* BoundaryMesh = BoundaryMeshComp->GetStaticMesh();
+	FPositionVertexBuffer* VertexBuffer = &BoundaryMesh->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
+
+	MinBounds.X = VertexBuffer->VertexPosition(0).X * BoundaryMeshComp->GetComponentScale().X;
+	MinBounds.Y = VertexBuffer->VertexPosition(0).Y * BoundaryMeshComp->GetComponentScale().Y;
+	MinBounds.Z = VertexBuffer->VertexPosition(0).Z * BoundaryMeshComp->GetComponentScale().Z;
+
+	MaxBounds.X = VertexBuffer->VertexPosition(0).X * BoundaryMeshComp->GetComponentScale().X;
+	MaxBounds.Y = VertexBuffer->VertexPosition(0).Y * BoundaryMeshComp->GetComponentScale().Y;
+	MaxBounds.Z = VertexBuffer->VertexPosition(0).Z * BoundaryMeshComp->GetComponentScale().Z;
+
+	// TODO: Maybe a more efficient way to do this by getting already transformed values for vertices
+	for (uint32 i = 1; i < VertexBuffer->GetNumVertices(); i++) {
+		FVector3f Vert = VertexBuffer->VertexPosition(i);
+		if ((Vert.X * BoundaryMeshComp->GetComponentScale().X) < MinBounds.X)
+			MinBounds.X = Vert.X * BoundaryMeshComp->GetComponentScale().X;
+		else if ((Vert.X * BoundaryMeshComp->GetComponentScale().X) > MaxBounds.X)
+			MaxBounds.X = Vert.X * BoundaryMeshComp->GetComponentScale().X;
+
+		if ((Vert.Y * BoundaryMeshComp->GetComponentScale().Y) < MinBounds.Y)
+			MinBounds.Y = Vert.Y * BoundaryMeshComp->GetComponentScale().Y;
+		else if ((Vert.Y * BoundaryMeshComp->GetComponentScale().Y) > MaxBounds.Y)
+			MaxBounds.Y = Vert.Y * BoundaryMeshComp->GetComponentScale().Y;
+
+		if ((Vert.Z * BoundaryMeshComp->GetComponentScale().Z) < MinBounds.Z)
+			MinBounds.Z = Vert.Z * BoundaryMeshComp->GetComponentScale().Z;
+		else if ((Vert.Z * BoundaryMeshComp->GetComponentScale().Z) > MaxBounds.Z)
+			MaxBounds.Z = Vert.Z * BoundaryMeshComp->GetComponentScale().Z;
+	}
+
+	MinBounds.X += BoundaryMeshComp->GetComponentLocation().X;
+	MinBounds.Y += BoundaryMeshComp->GetComponentLocation().Y;
+	MinBounds.Z += BoundaryMeshComp->GetComponentLocation().Z;
+
+	MaxBounds.X += BoundaryMeshComp->GetComponentLocation().X;
+	MaxBounds.Y += BoundaryMeshComp->GetComponentLocation().Y;
+	MaxBounds.Z += BoundaryMeshComp->GetComponentLocation().Z;
+
+	BoundingActor->Destroy();
+}
+
+std::shared_ptr<imstk::SurfaceMesh> ULevelSetModel::GetSurfaceMeshFromStatic()
+{
+	std::shared_ptr<imstk::SurfaceMesh> MeshGeom = std::make_shared<imstk::SurfaceMesh>();
+	UStaticMeshComponent* StaticMeshComp = (UStaticMeshComponent*)GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass());
+	if (!StaticMeshComp|| !StaticMeshComp->GetStaticMesh())
+		return nullptr;
+
+	// Get vertices and indices from static mesh and create imstk geometry
+	FPositionVertexBuffer* PositionVertexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
+	FRawStaticIndexBuffer* IndexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].IndexBuffer;
+
+	// Get vertices and indices in the mesh and set those values in the imstk mesh
+	TArray<FVector> Vertices;
+	for (uint32 i = 0; i < PositionVertexBuffer->GetNumVertices(); i++) {
+		Vertices.Add(FVector(PositionVertexBuffer->VertexPosition(i)));
+	}
+
+	// TODO: Could change this to array view?
+	TArray<int> Indices;
+	for (int32 i = 0; i < IndexBuffer->GetNumIndices(); i++) {
+		Indices.Add(IndexBuffer->GetIndex(i));
+	}
+	MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
+	MeshGeom->computeVertexNormals();
+	MeshGeom->rotate(UMathUtil::ToImstkQuat(StaticMeshComp->GetComponentRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
+	MeshGeom->scale(UMathUtil::ToImstkVec3d(StaticMeshComp->GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
+	MeshGeom->updatePostTransformData();
+	MeshGeom->translate(UMathUtil::ToImstkVec3d(StaticMeshComp->GetComponentLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+	StaticMeshComp->DestroyComponent();
+	return MeshGeom;
 }
 
 FMeshDataStruct ULevelSetModel::GenerateSurfaceMeshData(bool FlipNormals)
@@ -98,13 +200,13 @@ FMeshDataStruct ULevelSetModel::GenerateSurfaceMeshData(bool FlipNormals)
 	std::shared_ptr<imstk::SurfaceMeshFlyingEdges> SMFE = std::make_shared<imstk::SurfaceMeshFlyingEdges>();
 	std::shared_ptr<imstk::ImageData> LvlSetImage = ImageData->GetImageData();
 
-	// Scale the iMSTK level set model appropriately
+	// Scale the iMSTK level set Model appropriately
 	const imstk::Vec3d& currSpacing = LvlSetImage->getSpacing();
-	const FVector UnrealScale = MeshComp->GetComponentScale(); // TODO: This is annoying since its an actor component and not a scene component so you can't scale the actual model. maybe transform this into a scene component
+	const FVector UnrealScale = MeshComp->GetComponentScale(); // TODO: This is annoying since its an actor component and not a scene component so you can't scale the actual Model. maybe transform this into a scene component
 	imstk::Vec3d scaledSpacing = imstk::Vec3d(currSpacing.x() * UnrealScale.X, currSpacing.y() * UnrealScale.Z, currSpacing.z() * UnrealScale.Y);
 	LvlSetImage->setSpacing(scaledSpacing);
 
-	// Extract the surface mesh of the model
+	// Extract the surface mesh of the Model
 	SMFE->setInputImage(LvlSetImage);
 	SMFE->update();
 	std::shared_ptr<imstk::SurfaceMesh> SurfMesh = SMFE->getOutputMesh();
@@ -120,7 +222,7 @@ FMeshDataStruct ULevelSetModel::GenerateSurfaceMeshData(bool FlipNormals)
 	return MeshData;
 }
 
-void ULevelSetModel::UnInit() 
+void ULevelSetModel::UnInit()
 {
 	Super::UnInit();
 	LevelSetObj.reset();
@@ -131,54 +233,47 @@ void ULevelSetModel::UnInit()
 //	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "Creating mesh file");
 //	std::shared_ptr<imstk::SurfaceMeshFlyingEdges> SMFE = std::make_shared<imstk::SurfaceMeshFlyingEdges>();
 //
-//	SMFE->setInputImage(LevelSetObject->initLvlSetImage);
+//	SMFE->setInputImage(LevelSetObject->InitLvlSetImage);
 //	SMFE->update();
 //	imstk::MeshIO::write(SMFE->getOutputMesh(), std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())) + "outputMesh.stl");
 //}
 //
 //void ULevelSetModel::GenerateLevelSetData()
 //{
-//	imstk::MeshIO::write(LevelSetObject->initLvlSetImage, std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())) + "outputMesh.mhd");
+//	imstk::MeshIO::write(LevelSetObject->InitLvlSetImage, std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())) + "outputMesh.mhd");
 //}
 
 
 
 
 
-LevelSetObject::LevelSetObject(UProceduralMeshComponent* ProcMeshComp, UImageDataAsset* ImageData, UMaterial* Material) : LevelSetDeformableObject("LevelSetObject"),
+LevelSetObject::LevelSetObject(UProceduralMeshComponent* ProcMeshComp, UImageDataAsset* ImageData, ULevelSetModel* LevelSetModel, UMaterial* Material) : LevelSetDeformableObject("LevelSetObject"),
 m_isoExtract(std::make_shared<imstk::LocalMarchingCubes>())
 {
 	MeshComp = ProcMeshComp;
 	this->Material = Material;
-	initLvlSetImage = ImageData->GetImageData();
+	InitLvlSetImage = ImageData->GetImageData();
 
-	const imstk::Vec3d& currSpacing = initLvlSetImage->getSpacing();
-	const FVector UnrealScale = MeshComp->GetComponentScale(); // TODO: This is annoying since its an actor component and not a scene component so you can't scale the actual model. maybe transform this into a scene component
+	const imstk::Vec3d& CurrSpacing = InitLvlSetImage->getSpacing();
+	const FVector UnrealScale = MeshComp->GetComponentScale(); // TODO: This is annoying since its an actor component and not a scene component so you can't scale the actual Model. maybe transform this into a scene component
 
-	imstk::Vec3d scaledSpacing = imstk::Vec3d(currSpacing.x() * UnrealScale.X, currSpacing.y() * UnrealScale.Z, currSpacing.z() * UnrealScale.Y);
-	initLvlSetImage->setSpacing(scaledSpacing);
+	imstk::Vec3d ScaledSpacing = imstk::Vec3d(CurrSpacing.x() * UnrealScale.X, CurrSpacing.y() * UnrealScale.Z, CurrSpacing.z() * UnrealScale.Y);
+	InitLvlSetImage->setSpacing(ScaledSpacing);
 
 	MeshComp->SetWorldScale3D(FVector(1, 1, 1));
 
 	// Note: Anistropic scaling would invalidate the SDF
-	initLvlSetImage->setOrigin(UMathUtil::ToImstkVec3d(MeshComp->GetComponentLocation(), true));
-	//initLvlSetImage->setOrigin(imstk::Vec3d(0, 0, 0));
+	InitLvlSetImage->setOrigin(UMathUtil::ToImstkVec3d(MeshComp->GetComponentLocation(), true));
 
 	// Setup the Parameters
-	std::shared_ptr<imstk::LevelSetModelConfig> lvlSetConfig = std::make_shared<imstk::LevelSetModelConfig>();
-	lvlSetConfig->m_sparseUpdate = true;
-	lvlSetConfig->m_substeps = 15;
-	lvlSetConfig->m_dt = 0.001;
+	std::shared_ptr<imstk::LevelSetModelConfig> LvlSetConfig = std::make_shared<imstk::LevelSetModelConfig>();
+	LvlSetConfig->m_sparseUpdate = true;
+	LvlSetConfig->m_substeps = 15;
+	LvlSetConfig->m_dt = 0.001;
 
-	// Too many chunks and you'll hit memory constraints quickly
-	// Too little chunks and the updates for a chunk will take too long
-	// The chunks must divide the image dimensions-1 (image dim-1 must be divisible by # chunks)
-	m_isoExtract->setInputImage(initLvlSetImage);
-	m_isoExtract->setIsoValue(0.0);
-	//m_isoExtract->setNumberOfChunks(imstk::Vec3i(32, 9, 9));
+	m_isoExtract->setInputImage(InitLvlSetImage);
 
-	const imstk::Vec3i& Dimensions = initLvlSetImage->getDimensions();
-	m_isoExtract->setNumberOfChunks(imstk::Vec3i((Dimensions.x() - 1) / 10, (Dimensions.y() - 1) / 10, (Dimensions.z() - 1) / 10));
+	m_isoExtract->setNumberOfChunks(UMathUtil::ToImstkVec3i(LevelSetModel->NumChunks, false));
 	m_isoExtract->update();
 
 	if (m_useRandomChunkColors)
@@ -189,7 +284,68 @@ m_isoExtract(std::make_shared<imstk::LocalMarchingCubes>())
 	createVisualModels();
 
 	// Setup the Object
-	std::shared_ptr<imstk::SignedDistanceField> sdf = std::make_shared<imstk::SignedDistanceField>(initLvlSetImage);
+	std::shared_ptr<imstk::SignedDistanceField> SDF = std::make_shared<imstk::SignedDistanceField>(InitLvlSetImage);
+
+	// Setup the Model
+	std::shared_ptr<imstk::LevelSetModel> Model = std::make_shared<imstk::LevelSetModel>();
+	Model->setModelGeometry(SDF);
+	Model->configure(LvlSetConfig);
+
+	setPhysicsGeometry(SDF);
+	setCollidingGeometry(SDF);
+	setDynamicalModel(Model);
+
+	// Setup a custom task to forward the modified voxels of the level set Model
+	// to the marching cubes before they're cleared
+	m_forwardModifiedVoxels = std::make_shared<imstk::TaskNode>(
+		std::bind(&LevelSetObject::updateModifiedVoxels, this), "Isosurface: SetModifiedVoxels");
+	m_taskGraph->addNode(m_forwardModifiedVoxels);
+}
+
+LevelSetObject::LevelSetObject(UProceduralMeshComponent* ProcMeshComp, std::shared_ptr<imstk::SurfaceMesh> SurfMesh, ULevelSetModel* LevelSetModel, UMaterial* Material) : LevelSetDeformableObject("LevelSetObject"),
+m_isoExtract(std::make_shared<imstk::LocalMarchingCubes>())
+{
+	MeshComp = ProcMeshComp;
+	this->Material = Material;
+
+	//TODO: this is a hacky work around for an issue with rotation. Not sure why this works and it doesnt work normally. probably has something to do with how I am creating the surfacemesh to begin with?
+	imstk::MeshIO::write(SurfMesh, std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())) + "outputMesh.stl");
+	SurfMesh = imstk::MeshIO::read<imstk::SurfaceMesh>(std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())) + "outputMesh.stl");
+
+
+	imstk::SurfaceMeshDistanceTransform ComputeSdf;
+	ComputeSdf.setInputMesh(SurfMesh);
+	ComputeSdf.setDimensions(UMathUtil::ToImstkVec3i(LevelSetModel->Dimensions, false));
+	ComputeSdf.setBounds(UMathUtil::ToImstkVec3d(LevelSetModel->MinBounds, true), UMathUtil::ToImstkVec3d(LevelSetModel->MaxBounds, true));
+	ComputeSdf.update();
+
+	InitLvlSetImage = ComputeSdf.getOutputImage();
+
+	MeshComp->SetWorldScale3D(FVector(1, 1, 1));
+
+	// Setup the Parameters
+	std::shared_ptr<imstk::LevelSetModelConfig> lvlSetConfig = std::make_shared<imstk::LevelSetModelConfig>();
+	lvlSetConfig->m_sparseUpdate = true;
+	lvlSetConfig->m_substeps = 15;
+	lvlSetConfig->m_dt = 0.001;
+
+	// Too many chunks and you'll hit memory constraints quickly
+	// Too little chunks and the updates for a chunk will take too long
+	// The chunks must divide the image dimensions-1 (image dim-1 must be divisible by # chunks)
+	m_isoExtract->setInputImage(InitLvlSetImage);
+	//m_isoExtract->setIsoValue(0.0);
+	m_isoExtract->setNumberOfChunks(UMathUtil::ToImstkVec3i(LevelSetModel->NumChunks, false));
+	m_isoExtract->update();
+
+	if (m_useRandomChunkColors)
+	{
+		srand(static_cast<unsigned int>(time(NULL)));
+	}
+
+	createVisualModels();
+
+	// Setup the Object
+	std::shared_ptr<imstk::SignedDistanceField> sdf = std::make_shared<imstk::SignedDistanceField>(InitLvlSetImage);
 
 	// Setup the Model
 	std::shared_ptr<imstk::LevelSetModel> model = std::make_shared<imstk::LevelSetModel>();
@@ -200,7 +356,7 @@ m_isoExtract(std::make_shared<imstk::LocalMarchingCubes>())
 	setCollidingGeometry(sdf);
 	setDynamicalModel(model);
 
-	// Setup a custom task to forward the modified voxels of the level set model
+	// Setup a custom task to forward the modified voxels of the level set Model
 	// to the marching cubes before they're cleared
 	m_forwardModifiedVoxels = std::make_shared<imstk::TaskNode>(
 		std::bind(&LevelSetObject::updateModifiedVoxels, this), "Isosurface: SetModifiedVoxels");
@@ -277,7 +433,7 @@ LevelSetObject::updateModifiedVoxels()
 void
 LevelSetObject::initGraphEdges(std::shared_ptr<imstk::TaskNode> source, std::shared_ptr<imstk::TaskNode> sink)
 {
-	// Copy, sum, and connect the model graph to nest within this graph
+	// Copy, sum, and connect the Model graph to nest within this graph
 	m_taskGraph->addEdge(source, getUpdateNode());
 
 	m_dynamicalModel->initGraphEdges();

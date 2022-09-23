@@ -12,7 +12,21 @@ imstk::Vec3d UMathUtil::ToImstkVec3d(const FVector InputVec, const bool IsScaled
 	return imstk::Vec3d(InputVec.X / Scaling, InputVec.Z / Scaling, InputVec.Y / Scaling);
 }
 
+imstk::Vec3d UMathUtil::ToImstkVec3d(const FVector3f InputVec, const bool IsScaled)
+{
+	int Scaling = IsScaled ? Scale : 1;
+
+	return imstk::Vec3d(InputVec.X / Scaling, InputVec.Z / Scaling, InputVec.Y / Scaling);
+}
+
 imstk::Vec3i UMathUtil::ToImstkVec3i(const FVector InputVec, const bool IsScaled)
+{
+	int Scaling = IsScaled ? Scale : 1;
+
+	return imstk::Vec3i(InputVec.X / Scaling, InputVec.Z / Scaling, InputVec.Y / Scaling);
+}
+
+imstk::Vec3i UMathUtil::ToImstkVec3i(const FIntVector InputVec, const bool IsScaled)
 {
 	int Scaling = IsScaled ? Scale : 1;
 
