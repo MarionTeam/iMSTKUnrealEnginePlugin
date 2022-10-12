@@ -12,6 +12,9 @@
 #include "imstkPbdConstraintContainer.h"
 #include "imstkPbdFemTetConstraint.h"
 
+#include "imstkCleanMesh.h"
+#include "imstkMeshIO.h"
+
 #include "Engine/GameEngine.h"
 
 UPBDModel::UPBDModel() : UDeformableModel()
@@ -106,7 +109,7 @@ void UPBDModel::InitializeComponent()
 		}
 		else
 		{
-			if (GEngine) 
+			if (GEngine)
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Error Initializing : " + Owner->GetName() + ".No mesh component attached to actor");
 			// No mesh attached error
 			UE_LOG(LogTemp, Error, TEXT("Error Initializing: %s. No mesh component attached to actor"), *Owner->GetName());
@@ -186,24 +189,61 @@ void UPBDModel::Init()
 			return;
 		}
 
-		Geom->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
-		Geom->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
-		Geom->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
-		std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom)->computeUVSeamVertexGroups();
 
-		Geom->updatePostTransformData();
+		std::shared_ptr<imstk::SurfaceMesh> CleanedMesh;
+		if (bCleanMesh) {
+			std::shared_ptr<imstk::SurfaceMesh> SurfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom);
+
+			imstk::CleanMesh Clean;
+			Clean.setInputMesh(SurfMesh);
+			Clean.update();
+			CleanedMesh = Clean.getOutputMesh();
+
+			CleanedMesh->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+			CleanedMesh->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
+			CleanedMesh->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+
+			Geom->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+			Geom->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
+			Geom->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+			//std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom)->computeUVSeamVertexGroups();
+			//Geom->updatePostTransformData();
+			std::shared_ptr<imstk::PointwiseMap> Map = std::make_shared<imstk::PointwiseMap>(CleanedMesh, SurfMesh);
+			Map->setTolerance(0.00000001 * UMathUtil::GetScale());
+
+			PbdObject->setPhysicsToVisualMap(Map);
+			PbdObject->setCollidingToVisualMap(Map);
+
+			PbdObject->setCollidingGeometry(CleanedMesh);
+			PbdObject->setPhysicsGeometry(CleanedMesh);
+			PbdModel->setModelGeometry(CleanedMesh);
+
+
+		}
+		else {
+			Geom->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+			Geom->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
+			Geom->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+			std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom)->computeUVSeamVertexGroups();
+			Geom->updatePostTransformData();
+
+			PbdObject->setCollidingGeometry(Geom);
+			PbdObject->setPhysicsGeometry(Geom);
+			PbdModel->setModelGeometry(Geom);
+		}
+
+		/*std::shared_ptr<imstk::SurfaceMesh> SurfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom);
+		PbdObject->setPhysicsToVisualMap(std::make_shared<imstk::PointwiseMap>(SurfMesh, SurfMesh));
+		PbdObject->setCollidingToVisualMap(std::make_shared<imstk::PointwiseMap>(SurfMesh, SurfMesh));
 		PbdObject->setCollidingGeometry(Geom);
-		PbdObject->setVisualGeometry(Geom);
-
-
 		PbdObject->setPhysicsGeometry(Geom);
-		PbdModel->setModelGeometry(Geom);
+		PbdModel->setModelGeometry(Geom);*/
+		PbdObject->setVisualGeometry(Geom);
 	}
 	else
 	{
 		// Use the assigned tetrahedral mesh and extract its surface mesh
 		std::shared_ptr<imstk::TetrahedralMesh> TetMesh = TetrahedralMesh->GetTetrahedralMesh();
-		//std::shared_ptr<imstk::TetrahedralMesh> TetMesh = imstk::MeshIO::read<imstk::TetrahedralMesh>("D:\\Temp\\heart_volume.vtk");
 
 		TetMesh->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 		TetMesh->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
@@ -314,6 +354,9 @@ void UPBDModel::UpdateModel()
 			PointSetGeom = std::dynamic_pointer_cast<imstk::PointSet>(PbdObject->getVisualGeometry());
 		}
 	}
+	if (bCleanMesh && !CleanMeshGeom) {
+		CleanMeshGeom = std::dynamic_pointer_cast<imstk::SurfaceMesh>(PbdObject->getCollidingGeometry());
+	}
 
 	// Update the procedural mesh to positions from imstk
 	// Currently only supports vertex positions and normals
@@ -343,13 +386,26 @@ void UPBDModel::UpdateModel()
 			Verts = UMathUtil::ToUnrealFVecArray(PointSetGeom->getVertexPositions(), true);
 		}
 
-
-
+		//LOG(WARNING) << MeshGeom->getVertexPosition(100);
 		// If the number of verts and triangles is the same then just update the positions, otherwise clear the old mesh section and create a new one
 		if (Verts.Num() == MeshComp->GetProcMeshSection(0)->ProcVertexBuffer.Num() && (GeomFilter.GeomType == EGeometryType::PointSet || MeshGeom->getNumTriangles() * 3 == MeshComp->GetProcMeshSection(0)->ProcIndexBuffer.Num())) {
 			MeshComp->UpdateMeshSection_LinearColor(0, Verts, Normals, UV0, VertColors, Tangents);
 		}
 		else {
+			if (bCleanMesh) {
+				//// Remap the new geometry
+				//std::shared_ptr<imstk::PointwiseMap> Map = std::make_shared<imstk::PointwiseMap>(CleanMeshGeom, MeshGeom);
+				//Map->setTolerance(0.00000001 * UMathUtil::GetScale());
+				//Map->update();
+				////std::shared_ptr<imstk::GeometryMap> Map = PbdObject->getPhysicsToVisualMap();
+				////Map->update();
+
+				//PbdObject->setPhysicsToVisualMap(Map);
+				//PbdObject->setCollidingToVisualMap(Map);
+			}
+
+
+
 			UMaterialInterface* Mat = MeshComp->GetMaterial(0);
 
 			// Get the T coords (doesnt need to be from the meshgeom, but still have to iterate for Unreal)
@@ -384,4 +440,12 @@ void UPBDModel::UpdateModel()
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Owner->GetName() + ": " + UMathUtil::ToUnrealFVec(PbdObject->getCollidingGeometry()->getCenter(), true).ToString());
 		}
 	}
+}
+
+void UPBDModel::UnInit()
+{
+	Super::UnInit();
+	MeshGeom.reset();
+	CleanMeshGeom.reset();
+	PointSetGeom.reset();
 }

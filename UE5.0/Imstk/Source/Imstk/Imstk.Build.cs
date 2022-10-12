@@ -43,6 +43,7 @@ public class Imstk : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"UMG",
 				"DeveloperSettings",
 				"RawMesh",
 				"ProceduralMeshComponent"

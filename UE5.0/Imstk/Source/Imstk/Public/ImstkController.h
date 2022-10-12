@@ -10,6 +10,7 @@
 #include "imstkPbdObjectStitching.h"
 #include "imstkPbdRigidObjectGrasping.h"
 #include "imstkPbdObjectCutting.h"
+#include "imstkSurfaceMeshCut.h"
 #include "CollisionInteraction.h"
 #include "GeometryFilter.h"
 #include "ImstkController.generated.h"
@@ -81,6 +82,11 @@ protected:
 
 	// Array containing cutting interactions
 	TArray<std::shared_ptr<imstk::PbdObjectCutting>> Cuttings;
+
+	TArray<std::shared_ptr<imstk::PbdObject>> CutObjects;
+
+	//TArray<TPair<std::shared_ptr<imstk::SurfaceMeshCut>, std::shared_ptr<imstk::PbdObject>>> VisualMeshCuttings;
+	
 
 	// Array containing collision interactions
 	TArray<std::shared_ptr<imstk::CollisionInteraction>> Collisions;
@@ -173,6 +179,8 @@ public:
 	* @return None
 	*/
 	void AddCutting(std::shared_ptr<imstk::PbdObjectCutting> InputCutting);
+
+	void AddCutObject(std::shared_ptr<imstk::PbdObject> InputObject);
 
 	/** Adds a Collision interaction to the tool. Multiple can be assigned to collide with more than one object. Array is used to disable and enable the collisions
 	* @param InputCollision Collision interaction to be added to the tool

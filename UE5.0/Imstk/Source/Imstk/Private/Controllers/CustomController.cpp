@@ -17,6 +17,10 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
 
+#include "imstkPointwiseMap.h"
+#include "imstkPbdConstraintContainer.h"
+#include "imstkPbdSolver.h"
+
 #include "DrawDebugHelpers.h"
 
 void UCustomController::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
@@ -58,7 +62,8 @@ void UCustomController::PostEditChangeProperty(struct FPropertyChangedEvent& Pro
 			ToolType = EToolType::LevelSetTool;
 			bForceTool = true;
 			SpringForce = 1000;
-			SpringDamping = 10;
+			DamperForce = 10;
+			bIgnoreAngularForce = true;
 			break;
 		default:
 			return;
@@ -102,7 +107,7 @@ void UCustomController::InitController()
 		(ToolType == EToolType::CuttingTool && ToolGeomFilter.GeomType != EGeometryType::SurfaceMesh)) {
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Error: Controller type to Geometry mismatch");
-		UE_LOG(LogTemp, Error, TEXT("Controller type to Geometry mismatch"));;
+		UE_LOG(LogTemp, Error, TEXT("Error: Controller type to Geometry mismatch"));;
 		//SubsystemInstance->AllControllers.Remove(this); // This causes an error since it removes from the for loop it resides in
 		return;
 	}
@@ -113,11 +118,13 @@ void UCustomController::InitController()
 	// TODO: if there are multiple static meshes attached to controller it will only get the first
 	if (ToolGeomFilter.GeomType == EGeometryType::SurfaceMesh) {
 		TArray<USceneComponent*> Components;
-		GetChildrenComponents(true, Components);
+		GetChildrenComponents(false, Components);
 		for (USceneComponent* Comp : Components) {
-			if (MeshComp = (UStaticMeshComponent*)Comp)
+			if (Comp->IsA(UStaticMeshComponent::StaticClass())) {
+				MeshComp = (UStaticMeshComponent*)Comp;
 				ToolGeom->scale(UMathUtil::ToImstkVec3d(MeshComp->GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
-			break;
+				break;
+			}
 		}
 	}
 
@@ -138,7 +145,11 @@ void UCustomController::InitController()
 	ToolObj->getRigidBody()->m_mass = Mass;
 	ToolObj->getRigidBody()->m_intertiaTensor = imstk::Mat3d::Identity() * InertiaTensorMultiplier;
 	ToolObj->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3d(GetComponentLocation(), true));
-	ToolObj->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(GetComponentRotation().Quaternion()));
+
+	if (MeshComp)
+		ToolObj->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()));
+	else
+		ToolObj->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(GetComponentRotation().Quaternion()));
 
 	SubsystemInstance->ActiveScene->addSceneObject(ToolObj);
 
@@ -188,12 +199,66 @@ FVector UCustomController::UpdateImstkPosRot(FVector WorldPos, FQuat Orientation
 			GhostSceneComp->SetWorldRotation(Orientation);
 		}
 
-		// TODO: update this to the force movement version in suturing controller
-		imstk::Vec3d fS = (UMathUtil::ToImstkVec3d(WorldPos, true) - ToolObj->getRigidBody()->getPosition()) * SpringForce; // Spring force
-		imstk::Vec3d fD = -ToolObj->getRigidBody()->getVelocity() * SpringDamping; // Spring damping
-		(*ToolObj->getRigidBody()->m_force) += (fS + fD);
+		if (bIgnoreAngularForce) {
+			// TODO: update this to the force movement version in suturing controller
+			imstk::Vec3d fS = (UMathUtil::ToImstkVec3d(WorldPos, true) - ToolObj->getRigidBody()->getPosition()) * SpringForce; // Spring force
+			imstk::Vec3d fD = -ToolObj->getRigidBody()->getVelocity() * DamperForce; // Spring damping
+			(*ToolObj->getRigidBody()->m_force) += (fS + fD);
 
-		ToolObj->getRigidBody()->m_orientation = new imstk::Quatd(UMathUtil::ToImstkQuat(Orientation));
+			ToolObj->getRigidBody()->m_orientation = new imstk::Quatd(UMathUtil::ToImstkQuat(Orientation));
+		}
+		else {
+			const imstk::Vec3d& CurrPos = ToolObj->getRigidBody()->getPosition();
+			const imstk::Quatd& CurrOrientation = ToolObj->getRigidBody()->getOrientation();
+			const imstk::Vec3d& CurrVelocity = ToolObj->getRigidBody()->getVelocity();
+			const imstk::Vec3d& CurrAngularVelocity = ToolObj->getRigidBody()->getAngularVelocity();
+			imstk::Vec3d& CurrForce = *ToolObj->getRigidBody()->m_force;
+			imstk::Vec3d& CurrTorque = *ToolObj->getRigidBody()->m_torque;
+
+			const imstk::Vec3d& DevicePos = UMathUtil::ToImstkVec3d(WorldPos, true);
+			const imstk::Quatd& DeviceOrientation = UMathUtil::ToImstkQuat(Orientation);
+			const imstk::Vec3d& DeviceOffset = imstk::Vec3d(0.0, 0.0, 0.0);
+
+			// If using critical damping automatically compute kd
+			{
+				//const double Mass = ToolObj->getRigidBody()->getMass();
+				const double MaxLinearKs = UMathUtil::ToImstkVec3d(LinearKs, true).maxCoeff();
+				LinearKd = 2.0 * std::sqrt(Mass * MaxLinearKs);
+
+				const imstk::Mat3d Inertia = ToolObj->getRigidBody()->getIntertiaTensor();
+				// Currently kd is not a 3d vector though it could be.
+				// So here we make an approximation. Either:
+				//  - Use one colums eigenvalue (maxCoeff)
+				//  - cbrt(eigenvalue0*eigenvalue1*eigenvalue2). (det)
+				// Both may behave weird on anistropic Inertia tensors
+				//const double InertiaScale = Inertia.eigenvalues().real().maxCoeff();
+				const double InertiaScale = std::cbrt(Inertia.determinant());
+				const double MaxAngularKs = UMathUtil::ToImstkVec3d(AngularKs, true).maxCoeff();
+				AngularKd = 2.0 * std::sqrt(InertiaScale * MaxAngularKs);
+			}
+
+			// If kd > 2 * sqrt(Mass * ks); The system is overdamped (may be intentional)
+			// If kd < 2 * sqrt(Mass * ks); The system is underdamped (never intended)
+
+			// Uses non-relative force
+			{
+				// Compute force
+				imstk::Vec3d SForce = UMathUtil::ToImstkVec3d(LinearKs, true).cwiseProduct(DevicePos - CurrPos - DeviceOffset);
+				imstk::Vec3d DForce = LinearKd * (-CurrVelocity - CurrAngularVelocity.cross(DeviceOffset));
+				imstk::Vec3d Force = SForce + DForce;
+
+				// Computer torque
+				const imstk::Quatd Dq = DeviceOrientation * CurrOrientation.inverse();
+				const imstk::Rotd  AngleAxes = imstk::Rotd(Dq);
+				AngularSpringForce = DeviceOffset.cross(Force) + UMathUtil::ToImstkVec3d(AngularKs, true).cwiseProduct(AngleAxes.axis() * AngleAxes.angle());
+				AngularDamperForce = AngularKd * -CurrAngularVelocity;
+				imstk::Vec3d Torque = AngularSpringForce + AngularDamperForce;
+
+				CurrForce += Force * ForceScale;
+				CurrTorque += Torque * ForceScale;
+			}
+		}
+
 	}
 
 
@@ -208,7 +273,7 @@ void UCustomController::UpdateUnrealPosRot()
 {
 	// Since mesh comp and controller can have different orientations, only orient the controller to update and keep rotation offset for the mesh component
 	if (MeshComp) {
-		SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true), UKismetMathLibrary::ComposeRotators(UMathUtil::ToUnrealFQuat(ToolObj->getRigidBody()->getOrientation()).Rotator(), (MeshComp->GetRelativeRotation() * -1)));
+		MeshComp->SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true), UMathUtil::ToUnrealFQuat(ToolObj->getRigidBody()->getOrientation()).Rotator());
 		return;
 	}
 	SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true), UMathUtil::ToUnrealFQuat(ToolObj->getRigidBody()->getOrientation()));
@@ -315,8 +380,53 @@ void UCustomController::BeginCut()
 			for (std::shared_ptr<imstk::PbdObjectCutting> Cutting : Cuttings) {
 				Cutting->apply();
 			}
+
+			for (std::shared_ptr<imstk::PbdObject> Obj : CutObjects) {
+				std::shared_ptr<imstk::PbdModel> pbdModel = Obj->getPbdModel();
+
+				imstk::SurfaceMeshCut SMC;
+				auto SurfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(Obj->getVisualGeometry());
+
+				SMC.setInputMesh(std::dynamic_pointer_cast<imstk::SurfaceMesh>(SurfMesh));
+				SMC.setCutGeometry(ToolObj->getCollidingGeometry());
+				SMC.setEpsilon(CutEpsilon);
+				SMC.update();
+				std::shared_ptr<imstk::SurfaceMesh> NewMesh = SMC.getOutputMesh();
+
+				SurfMesh->setInitialVertexPositions(std::make_shared<imstk::VecDataArray<double, 3>>(*NewMesh->getInitialVertexPositions()));
+				SurfMesh->setVertexPositions(std::make_shared<imstk::VecDataArray<double, 3>>(*NewMesh->getVertexPositions()));
+				SurfMesh->setTriangleIndices(std::make_shared<imstk::VecDataArray<int, 3>>(*NewMesh->getTriangleIndices()));
+				SurfMesh->postModified();
+
+				// Remap the new geometry
+				std::shared_ptr<imstk::PointwiseMap> Map = std::make_shared<imstk::PointwiseMap>(std::dynamic_pointer_cast<imstk::SurfaceMesh>(Obj->getPhysicsGeometry()), std::dynamic_pointer_cast<imstk::SurfaceMesh>(Obj->getVisualGeometry()));
+				Map->setTolerance(0.00000001 * UMathUtil::GetScale());
+				Map->compute();
+				Obj->setPhysicsToVisualMap(Map);
+				Obj->setCollidingToVisualMap(Map);
+			}
+
+			//for (const TPair<std::shared_ptr<imstk::SurfaceMeshCut>, std::shared_ptr<imstk::PbdObject> >& CuttingPair : VisualMeshCuttings)
+			//{
+			//	CuttingPair.Key->update();
+			//	CuttingPair.Value->setVisualGeometry(CuttingPair.Key->getOutputMesh());
+
+			//	// Remap the new geometry
+			//	std::shared_ptr<imstk::PointwiseMap> Map = std::make_shared<imstk::PointwiseMap>(CuttingPair.Value->getCollidingGeometry(), CuttingPair.Value->getVisualGeometry());
+			//	Map->setTolerance(0.00000001 * UMathUtil::GetScale());
+			//	Map->update();
+			//	//std::shared_ptr<imstk::GeometryMap> Map = PbdObject->getPhysicsToVisualMap();
+			//	//Map->update();
+			//	CuttingPair.Value->setPhysicsToVisualMap(Map);
+			//	CuttingPair.Value->setCollidingToVisualMap(Map);
+			//}
 		}
 	}
+}
+
+FVector UCustomController::GetControlleriMSTKPosition()
+{
+	return UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true);
 }
 
 void UCustomController::SetGhostComponents(USceneComponent* SceneComponent, TArray<UStaticMeshComponent*> StaticMeshComponents)

@@ -38,9 +38,12 @@ UObject* UTetrahedralMeshImporterFactory::FactoryCreateFile(UClass* InClass, UOb
 	std::shared_ptr<imstk::SurfaceMesh> SurfaceMesh;
 
 	if (ImportedPointSet->getTypeName() == "TetrahedralMesh") {
-
 		// Create TetrahedralMeshAsset
 		std::shared_ptr<imstk::TetrahedralMesh> TetMesh = std::dynamic_pointer_cast<imstk::TetrahedralMesh>(ImportedPointSet);
+
+		// Rotate by -90 degrees on x axis to orient with obj imports
+		TetMesh->rotate(imstk::Vec3d(1.0, 0.0, 0.0), -3.14/2, imstk::Geometry::TransformType::ApplyToData);
+
 		FString TetAssetStr = InName.ToString();
 		TetAssetStr.Append("_volume");
 		FName TetAssetName = FName(*TetAssetStr);
@@ -54,8 +57,6 @@ UObject* UTetrahedralMeshImporterFactory::FactoryCreateFile(UClass* InClass, UOb
 	else if (ImportedPointSet->getTypeName() == "SurfaceMesh")
 	{
 		SurfaceMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(ImportedPointSet);
-
-
 	}
 	else if (ImportedPointSet->getTypeName() == "ImageData")
 	{

@@ -39,14 +39,22 @@ std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UDynamicalModel* M
 	}
 
 	if (StaticMeshComp) {
+		if (!StaticMeshComp->GetStaticMesh()->bAllowCPUAccess)
+			FMessageLog("PIE").Warning(FText::FromString("'Allow CPU Access' is not enabled. This is required to access static mesh data in the packaged game."));
+		
 		// Get vertices and indices from static mesh and create imstk geometry
 		FPositionVertexBuffer* PositionVertexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
 		FRawStaticIndexBuffer* IndexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].IndexBuffer;
 
+		FStaticMeshVertexBuffer* TexCoordBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.StaticMeshVertexBuffer;
+		StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.StaticMeshVertexBuffer.GetTexCoordData();
+
 		// Get vertices and indices in the mesh and set those values in the imstk mesh
 		TArray<FVector> Vertices;
+		std::shared_ptr<imstk::VecDataArray<float, 2>> TCoords = std::make_shared<imstk::VecDataArray<float, 2>>();
 		for (uint32 i = 0; i < PositionVertexBuffer->GetNumVertices(); i++) {
 			Vertices.Add(FVector(PositionVertexBuffer->VertexPosition(i)));
+			TCoords->push_back(imstk::Vec2f(TexCoordBuffer->GetVertexUV(i, 0).X, TexCoordBuffer->GetVertexUV(i, 0).Y));
 		}
 
 		// TODO: Could change this to array view?
@@ -56,6 +64,7 @@ std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UDynamicalModel* M
 		}
 
 		MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
+		MeshGeom->setVertexTCoords("tcoords", TCoords);
 		MeshGeom->computeVertexNormals();
 	}
 	else if (ProcMeshComp) {
@@ -68,7 +77,7 @@ std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UDynamicalModel* M
 		std::shared_ptr<imstk::VecDataArray<float, 2>> TCoords = std::make_shared<imstk::VecDataArray<float, 2>>();
 		for (int32 i = 0; i < VertexBuffer.Num(); i++) {
 			Vertices.Add(VertexBuffer[i].Position);
-			TCoords->push_back(imstk::Vec2f( (float)VertexBuffer[i].UV0[0], (float)VertexBuffer[i].UV0[1])); 
+			TCoords->push_back(imstk::Vec2f((float)VertexBuffer[i].UV0[0], (float)VertexBuffer[i].UV0[1]));
 		}
 
 		// TODO: Could change this to array view?
@@ -101,15 +110,28 @@ std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UImstkController* 
 	UStaticMeshComponent* StaticMeshComp = nullptr;
 
 	TArray<USceneComponent*> Components;
-	Controller->GetChildrenComponents(true, Components);
+	Controller->GetChildrenComponents(false, Components);
+
+	int Count = 0;
 	for (USceneComponent* Comp : Components) {
-		if (UStaticMeshComponent* MeshComp = (UStaticMeshComponent*)Comp) {
-			StaticMeshComp = MeshComp;
-			break;
+		if (Comp->IsA(UStaticMeshComponent::StaticClass())) {
+			StaticMeshComp = (UStaticMeshComponent*)Comp;
+			Count++;
 		}
 	}
+	if (Count > 1) {
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Warning: More than one static mesh component is attached to controller " + Controller->GetName() + ". Behaviour May not function as expected.");
+		UE_LOG(LogTemp, Warning, TEXT("Warning: More than one static mesh component is attached to controller %s. Behaviour May not function as expected."), *Controller->GetName());
+	}
+
 
 	if (StaticMeshComp) {
+		if (!StaticMeshComp->GetStaticMesh()->bAllowCPUAccess)
+		{
+			FMessageLog("PIE").Warning(FText::FromString("'Allow CPU Access' is not enabled. This is required to access static mesh data in the packaged game."));
+		}
+
 		// Get vertices and indices from static mesh and create imstk geometry
 		FPositionVertexBuffer* PositionVertexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
 		FRawStaticIndexBuffer* IndexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].IndexBuffer;
@@ -203,6 +225,10 @@ std::shared_ptr<imstk::Geometry> FPointSetGeomStruct::Init(UDynamicalModel* Mode
 	UStaticMeshComponent* StaticMeshComp = (UStaticMeshComponent*)Actor->GetComponentByClass(UStaticMeshComponent::StaticClass());
 	UProceduralMeshComponent* ProcMeshComp = (UProceduralMeshComponent*)Actor->GetComponentByClass(UProceduralMeshComponent::StaticClass());
 	if (StaticMeshComp) {
+		if (!StaticMeshComp->GetStaticMesh()->bAllowCPUAccess)
+		{
+			FMessageLog("PIE").Warning(FText::FromString("'Allow CPU Access' is not enabled. This is required to access static mesh data in the packaged game."));
+		}
 		FPositionVertexBuffer* PositionVertexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
 
 		// Get vertices and indices in the mesh and set those values in the imstk mesh
@@ -252,6 +278,10 @@ std::shared_ptr<imstk::Geometry> FPointSetGeomStruct::Init(UImstkController* Con
 	}
 
 	if (StaticMeshComp) {
+		if (!StaticMeshComp->GetStaticMesh()->bAllowCPUAccess)
+		{
+			FMessageLog("PIE").Warning(FText::FromString("'Allow CPU Access' is not enabled. This is required to access static mesh data in the packaged game."));
+		}
 		FPositionVertexBuffer* PositionVertexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
 
 		// Get vertices and indices in the mesh and set those values in the imstk mesh

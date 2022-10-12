@@ -80,6 +80,13 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 		}
 		return Z_Registration_Info_UEnum_EControllerPreset.InnerSingleton;
 	}
+	DEFINE_FUNCTION(UCustomController::execGetControlleriMSTKPosition)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(FVector*)Z_Param__Result=P_THIS->GetControlleriMSTKPosition();
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(UCustomController::execSetGhostComponents)
 	{
 		P_GET_OBJECT(USceneComponent,Z_Param_SceneComponent);
@@ -165,6 +172,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 			{ "BeginStitch", &UCustomController::execBeginStitch },
 			{ "BeginVertexGrasp", &UCustomController::execBeginVertexGrasp },
 			{ "EndGrasp", &UCustomController::execEndGrasp },
+			{ "GetControlleriMSTKPosition", &UCustomController::execGetControlleriMSTKPosition },
 			{ "MoveControllerToLocation", &UCustomController::execMoveControllerToLocation },
 			{ "MoveControllerToRaycastOnPlane", &UCustomController::execMoveControllerToRaycastOnPlane },
 			{ "SetGhostComponents", &UCustomController::execSetGhostComponents },
@@ -335,6 +343,39 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 		}
 		return ReturnFunction;
 	}
+	struct Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition_Statics
+	{
+		struct CustomController_eventGetControlleriMSTKPosition_Parms
+		{
+			FVector ReturnValue;
+		};
+		static const UECodeGen_Private::FStructPropertyParams NewProp_ReturnValue;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(CustomController_eventGetControlleriMSTKPosition_Parms, ReturnValue), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(nullptr, 0) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition_Statics::Function_MetaDataParams[] = {
+		{ "Category", "Imstk" },
+		{ "ModuleRelativePath", "Public/CustomController.h" },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UCustomController, nullptr, "GetControlleriMSTKPosition", nullptr, nullptr, sizeof(Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition_Statics::CustomController_eventGetControlleriMSTKPosition_Parms), Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04880401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
 	struct Z_Construct_UFunction_UCustomController_MoveControllerToLocation_Statics
 	{
 		struct CustomController_eventMoveControllerToLocation_Parms
@@ -437,7 +478,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UCustomController_MoveControllerToRaycastOnPlane_Statics::Function_MetaDataParams[] = {
 		{ "Category", "Imstk" },
-		{ "Comment", "/** Projects a ray with the specified start and direction onto the supplied plane to find a point of intersection and moves the iMSTK object to that location. \n\x09* Moves the Unreal Actor that the component is attached to to the specified location if bUpdateUnrealPosRot is set.\n\x09* @param Location - The Unreal position to move the controller to\n\x09* @param Orientation - The Unreal orientation to move the controller to\n\x09* @param bUpdateUnrealPosRot - Updates the position and rotation of the Unreal Actor if true\n\x09* @return The intersection location between the projected ray and the plane\n\x09*/" },
+		{ "Comment", "/** Projects a ray with the specified start and direction onto the supplied plane to find a point of intersection and moves the iMSTK object to that location.\n\x09* Moves the Unreal Actor that the component is attached to to the specified location if bUpdateUnrealPosRot is set.\n\x09* @param Location - The Unreal position to move the controller to\n\x09* @param Orientation - The Unreal orientation to move the controller to\n\x09* @param bUpdateUnrealPosRot - Updates the position and rotation of the Unreal Actor if true\n\x09* @return The intersection location between the projected ray and the plane\n\x09*/" },
 		{ "CPP_Default_bUpdateUnrealPosRot", "true" },
 		{ "ModuleRelativePath", "Public/CustomController.h" },
 		{ "ToolTip", "Projects a ray with the specified start and direction onto the supplied plane to find a point of intersection and moves the iMSTK object to that location.\nMoves the Unreal Actor that the component is attached to to the specified location if bUpdateUnrealPosRot is set.\n@param Location - The Unreal position to move the controller to\n@param Orientation - The Unreal orientation to move the controller to\n@param bUpdateUnrealPosRot - Updates the position and rotation of the Unreal Actor if true\n@return The intersection location between the projected ray and the plane" },
@@ -561,13 +602,38 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_GhostMaterial;
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_bIgnoreAngularForce_MetaData[];
+#endif
+		static void NewProp_bIgnoreAngularForce_SetBit(void* Obj);
+		static const UECodeGen_Private::FBoolPropertyParams NewProp_bIgnoreAngularForce;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_SpringForce_MetaData[];
 #endif
 		static const UECodeGen_Private::FFloatPropertyParams NewProp_SpringForce;
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_SpringDamping_MetaData[];
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_DamperForce_MetaData[];
 #endif
-		static const UECodeGen_Private::FFloatPropertyParams NewProp_SpringDamping;
+		static const UECodeGen_Private::FFloatPropertyParams NewProp_DamperForce;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_LinearKs_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_LinearKs;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_AngularKs_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_AngularKs;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_LinearKd_MetaData[];
+#endif
+		static const UECodeGen_Private::FDoublePropertyParams NewProp_LinearKd;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_AngularKd_MetaData[];
+#endif
+		static const UECodeGen_Private::FDoublePropertyParams NewProp_AngularKd;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_ForceScale_MetaData[];
+#endif
+		static const UECodeGen_Private::FDoublePropertyParams NewProp_ForceScale;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_bPrintImstkPos_MetaData[];
 #endif
@@ -597,8 +663,9 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 		{ &Z_Construct_UFunction_UCustomController_BeginStitch, "BeginStitch" }, // 261615008
 		{ &Z_Construct_UFunction_UCustomController_BeginVertexGrasp, "BeginVertexGrasp" }, // 3894908041
 		{ &Z_Construct_UFunction_UCustomController_EndGrasp, "EndGrasp" }, // 3458966767
+		{ &Z_Construct_UFunction_UCustomController_GetControlleriMSTKPosition, "GetControlleriMSTKPosition" }, // 1079064868
 		{ &Z_Construct_UFunction_UCustomController_MoveControllerToLocation, "MoveControllerToLocation" }, // 1733819221
-		{ &Z_Construct_UFunction_UCustomController_MoveControllerToRaycastOnPlane, "MoveControllerToRaycastOnPlane" }, // 3508072369
+		{ &Z_Construct_UFunction_UCustomController_MoveControllerToRaycastOnPlane, "MoveControllerToRaycastOnPlane" }, // 616567667
 		{ &Z_Construct_UFunction_UCustomController_SetGhostComponents, "SetGhostComponents" }, // 1573569502
 	};
 #if WITH_METADATA
@@ -699,10 +766,23 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_GhostMaterial = { "GhostMaterial", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, GhostMaterial), Z_Construct_UClass_UMaterial_NoRegister, METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_GhostMaterial_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_GhostMaterial_MetaData)) };
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_SpringForce_MetaData[] = {
-		{ "Category", "General|Advanced" },
-		{ "Comment", "// Spring force of the force applied to the tool\n" },
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_bIgnoreAngularForce_MetaData[] = {
+		{ "Category", "General|Advanced|ForceTool" },
 		{ "EditCondition", "bForceTool" },
+		{ "EditConditionHides", "" },
+		{ "ModuleRelativePath", "Public/CustomController.h" },
+	};
+#endif
+	void Z_Construct_UClass_UCustomController_Statics::NewProp_bIgnoreAngularForce_SetBit(void* Obj)
+	{
+		((UCustomController*)Obj)->bIgnoreAngularForce = 1;
+	}
+	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_bIgnoreAngularForce = { "bIgnoreAngularForce", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(UCustomController), &Z_Construct_UClass_UCustomController_Statics::NewProp_bIgnoreAngularForce_SetBit, METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_bIgnoreAngularForce_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_bIgnoreAngularForce_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_SpringForce_MetaData[] = {
+		{ "Category", "General|Advanced|ForceTool" },
+		{ "Comment", "// Spring force of the force applied to the tool\n" },
+		{ "EditCondition", "bForceTool && bIgnoreAngularForce" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/CustomController.h" },
 		{ "ToolTip", "Spring force of the force applied to the tool" },
@@ -710,16 +790,61 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 #endif
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_SpringForce = { "SpringForce", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, SpringForce), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_SpringForce_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_SpringForce_MetaData)) };
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_SpringDamping_MetaData[] = {
-		{ "Category", "General|Advanced" },
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_DamperForce_MetaData[] = {
+		{ "Category", "General|Advanced|ForceTool" },
 		{ "Comment", "// Spring damping of the force applied to the tool\n" },
-		{ "EditCondition", "bForceTool" },
+		{ "EditCondition", "bForceTool && bIgnoreAngularForce" },
 		{ "EditConditionHides", "" },
 		{ "ModuleRelativePath", "Public/CustomController.h" },
 		{ "ToolTip", "Spring damping of the force applied to the tool" },
 	};
 #endif
-	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_SpringDamping = { "SpringDamping", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, SpringDamping), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_SpringDamping_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_SpringDamping_MetaData)) };
+	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_DamperForce = { "DamperForce", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, DamperForce), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_DamperForce_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_DamperForce_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_LinearKs_MetaData[] = {
+		{ "Category", "General|Advanced|ForceTool" },
+		{ "EditCondition", "bForceTool && !bIgnoreAngularForce" },
+		{ "EditConditionHides", "" },
+		{ "ModuleRelativePath", "Public/CustomController.h" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_LinearKs = { "LinearKs", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, LinearKs), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_LinearKs_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_LinearKs_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_AngularKs_MetaData[] = {
+		{ "Category", "General|Advanced|ForceTool" },
+		{ "EditCondition", "bForceTool && !bIgnoreAngularForce" },
+		{ "EditConditionHides", "" },
+		{ "ModuleRelativePath", "Public/CustomController.h" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_AngularKs = { "AngularKs", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, AngularKs), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_AngularKs_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_AngularKs_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_LinearKd_MetaData[] = {
+		{ "Category", "General|Advanced|ForceTool" },
+		{ "EditCondition", "bForceTool && !bIgnoreAngularForce" },
+		{ "EditConditionHides", "" },
+		{ "ModuleRelativePath", "Public/CustomController.h" },
+	};
+#endif
+	const UECodeGen_Private::FDoublePropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_LinearKd = { "LinearKd", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Double, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, LinearKd), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_LinearKd_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_LinearKd_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_AngularKd_MetaData[] = {
+		{ "Category", "General|Advanced|ForceTool" },
+		{ "EditCondition", "bForceTool && !bIgnoreAngularForce" },
+		{ "EditConditionHides", "" },
+		{ "ModuleRelativePath", "Public/CustomController.h" },
+	};
+#endif
+	const UECodeGen_Private::FDoublePropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_AngularKd = { "AngularKd", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Double, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, AngularKd), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_AngularKd_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_AngularKd_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_ForceScale_MetaData[] = {
+		{ "Category", "General|Advanced|ForceTool" },
+		{ "EditCondition", "bForceTool && !bIgnoreAngularForce" },
+		{ "EditConditionHides", "" },
+		{ "ModuleRelativePath", "Public/CustomController.h" },
+	};
+#endif
+	const UECodeGen_Private::FDoublePropertyParams Z_Construct_UClass_UCustomController_Statics::NewProp_ForceScale = { "ForceScale", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Double, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomController, ForceScale), METADATA_PARAMS(Z_Construct_UClass_UCustomController_Statics::NewProp_ForceScale_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomController_Statics::NewProp_ForceScale_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomController_Statics::NewProp_bPrintImstkPos_MetaData[] = {
 		{ "Category", "Debugging" },
@@ -762,8 +887,14 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_InertiaTensorMultiplier,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_bForceTool,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_GhostMaterial,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_bIgnoreAngularForce,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_SpringForce,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_SpringDamping,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_DamperForce,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_LinearKs,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_AngularKs,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_LinearKd,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_AngularKd,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_ForceScale,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_bPrintImstkPos,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_GhostSceneComp,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomController_Statics::NewProp_GhostMeshes_Inner,
@@ -809,9 +940,9 @@ void EmptyLinkFunctionForGeneratedCodeCustomController() {}
 		{ EControllerPreset_StaticEnum, TEXT("EControllerPreset"), &Z_Registration_Info_UEnum_EControllerPreset, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1497589548U) },
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UCustomController, UCustomController::StaticClass, TEXT("UCustomController"), &Z_Registration_Info_UClass_UCustomController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UCustomController), 176253025U) },
+		{ Z_Construct_UClass_UCustomController, UCustomController::StaticClass, TEXT("UCustomController"), &Z_Registration_Info_UClass_UCustomController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UCustomController), 2096512419U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_1952121216(TEXT("/Script/Imstk"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_2282379526(TEXT("/Script/Imstk"),
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::ClassInfo),
 		nullptr, 0,
 		Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_Statics::EnumInfo));

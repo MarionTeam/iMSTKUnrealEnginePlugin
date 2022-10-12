@@ -99,6 +99,11 @@ void UImstkController::AddCutting(std::shared_ptr<imstk::PbdObjectCutting> Input
 	this->Cuttings.Add(InputCutting);
 }
 
+void UImstkController::AddCutObject(std::shared_ptr<imstk::PbdObject> InputObject)
+{
+	this->CutObjects.Add(InputObject);
+}
+
 void UImstkController::AddCollision(std::shared_ptr<imstk::CollisionInteraction> InputCollision)
 {
 	this->Collisions.Add(InputCollision);

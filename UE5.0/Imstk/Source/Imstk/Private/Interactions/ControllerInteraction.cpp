@@ -5,6 +5,7 @@
 
 #include "DeformableModel.h"
 #include "RBDModel.h"
+#include "PBDModel.h"
 #include "StaticModel.h"
 #include "SuturingController.h"
 #include "Suturing/NeedleInteraction.h"
@@ -22,6 +23,8 @@
 #include "imstkRigidObjectLevelSetCollision.h"
 #include "imstkRigidBodyCH.h"
 #include "imstkLevelSetCH.h"
+
+#include "imstkSurfaceMeshCut.h"
 
 void UControllerInteraction::Init()
 {
@@ -100,8 +103,17 @@ void UControllerInteraction::Init()
 	}
 
 	if (Controller->ToolType == EToolType::CuttingTool) {
-		if (Cast<UDeformableModel>(Model1)) {
-			std::shared_ptr<imstk::PbdObjectCutting> Cutting = std::make_shared<imstk::PbdObjectCutting>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), Controller->GetToolObj());
+		if (UPBDModel* PBD = Cast<UPBDModel>(Model1)) {
+			std::shared_ptr<imstk::PbdObjectCutting> Cutting = std::make_shared<imstk::PbdObjectCutting>(PBD->PbdObject, Controller->GetToolObj());
+			if (PBD->bCleanMesh) {
+				/*std::shared_ptr<imstk::SurfaceMeshCut> SMC = std::make_shared<imstk::SurfaceMeshCut>();
+				SMC->setInputMesh(std::dynamic_pointer_cast<imstk::SurfaceMesh>(PBD->PbdObject->getVisualGeometry()));
+				SMC->setCutGeometry(Controller->GetToolObj()->getCollidingGeometry());
+				SMC->setEpsilon(Controller->CutEpsilon);
+				SMC->update();
+				Controller->AddCutting(SMC, PBD->PbdObject);*/
+				Controller->AddCutObject(PBD->PbdObject);
+			}
 			//SubsystemInstance->ActiveScene->addInteraction(Cutting);
 			Cutting->setCutEpsilon(Controller->CutEpsilon);
 			Controller->AddCutting(Cutting);

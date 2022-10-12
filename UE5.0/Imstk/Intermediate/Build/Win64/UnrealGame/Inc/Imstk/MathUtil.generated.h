@@ -21,7 +21,7 @@ private: \
 	static void StaticRegisterNativesUMathUtil(); \
 	friend struct Z_Construct_UClass_UMathUtil_Statics; \
 public: \
-	DECLARE_CLASS(UMathUtil, UBlueprintFunctionLibrary, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/Imstk"), NO_API) \
+	DECLARE_CLASS(UMathUtil, UObject, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/Imstk"), NO_API) \
 	DECLARE_SERIALIZER(UMathUtil)
 
 
@@ -30,7 +30,7 @@ private: \
 	static void StaticRegisterNativesUMathUtil(); \
 	friend struct Z_Construct_UClass_UMathUtil_Statics; \
 public: \
-	DECLARE_CLASS(UMathUtil, UBlueprintFunctionLibrary, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/Imstk"), NO_API) \
+	DECLARE_CLASS(UMathUtil, UObject, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/Imstk"), NO_API) \
 	DECLARE_SERIALIZER(UMathUtil)
 
 

@@ -14,8 +14,8 @@ class UStaticMeshComponent;
 #endif
 #define IMSTK_ImstkController_generated_h
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_SPARSE_DATA
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_RPC_WRAPPERS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_SPARSE_DATA
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_RPC_WRAPPERS \
  \
 	DECLARE_FUNCTION(execGetGeomOffset); \
 	DECLARE_FUNCTION(execGetGeomScale); \
@@ -25,7 +25,7 @@ class UStaticMeshComponent;
 	DECLARE_FUNCTION(execIsInitialized);
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_RPC_WRAPPERS_NO_PURE_DECLS \
  \
 	DECLARE_FUNCTION(execGetGeomOffset); \
 	DECLARE_FUNCTION(execGetGeomScale); \
@@ -35,7 +35,7 @@ class UStaticMeshComponent;
 	DECLARE_FUNCTION(execIsInitialized);
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_INCLASS_NO_PURE_DECLS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUImstkController(); \
 	friend struct Z_Construct_UClass_UImstkController_Statics; \
@@ -44,7 +44,7 @@ public: \
 	DECLARE_SERIALIZER(UImstkController)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_INCLASS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_INCLASS \
 private: \
 	static void StaticRegisterNativesUImstkController(); \
 	friend struct Z_Construct_UClass_UImstkController_Statics; \
@@ -53,7 +53,7 @@ public: \
 	DECLARE_SERIALIZER(UImstkController)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_STANDARD_CONSTRUCTORS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_STANDARD_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UImstkController(const FObjectInitializer& ObjectInitializer); \
 	DEFINE_ABSTRACT_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UImstkController) \
@@ -66,7 +66,7 @@ private: \
 public:
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_ENHANCED_CONSTRUCTORS \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	NO_API UImstkController(UImstkController&&); \
@@ -77,25 +77,25 @@ public: \
 	DEFINE_ABSTRACT_DEFAULT_CONSTRUCTOR_CALL(UImstkController)
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_54_PROLOG
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_GENERATED_BODY_LEGACY \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_55_PROLOG
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_SPARSE_DATA \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_RPC_WRAPPERS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_INCLASS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_STANDARD_CONSTRUCTORS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_SPARSE_DATA \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_RPC_WRAPPERS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_INCLASS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_STANDARD_CONSTRUCTORS \
 public: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_GENERATED_BODY \
+#define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_SPARSE_DATA \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_INCLASS_NO_PURE_DECLS \
-	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_57_ENHANCED_CONSTRUCTORS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_SPARSE_DATA \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_INCLASS_NO_PURE_DECLS \
+	FID_HostProject_Plugins_Imstk_Source_Imstk_Public_ImstkController_h_58_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

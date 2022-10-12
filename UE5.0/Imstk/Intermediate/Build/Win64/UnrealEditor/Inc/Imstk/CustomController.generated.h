@@ -19,6 +19,7 @@ class UDynamicalModel;
 #define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_30_SPARSE_DATA
 #define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_30_RPC_WRAPPERS \
  \
+	DECLARE_FUNCTION(execGetControlleriMSTKPosition); \
 	DECLARE_FUNCTION(execSetGhostComponents); \
 	DECLARE_FUNCTION(execBeginCut); \
 	DECLARE_FUNCTION(execBeginStitch); \
@@ -32,6 +33,7 @@ class UDynamicalModel;
 
 #define FID_HostProject_Plugins_Imstk_Source_Imstk_Public_CustomController_h_30_RPC_WRAPPERS_NO_PURE_DECLS \
  \
+	DECLARE_FUNCTION(execGetControlleriMSTKPosition); \
 	DECLARE_FUNCTION(execSetGhostComponents); \
 	DECLARE_FUNCTION(execBeginCut); \
 	DECLARE_FUNCTION(execBeginStitch); \

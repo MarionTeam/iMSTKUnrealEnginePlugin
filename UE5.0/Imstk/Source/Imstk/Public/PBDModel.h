@@ -55,6 +55,10 @@ public:
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "TetrahedralMesh != nullptr", EditConditionHides), Category = "General")
 		bool bGenerateSurfaceFromTetrahedral = false;
 
+	// Clean the mesh to remove duplicated vertices (useful for uv seams)
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "TetrahedralMesh == nullptr", EditConditionHides), Category = "General")
+		bool bCleanMesh = false;
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -73,6 +77,8 @@ public:
 	*/
 	virtual void Init() override;
 
+	virtual void UnInit() override;
+
 protected:
 	// Procedural mesh component attached to the actor (will be generated if one is not attached)
 	UPROPERTY()
@@ -80,6 +86,7 @@ protected:
 
 	// Cached mesh geometry used to update Unreal procedural mesh
 	std::shared_ptr<imstk::SurfaceMesh> MeshGeom;
+	std::shared_ptr<imstk::SurfaceMesh> CleanMeshGeom;
 	std::shared_ptr<imstk::PointSet> PointSetGeom;
 
 	/** Updates the mesh's vertices in Unreal to visualize the scene in imstk

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
+//#include "Kismet/BlueprintFunctionLibrary.h"
 #include "imstkMath.h"
 #include "imstkVecDataArray.h"
 #include "MathUtil.generated.h"
@@ -13,7 +13,7 @@
  *  \details Converts Vectors, Quaternions...
  */
 UCLASS()
-class IMSTK_API UMathUtil : public UBlueprintFunctionLibrary
+class IMSTK_API UMathUtil : public UObject
 {
 	GENERATED_BODY()
 public:

@@ -53,7 +53,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Imstk")
 		void MoveControllerToLocation(FVector Location, FQuat Orientation, bool bUpdateUnrealPosRot = true);
 
-	/** Projects a ray with the specified start and direction onto the supplied plane to find a point of intersection and moves the iMSTK object to that location. 
+	/** Projects a ray with the specified start and direction onto the supplied plane to find a point of intersection and moves the iMSTK object to that location.
 	* Moves the Unreal Actor that the component is attached to to the specified location if bUpdateUnrealPosRot is set.
 	* @param Location - The Unreal position to move the controller to
 	* @param Orientation - The Unreal orientation to move the controller to
@@ -64,7 +64,7 @@ public:
 		FVector MoveControllerToRaycastOnPlane(FVector RayStart, FVector RayDir, FQuat Orientation, UDynamicalModel* PlaneActor, bool bUpdateUnrealPosRot = true);
 
 protected:
-	/** Helper function that updates the object in imstk the WorldPos, or a location on the plane determined by a raycast from the WorlPos in the 
+	/** Helper function that updates the object in imstk the WorldPos, or a location on the plane determined by a raycast from the WorlPos in the
 	* direction of WorldDir if the PlaneActor is provided
 	* @param WorldPos - New world position of the mouse cursor or if a PlaneActor is provided, the starting point of the ray
 	* @param WorldDir - Direction of the raycast if relevant
@@ -149,7 +149,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "General|Advanced")
 		UMaterial* GhostMaterial;
 
-
 	/** Sets the components used for the ghost object on force tools
 	* @param SceneComponent - Pointer to the empty parent USceneComponent that holds the UStaticMeshComponents
 	* @param StaticMeshComponents - Array of pointers to UStaticMeshComponents that represent the ghost model
@@ -157,13 +156,40 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Imstk")
 		void SetGhostComponents(USceneComponent* SceneComponent, TArray<UStaticMeshComponent*> StaticMeshComponents);
 
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "General|Advanced|ForceTool")
+		bool bIgnoreAngularForce = true;
+
 	// Spring force of the force applied to the tool
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool && bIgnoreAngularForce", EditConditionHides), BlueprintReadWrite, Category = "General|Advanced|ForceTool")
 		float SpringForce = 10000;
 
 	// Spring damping of the force applied to the tool
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "General|Advanced")
-		float SpringDamping = 100;
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool && bIgnoreAngularForce", EditConditionHides), BlueprintReadWrite, Category = "General|Advanced|ForceTool")
+		float DamperForce = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "General|Advanced|ForceTool")
+		FVector LinearKs = FVector(8000000.0, 8000000.0, 8000000.0);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "General|Advanced|ForceTool")
+		FVector AngularKs = FVector(10000.0, 10000.0, 10000.0);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "General|Advanced|ForceTool")
+		double LinearKd = 10000.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "General|Advanced|ForceTool")
+		double AngularKd = 300.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "General|Advanced|ForceTool")
+		double ForceScale = 1;
+
+	UFUNCTION(BlueprintCallable, Category = "Imstk")
+		FVector GetControlleriMSTKPosition();
+
+	//imstk::Vec3d SpringForce = imstk::Vec3d::Zero();
+	//imstk::Vec3d DamperForce = imstk::Vec3d::Zero();
+
+	imstk::Vec3d AngularSpringForce = imstk::Vec3d::Zero();
+	imstk::Vec3d AngularDamperForce = imstk::Vec3d::Zero();
 
 	// Prints the position of the object to the screen
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debugging")
@@ -179,5 +205,5 @@ protected:
 
 public:
 	virtual void UnInit() override;
-	
+
 };

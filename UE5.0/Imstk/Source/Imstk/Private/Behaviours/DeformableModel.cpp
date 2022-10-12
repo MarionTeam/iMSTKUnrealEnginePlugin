@@ -6,6 +6,8 @@
 #include "imstkPbdModel.h"
 #include "imstkSelectEnclosedPoints.h"
 #include "imstkTetrahedralMesh.h"
+#include "MeshDescription.h"
+
 
 void UDeformableModel::InitializeComponent()
 {
@@ -55,14 +57,15 @@ void UDeformableModel::ProcessBoundaryConditions()
 			continue;
 		}
 
+		FStaticMeshRenderData* BoundaryRenderData = BoundaryMeshComp->GetStaticMesh()->GetRenderData();
 
-		UStaticMesh* BoundaryMesh = BoundaryMeshComp->GetStaticMesh();
+		if (!BoundaryMeshComp->GetStaticMesh()->bAllowCPUAccess) 
+			FMessageLog("PIE").Warning(FText::FromString("'Allow CPU Access' is not enabled. This is required to access static mesh data in the packaged game."));
+		
 
 		// TODO: this could be made into a util function that creates an imstk mesh based on unreal values
-		FPositionVertexBuffer* VertexBuffer = &BoundaryMesh->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
-		FRawStaticIndexBuffer* IndexBuffer = &BoundaryMesh->GetRenderData()->LODResources[0].IndexBuffer;
-
-		std::shared_ptr<imstk::SurfaceMesh> BoundaryMeshGeom = std::make_shared<imstk::SurfaceMesh>();
+		FPositionVertexBuffer* VertexBuffer = &BoundaryRenderData->LODResources[0].VertexBuffers.PositionVertexBuffer;
+		FRawStaticIndexBuffer* IndexBuffer = &BoundaryRenderData->LODResources[0].IndexBuffer;
 
 		// Get vertices and indices in the mesh and set those values in the imstk mesh
 		TArray<FVector> Vertices;
@@ -73,7 +76,8 @@ void UDeformableModel::ProcessBoundaryConditions()
 		for (int32 i = 0; i < IndexBuffer->GetNumIndices(); i++) {
 			Indices.Add(IndexBuffer->GetIndex(i));
 		}
-		
+
+		std::shared_ptr<imstk::SurfaceMesh> BoundaryMeshGeom = std::make_shared<imstk::SurfaceMesh>();
 		// Create the geometry in iMSTK and make it reflect Unreal
 		BoundaryMeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
 		BoundaryMeshGeom->scale(UMathUtil::ToImstkVec3d(Actor->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
