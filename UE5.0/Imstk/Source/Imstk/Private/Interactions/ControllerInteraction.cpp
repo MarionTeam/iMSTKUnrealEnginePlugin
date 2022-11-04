@@ -182,10 +182,12 @@ void UControllerInteraction::Init()
 	}
 	else if (Cast<UDeformableModel>(Model1))
 	{
-		std::shared_ptr<imstk::PbdObjectCollision> Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), Controller->GetToolObj(), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+		std::shared_ptr<imstk::PbdObjectCollision> Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), Controller->GetToolObj());
 		Interaction->setFriction(Friction);
 		Interaction->setRestitution(Restitution);
 		Interaction->setRigidBodyCompliance(RigidBodyCompliance);
+		Interaction->setDeformableStiffnessA(Stiffness);
+		Interaction->setDeformableStiffnessB(Stiffness);
 		SubsystemInstance->ActiveScene->addInteraction(Interaction);
 		Controller->AddCollision(Interaction);
 	}

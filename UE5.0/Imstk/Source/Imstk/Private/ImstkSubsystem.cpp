@@ -38,7 +38,9 @@
 #include "imstkSimulationManager.h"
 #include "imstkSimulationUtils.h"
 #include "imstkVisualModel.h"
-//#include "imstkVTKViewer.h"
+
+#include "imstkVTKViewer.h"
+
 #include "imstkMeshIO.h"
 #include "imstkDeviceManager.h"
 #include "imstkDeviceManagerFactory.h"
@@ -367,7 +369,7 @@ makePbdObjSurface(
 	auto prismObj = std::make_shared<imstk::PbdObject>(name);
 
 	// Setup the Geometry
-	std::shared_ptr<imstk::TetrahedralMesh> prismMesh = imstk::GeometryUtils::toTetGrid(center, size, dim);
+	std::shared_ptr<imstk::TetrahedralMesh> prismMesh = imstk::MeshIO::read<imstk::TetrahedralMesh>("C:/WorkStuff/UnmodifiedTest/build/install/data/textured_organs/heart_volume.vtk");
 	std::shared_ptr<imstk::SurfaceMesh>     surfMesh = prismMesh->extractSurfaceMesh();
 	//std::shared_ptr<TetrahedralMesh> prismMesh = MeshIO::read<TetrahedralMesh>(iMSTK_DATA_ROOT "/textured_organs/heart_volume.vtk");
 	//std::shared_ptr<SurfaceMesh>     surfMesh = prismMesh->extractSurfaceMesh();
@@ -429,7 +431,7 @@ makeCapsuleToolObj(std::shared_ptr<imstk::PbdModel> model)
 	controller->setLinearKs(5000.0);
 	controller->setAngularKs(1000.0);
 	controller->setUseCritDamping(true);
-	controller->setForceScaling(0.001);
+	controller->setForceScaling(0.01);
 	controller->setSmoothingKernelSize(15);
 	controller->setUseForceSmoothening(true);
 
@@ -441,143 +443,143 @@ makeCapsuleToolObj(std::shared_ptr<imstk::PbdModel> model)
 }
 
 void UImstkSubsystem::ImstkTest() {
-	//// Setup logger (write to file and stdout)
-	//imstk::Logger::getInstance().addFileSink("simulation", std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())));
+	// Setup logger (write to file and stdout)
+	imstk::Logger::getInstance().addFileSink("simulation", std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())));
 
-	//// Setup the scene
-	//auto scene = std::make_shared<imstk::Scene>("PbdHapticGrasping");
-	//scene->getActiveCamera()->setPosition(0.12, 4.51, 16.51);
-	//scene->getActiveCamera()->setFocalPoint(0.0, 0.0, 0.0);
-	//scene->getActiveCamera()->setViewUp(0.0, 0.96, -0.28);
+	// Setup the scene
+	auto scene = std::make_shared<imstk::Scene>("PbdHapticGrasping");
+	scene->getActiveCamera()->setPosition(0.12, 4.51, 16.51);
+	scene->getActiveCamera()->setFocalPoint(0.0, 0.0, 0.0);
+	scene->getActiveCamera()->setViewUp(0.0, 0.96, -0.28);
 
-	//auto                            pbdModel = std::make_shared<imstk::PbdModel>();
-	//std::shared_ptr<imstk::PbdModelConfig> pbdParams = pbdModel->getConfig();
-	//pbdParams->m_gravity = imstk::Vec3d(0.0, 0.0, 0.0);
-	//pbdParams->m_dt = 0.005;
-	//pbdParams->m_iterations = 8;
-	//pbdParams->m_linearDampingCoeff = 0.003;
+	auto                            pbdModel = std::make_shared<imstk::PbdModel>();
+	std::shared_ptr<imstk::PbdModelConfig> pbdParams = pbdModel->getConfig();
+	pbdParams->m_gravity = imstk::Vec3d(0.0, 0.0, 0.0);
+	pbdParams->m_dt = 0.005;
+	pbdParams->m_iterations = 8;
+	pbdParams->m_linearDampingCoeff = 0.003;
 
-	//// Setup a tissue to grasp
-	//std::shared_ptr<imstk::PbdObject> pbdObj = makePbdObjSurface("Tissue",
-	//	pbdModel,
-	//	imstk::Vec3d(4.0, 4.0, 4.0),  // Dimensions
-	//	imstk::Vec3i(5, 5, 5),        // Divisions
-	//	imstk::Vec3d(0.0, 0.0, 0.0)); // Center
-	//scene->addSceneObject(pbdObj);
+	// Setup a tissue to grasp
+	std::shared_ptr<imstk::PbdObject> pbdObj = makePbdObjSurface("Tissue",
+		pbdModel,
+		imstk::Vec3d(4.0, 4.0, 4.0),  // Dimensions
+		imstk::Vec3i(5, 5, 5),        // Divisions
+		imstk::Vec3d(0.0, 0.0, 0.0)); // Center
+	scene->addSceneObject(pbdObj);
 
-	//// Setup a tool to grasp with
-	//std::shared_ptr<imstk::PbdObject> toolObj = makeCapsuleToolObj(pbdModel);
-	//scene->addSceneObject(toolObj);
+	// Setup a tool to grasp with
+	std::shared_ptr<imstk::PbdObject> toolObj = makeCapsuleToolObj(pbdModel);
+	scene->addSceneObject(toolObj);
 
-	//// Add collision
-	//auto pbdToolCollision = std::make_shared<imstk::PbdObjectCollision>(pbdObj, toolObj, "SurfaceMeshToCapsuleCD");
+	// Add collision
+	auto pbdToolCollision = std::make_shared<imstk::PbdObjectCollision>(pbdObj, toolObj);
 	//pbdToolCollision->setRigidBodyCompliance(0.0001); // Helps with smoothness
-	//scene->addInteraction(pbdToolCollision);
+	scene->addInteraction(pbdToolCollision);
 
-	//// Create new picking with constraints
-	///*auto toolPicking = std::make_shared<imstk::PbdObjectGrasping>(pbdObj, toolObj);
-	//toolPicking->setStiffness(0.3);
-	//scene->addInteraction(toolPicking);*/
+	// Create new picking with constraints
+	/*auto toolPicking = std::make_shared<imstk::PbdObjectGrasping>(pbdObj, toolObj);
+	toolPicking->setStiffness(0.3);
+	scene->addInteraction(toolPicking);*/
 
-	//// Light
-	//auto light = std::make_shared<imstk::DirectionalLight>();
-	//light->setFocalPoint(imstk::Vec3d(5.0, -8.0, -5.0));
-	//light->setIntensity(1.0);
-	//scene->addLight("Light", light);
+	// Light
+	auto light = std::make_shared<imstk::DirectionalLight>();
+	light->setFocalPoint(imstk::Vec3d(5.0, -8.0, -5.0));
+	light->setIntensity(1.0);
+	scene->addLight("Light", light);
 
-	//// Run the simulation
-	//{
-	//	// Setup a viewer to render
-	//	auto viewer = std::make_shared<imstk::VTKViewer>();
-	//	viewer->setActiveScene(scene);
-	//	viewer->setVtkLoggerMode(imstk::VTKViewer::VTKLoggerMode::MUTE);
+	// Run the simulation
+	{
+		// Setup a viewer to render
+		auto viewer = std::make_shared<imstk::VTKViewer>();
+		viewer->setActiveScene(scene);
+		viewer->setVtkLoggerMode(imstk::VTKViewer::VTKLoggerMode::MUTE);
 
-	//	// Setup a scene manager to advance the scene
-	//	auto sceneManager = std::make_shared<imstk::SceneManager>();
-	//	sceneManager->setActiveScene(scene);
-	//	sceneManager->pause();         // Start simulation paused
+		// Setup a scene manager to advance the scene
+		auto sceneManager = std::make_shared<imstk::SceneManager>();
+		sceneManager->setActiveScene(scene);
+		sceneManager->pause();         // Start simulation paused
 
-	//	auto driver = std::make_shared<imstk::SimulationManager>();
-	//	driver->addModule(viewer);
-	//	driver->addModule(sceneManager);
-	//	driver->setDesiredDt(0.002);
+		auto driver = std::make_shared<imstk::SimulationManager>();
+		driver->addModule(viewer);
+		driver->addModule(sceneManager);
+		driver->setDesiredDt(0.005);
 
-	//	auto controller = toolObj->getComponent<imstk::PbdObjectController>();
-	//	// Setup default haptics manager
-	//	std::shared_ptr<imstk::DeviceManager> hapticManager = imstk::DeviceManagerFactory::makeDeviceManager();
-	//	if (hapticManager->getTypeName() == "HaplyDeviceManager")
-	//	{
-	//		controller->setTranslationOffset(imstk::Vec3d(2.0, 0.0, -2.0));
-	//	}
-	//	std::shared_ptr<imstk::DeviceClient> deviceClient = hapticManager->makeDeviceClient();
-	//	driver->addModule(hapticManager);
+		auto controller = toolObj->getComponent<imstk::PbdObjectController>();
+		// Setup default haptics manager
+		std::shared_ptr<imstk::DeviceManager> hapticManager = imstk::DeviceManagerFactory::makeDeviceManager();
+		if (hapticManager->getTypeName() == "HaplyDeviceManager")
+		{
+			controller->setTranslationOffset(imstk::Vec3d(2.0, 0.0, -2.0));
+		}
+		std::shared_ptr<imstk::DeviceClient> deviceClient = hapticManager->makeDeviceClient();
+		driver->addModule(hapticManager);
 
-	//	//connect<imstk::ButtonEvent>(deviceClient, &imstk::DeviceClient::buttonStateChanged,
-	//	//    [&](imstk::ButtonEvent* e)
-	//	//    {
-	//	//        if (e->m_buttonState == BUTTON_PRESSED)
-	//	//        {
-	//	//            if (e->m_button == 1)
-	//	//            {
-	//	//                // Use a slightly larger capsule since collision prevents intersection
-	//	//                auto capsule = std::dynamic_pointer_cast<Capsule>(toolObj->getCollidingGeometry());
-	//	//                auto dilatedCapsule = std::make_shared<Capsule>(*capsule);
-	//	//                dilatedCapsule->setRadius(capsule->getRadius() * 1.1);
-	//	//                toolPicking->beginVertexGrasp(dilatedCapsule);
-	//	//                //pbdToolCollision->setEnabled(false);
-	//	//            }
-	//	//        }
-	//	//        else if (e->m_buttonState == BUTTON_RELEASED)
-	//	//        {
-	//	//            if (e->m_button == 1)
-	//	//            {
-	//	//                toolPicking->endGrasp();
-	//	//                //pbdToolCollision->setEnabled(true);
-	//	//            }
-	//	//        }
-	//	//    });
+		//connect<imstk::ButtonEvent>(deviceClient, &imstk::DeviceClient::buttonStateChanged,
+		//    [&](imstk::ButtonEvent* e)
+		//    {
+		//        if (e->m_buttonState == BUTTON_PRESSED)
+		//        {
+		//            if (e->m_button == 1)
+		//            {
+		//                // Use a slightly larger capsule since collision prevents intersection
+		//                auto capsule = std::dynamic_pointer_cast<Capsule>(toolObj->getCollidingGeometry());
+		//                auto dilatedCapsule = std::make_shared<Capsule>(*capsule);
+		//                dilatedCapsule->setRadius(capsule->getRadius() * 1.1);
+		//                toolPicking->beginVertexGrasp(dilatedCapsule);
+		//                //pbdToolCollision->setEnabled(false);
+		//            }
+		//        }
+		//        else if (e->m_buttonState == BUTTON_RELEASED)
+		//        {
+		//            if (e->m_button == 1)
+		//            {
+		//                toolPicking->endGrasp();
+		//                //pbdToolCollision->setEnabled(true);
+		//            }
+		//        }
+		//    });
 
-	//	// Alternative grasping by keyboard (in case device doesn't have a button)
-	//	//connect<KeyEvent>(viewer->getKeyboardDevice(), &KeyboardDeviceClient::keyPress,
-	//	//    [&](KeyEvent* e)
-	//	//    {
-	//	//        if (e->m_key == 'g')
-	//	//        {
-	//	//            auto capsule = std::dynamic_pointer_cast<Capsule>(toolObj->getCollidingGeometry());
-	//	//            auto dilatedCapsule = std::make_shared<Capsule>(*capsule);
-	//	//            dilatedCapsule->setRadius(capsule->getRadius() * 1.1);
-	//	//            toolPicking->beginVertexGrasp(dilatedCapsule);
-	//	//            //pbdToolCollision->setEnabled(false);
-	//	//        }
-	//	//    });
-	//	//connect<KeyEvent>(viewer->getKeyboardDevice(), &KeyboardDeviceClient::keyRelease,
-	//	//    [&](KeyEvent* e)
-	//	//    {
-	//	//        if (e->m_key == 'g')
-	//	//        {
-	//	//            toolPicking->endGrasp();
-	//	//            //pbdToolCollision->setEnabled(true);
-	//	//        }
-	//	//    });
-	//	controller->setDevice(deviceClient);
+		// Alternative grasping by keyboard (in case device doesn't have a button)
+		//connect<KeyEvent>(viewer->getKeyboardDevice(), &KeyboardDeviceClient::keyPress,
+		//    [&](KeyEvent* e)
+		//    {
+		//        if (e->m_key == 'g')
+		//        {
+		//            auto capsule = std::dynamic_pointer_cast<Capsule>(toolObj->getCollidingGeometry());
+		//            auto dilatedCapsule = std::make_shared<Capsule>(*capsule);
+		//            dilatedCapsule->setRadius(capsule->getRadius() * 1.1);
+		//            toolPicking->beginVertexGrasp(dilatedCapsule);
+		//            //pbdToolCollision->setEnabled(false);
+		//        }
+		//    });
+		//connect<KeyEvent>(viewer->getKeyboardDevice(), &KeyboardDeviceClient::keyRelease,
+		//    [&](KeyEvent* e)
+		//    {
+		//        if (e->m_key == 'g')
+		//        {
+		//            toolPicking->endGrasp();
+		//            //pbdToolCollision->setEnabled(true);
+		//        }
+		//    });
+		controller->setDevice(deviceClient);
 
-	//	// Add default mouse and keyboard controls to the viewer
-	//	std::shared_ptr<imstk::Entity> mouseAndKeyControls =
-	//		imstk::SimulationUtils::createDefaultSceneControl(driver);
-	//	scene->addSceneObject(mouseAndKeyControls);
+		// Add default mouse and keyboard controls to the viewer
+		std::shared_ptr<imstk::Entity> mouseAndKeyControls =
+			imstk::SimulationUtils::createDefaultSceneControl(driver);
+		scene->addSceneObject(mouseAndKeyControls);
 
-	//	imstk::connect<imstk::Event>(sceneManager, &imstk::SceneManager::preUpdate, [&](imstk::Event*)
-	//		{
-	//			// Simulate in real time
-	//			pbdModel->getConfig()->m_dt = sceneManager->getDt();
-	//			auto verts = std::dynamic_pointer_cast<imstk::SurfaceMesh>(pbdObj->getVisualGeometry())->getVertexPositions();
-	//			for (auto vert : *verts.get())
-	//				if (vert.x() != vert.x())
-	//					LOG(WARNING) << "NAN";
-	//		});
+		imstk::connect<imstk::Event>(sceneManager, &imstk::SceneManager::preUpdate, [&](imstk::Event*)
+			{
+				// Simulate in real time
+				pbdModel->getConfig()->m_dt = sceneManager->getDt();
+				auto verts = std::dynamic_pointer_cast<imstk::SurfaceMesh>(pbdObj->getVisualGeometry())->getVertexPositions();
+				for (auto vert : *verts.get())
+					if (vert.x() != vert.x())
+						LOG(WARNING) << "NAN";
+			});
 
-	//	driver->start();
-	//}
+		driver->start();
+	}
 }
 void UImstkSubsystem::UpdateHaptics()
 {
