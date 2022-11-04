@@ -1,78 +1,86 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/*
+** This file is part of the Interactive Medical Simulation Toolkit (iMSTK)
+** iMSTK is distributed under the Apache License, Version 2.0.
+** See accompanying NOTICE for details.
+*/
 
+#pragma once
 
 #include "ThreadInsertionConstraint.h"
 
+using namespace imstk;
 
 void
 ThreadInsertionConstraint::initConstraint(
-	imstk::VertexMassPair ptA1,
-	imstk::VertexMassPair ptA2,
-	imstk::Vec2d          threadBaryPoint,
-	imstk::VertexMassPair ptB1,
-	imstk::VertexMassPair ptB2,
-	imstk::VertexMassPair ptB3,
-	imstk::Vec3d          triBaryPoint,
-	double         stiffnessA,
-	double         stiffnessB)
+    const PbdState& bodies,
+    const PbdParticleId& ptA1,
+    const PbdParticleId& ptA2,
+    const Vec2d& threadBaryPoint,
+    const PbdParticleId& ptB1,
+    const PbdParticleId& ptB2,
+    const PbdParticleId& ptB3,
+    const Vec3d& triBaryPoint,
+    double               stiffnessA,
+    double               stiffnessB)
 {
-	// Vertex mass pairs for thread
-	m_bodiesFirst[0] = ptA1;
-	m_bodiesFirst[1] = ptA2;
+    // Vertex mass pairs for thread
+    m_particles[0] = ptA1;
+    m_particles[1] = ptA2;
 
-	// Barycentric coordinate on thread of intersection point
-	m_threadBaryPt = threadBaryPoint;
+    // Barycentric coordinate on thread of intersection point
+    m_threadBaryPt = threadBaryPoint;
 
-	// Computing world coordinates of intersecting point along thread
-	m_threadInsertionPoint = m_threadBaryPt[0] * (*m_bodiesFirst[0].vertex)
-		+ m_threadBaryPt[1] * (*m_bodiesFirst[1].vertex);
+    // Computing world coordinates of intersecting point along thread
+    m_threadInsertionPoint = m_threadBaryPt[0] * bodies.getPosition(m_particles[0])
+        + m_threadBaryPt[1] * bodies.getPosition(m_particles[1]);
 
-	// Vertex mass pairs for triangle
-	m_bodiesSecond[0] = ptB1;
-	m_bodiesSecond[1] = ptB2;
-	m_bodiesSecond[2] = ptB3;
+    // Vertex mass pairs for triangle
+    m_particles[2] = ptB1;
+    m_particles[3] = ptB2;
+    m_particles[4] = ptB3;
 
-	// Barycentric coordinate of puncture point on triangle
-	m_triangleBaryPt = triBaryPoint;
+    // Barycentric coordinate of puncture point on triangle
+    m_triangleBaryPt = triBaryPoint;
 
-	// Computing world coordinates of puncture point
-	m_triInsertionPoint = m_triangleBaryPt[0] * (*m_bodiesSecond[0].vertex)
-		+ m_triangleBaryPt[1] * (*m_bodiesSecond[1].vertex)
-		+ m_triangleBaryPt[2] * (*m_bodiesSecond[2].vertex);
+    // Computing world coordinates of puncture point
+    m_triInsertionPoint = m_triangleBaryPt[0] * bodies.getPosition(m_particles[2])
+        + m_triangleBaryPt[1] * bodies.getPosition(m_particles[3])
+        + m_triangleBaryPt[2] * bodies.getPosition(m_particles[4]);
 
-	// Saving stiffness
-	m_stiffnessA = stiffnessA;
-	m_stiffnessB = stiffnessB;
+    // Saving stiffness
+    m_stiffness[0] = stiffnessA;
+    m_stiffness[1] = stiffnessB;
 }
 
 bool
-ThreadInsertionConstraint::computeValueAndGradient(
-	double& c,
-	std::vector<imstk::Vec3d>& dcdxA,
-	std::vector<imstk::Vec3d>& dcdxB) const
+ThreadInsertionConstraint::computeValueAndGradient(PbdState& bodies,
+    double& c, std::vector<Vec3d>& dcdx)
 {
-	// Move thread such that the thread stays intersected with the
-	// puncture point on the triangle
+    // \todo: No reprojection is done here so smooth multi iteration solve is not possible
+    // two-way solve not possible
 
-	imstk::Vec3d diff = m_triInsertionPoint - m_threadInsertionPoint;  // gradient dcdx
-	c = diff.norm();
+    // Move thread such that the thread stays intersected with the
+    // puncture point on the triangle
 
-	// If sufficiently close, do not solve constraint
-	if (c < 1E-8)
-	{
-		return false;
-	}
+    Vec3d diff = m_triInsertionPoint - m_threadInsertionPoint;  // gradient dcdx
+    c = diff.norm();
 
-	diff.normalize();
+    // If sufficiently close, do not solve constraint
+    if (c < 1E-8)
+    {
+        c = 0.0;
+        return false;
+    }
+    diff.normalize();
 
-	// Move thread to follow insertion point
-	dcdxA[0] = diff * m_threadBaryPt[0];
-	dcdxA[1] = diff * m_threadBaryPt[1];
+    // Move thread to follow insertion point
+    dcdx[0] = diff * m_threadBaryPt[0];
+    dcdx[1] = diff * m_threadBaryPt[1];
 
-	// Move triangle to follow thread point (WARNING: Currently inactive)
-	dcdxB[0] = imstk::Vec3d::Zero();
-	dcdxB[1] = imstk::Vec3d::Zero();
-	dcdxB[2] = imstk::Vec3d::Zero();
+    // Move triangle to follow thread point (WARNING: Currently inactive)
+    dcdx[2] = -diff * m_triangleBaryPt[0];
+    dcdx[3] = -diff * m_triangleBaryPt[1];
+    dcdx[4] = -diff * m_triangleBaryPt[2];
 
-	return true;
+    return true;
 }

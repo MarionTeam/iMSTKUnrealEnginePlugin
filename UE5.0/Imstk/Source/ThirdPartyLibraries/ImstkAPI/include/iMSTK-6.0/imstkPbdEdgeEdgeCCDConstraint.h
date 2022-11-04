@@ -18,29 +18,37 @@ namespace imstk
 class PbdEdgeEdgeCCDConstraint : public PbdCollisionConstraint
 {
 public:
-    PbdEdgeEdgeCCDConstraint() : PbdCollisionConstraint(4, 4) { }
+    PbdEdgeEdgeCCDConstraint() : PbdCollisionConstraint(2, 2) { }
     ~PbdEdgeEdgeCCDConstraint() override = default;
 
 public:
     ///
-    /// \brief initialize constraint
-    /// \return  true if succeeded
+    /// \brief Initialize constraint
     ///
     void initConstraint(
-        VertexMassPair prev_ptA1, VertexMassPair prev_ptA2, VertexMassPair prev_ptB1, VertexMassPair prev_ptB2,
-        VertexMassPair ptA1, VertexMassPair ptA2, VertexMassPair ptB1, VertexMassPair ptB2,
-        double stiffnessA, double stiffnessB);
+        Vec3d* prevPtA0, Vec3d* prevPtA1,
+        Vec3d* prevPtB0, Vec3d* prevPtB1,
+        const PbdParticleId& ptA0, const PbdParticleId& ptA1,
+        const PbdParticleId& ptB0, const PbdParticleId& ptB1,
+        double stiffnessA, double stiffnessB,
+        int ccdSubsteps = 25);
+
+    void projectConstraint(PbdState& bodies,
+                           const double dt, const SolverType& type) override;
 
     ///
-    /// \brief compute value and gradient of constraint function
-    ///
-    /// \param[in] currVertexPositionsA current positions from object A
-    /// \param[in] currVertexPositionsA current positions from object B
+    /// \brief Compute value and gradient of constraint function
+    /// \param[inout] set of bodies involved in system
     /// \param[inout] c constraint value
     /// \param[inout] dcdx constraint gradient
     ///
-    bool computeValueAndGradient(double&             c,
-                                 std::vector<Vec3d>& dcdxA,
-                                 std::vector<Vec3d>& dcdxB) const override;
+    bool computeValueAndGradient(PbdState& bodies,
+                                 double& c, std::vector<Vec3d>& dcdx) override;
+
+protected:
+    // Extra particles used but not solved for
+    std::array<Vec3d*, 2> m_prevEdgeA = { nullptr, nullptr };
+    std::array<Vec3d*, 2> m_prevEdgeB = { nullptr, nullptr };
+    int m_ccdSubsteps = 25;
 };
 } // namespace imstk

@@ -40,7 +40,7 @@ public:
 	/** Check if behaviour is initialized in iMSTK. Can be called in blueprint to avoid null references
 	* @return True if behaviour is initialized in iMSTK
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK")
 		bool IsInitialized();
 
 	virtual void UnInit();

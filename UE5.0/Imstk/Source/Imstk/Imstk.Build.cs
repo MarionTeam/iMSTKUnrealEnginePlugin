@@ -10,7 +10,8 @@ public class Imstk : ModuleRules
 		bUseRTTI = true;
 		bLegacyPublicIncludePaths = true;
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
+		bEnableUndefinedIdentifierWarnings = false;
+
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
@@ -30,7 +31,8 @@ public class Imstk : ModuleRules
 			{
 				"Core",
 				"Projects",
-				"ImstkAPI"
+				"ImstkAPI",
+				"ProceduralMeshComponent"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -45,8 +47,7 @@ public class Imstk : ModuleRules
 				"SlateCore",
 				"UMG",
 				"DeveloperSettings",
-				"RawMesh",
-				"ProceduralMeshComponent"
+				"RawMesh"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

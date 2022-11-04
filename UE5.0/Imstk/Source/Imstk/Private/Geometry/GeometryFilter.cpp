@@ -190,7 +190,7 @@ FVector FSurfaceMeshGeomStruct::GetGeomScale() {
 std::shared_ptr<imstk::Geometry> FCapsuleGeomStruct::Init() const {
 	std::shared_ptr<imstk::Capsule> CapsuleGeom = std::make_shared<imstk::Capsule>();
 
-	CapsuleGeom->setPosition(imstk::Vec3d(0, (Length / UMathUtil::GetScale()) / 2, 0));
+	//CapsuleGeom->setPosition(imstk::Vec3d(0, (Length / UMathUtil::GetScale()) / 2, 0));
 	CapsuleGeom->setRadius(Radius / UMathUtil::GetScale());
 	CapsuleGeom->setLength(Length / UMathUtil::GetScale());
 	CapsuleGeom->setPosition(UMathUtil::ToImstkVec3d(GeometryOffset, true));

@@ -10,7 +10,7 @@
  *  \brief Abstract class for Imstk interactions
  *  \details Provides a function for initializing the interaction. Can be overridden in child classes to create the interaction in imstk
  */
-UCLASS(Abstract)
+UCLASS(Abstract, BlueprintType)
 class IMSTK_API UImstkInteraction : public UObject
 {
 	GENERATED_BODY()

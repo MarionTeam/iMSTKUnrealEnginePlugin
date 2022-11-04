@@ -1,51 +1,125 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+
 #include "NeedleObject.h"
-#include "Interfaces/IPluginManager.h"
-#include "MathUtil.h"
-#include "imstkIsometricMap.h"
-#include "imstkLineMesh.h"
-#include "imstkMeshIO.h"
-#include "imstkRbdConstraint.h"
+#include "ImstkSettings.h"
+#include "imstkPbdModel.h"
+#include "imstkSelectEnclosedPoints.h"
+#include "imstkPointwiseMap.h"
+#include "imstkPointToTetMap.h"
 #include "imstkTetrahedralMesh.h"
-#include "imstkRenderMaterial.h"
-#include "imstkRigidBodyModel2.h"
-#include "imstkSurfaceMesh.h"
-#include "imstkVisualModel.h"
-#include "imstkCollisionUtils.h"
+#include "KismetProceduralMeshLibrary.h"
+#include "imstkPbdConstraintContainer.h"
+#include "imstkPbdFemTetConstraint.h"
+#include "imstkPbdModelConfig.h"
+#include "Interfaces/IPluginManager.h"
+#include "imstkIsometricMap.h"
+#include "imstkRbdConstraint.h"
+#include "imstkNeedle.h"
 
-NeedleObject::NeedleObject(std::shared_ptr<imstk::RigidBodyModel2> rbdModel, USceneComponent* Comp) : imstk::RigidObject2("Needle")
+#include "imstkCleanMesh.h"
+#include "imstkMeshIO.h"
+
+#include "Engine/GameEngine.h"
+
+
+#include "imstkGeometryUtilities.h"
+
+// Called when the game starts or when spawned
+void UNeedleObject::BeginPlay()
 {
+	Super::BeginPlay();
+}
+
+void UNeedleObject::InitializeComponent()
+{
+	UDynamicalModel::InitializeComponent();
+	// Check if game is in play mode (required because InitializeComponent() is run when creating a blueprint of the object)
+	if (GetWorld() && GetWorld()->GetGameInstance()) {
+		// Make the subsystem tick first to update the imstk scene before updating the model in unreal
+		AddTickPrerequisiteActor((AActor*)SubsystemInstance);
+		ProcMeshComp = NewObject<UProceduralMeshComponent>(this);
+		ProcMeshComp->AttachToComponent(Owner->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		ProcMeshComp->RegisterComponent();
+			
+	}
+
+}
+void UNeedleObject::Init()
+{
+	// Create a Pbd object with a rigid body for the needle, visuals are the needle mesh and colliding and phyics are a line mesh
+
+	Needle = std::make_shared<imstk::PbdObject>(TCHAR_TO_UTF8(*(Owner->GetName())));
 	FString ContentDir = IPluginManager::Get().FindPlugin((TEXT("Imstk")))->GetContentDir();
+	auto SutureMesh = imstk::MeshIO::read<imstk::SurfaceMesh>(std::string(TCHAR_TO_UTF8(*(ContentDir + "/ExtraFiles/Needles/c6_suture.stl"))));
+	auto SutureLineMesh = imstk::MeshIO::read<imstk::LineMesh>(std::string(TCHAR_TO_UTF8(*(ContentDir + "/ExtraFiles/Needles/c6_suture_hull.vtk"))));
+	SutureMesh->translate(imstk::Vec3d(0.0, -0.0047, -0.0087), imstk::Geometry::TransformType::ApplyToData);
+	SutureLineMesh->translate(imstk::Vec3d(0.0, -0.0047, -0.0087), imstk::Geometry::TransformType::ApplyToData);
 
-	auto sutureMesh = imstk::MeshIO::read<imstk::SurfaceMesh>(std::string(TCHAR_TO_UTF8(*(ContentDir +"/ExtraFiles/Needles/c6_suture.stl"))));
-	auto sutureLineMesh = imstk::MeshIO::read<imstk::LineMesh>(std::string(TCHAR_TO_UTF8(*(ContentDir + "/ExtraFiles/Needles/c6_suture_hull.vtk"))));
+	SutureMesh->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+	SutureLineMesh->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
 
-	const imstk::Mat4d rot = imstk::mat4dRotation(imstk::Rotd(-PI_2, imstk::Vec3d(0.0, 1.0, 0.0))) *
-		imstk::mat4dRotation(imstk::Rotd(-0.6, imstk::Vec3d(1.0, 0.0, 0.0)));
+	Needle->setVisualGeometry(SutureMesh);
+	Needle->setCollidingGeometry(SutureLineMesh);
+	Needle->setPhysicsGeometry(SutureLineMesh);
+	Needle->setPhysicsToVisualMap(std::make_shared<imstk::IsometricMap>(SutureLineMesh, SutureMesh));
 
-	sutureMesh->setScaling(UMathUtil::ToImstkVec3d(Comp->GetComponentScale(), false));
+	std::shared_ptr<imstk::PbdModel> PbdModel = SubsystemInstance->PbdModel;
+	
+	Needle->setDynamicalModel(PbdModel);
 
-	sutureMesh->transform(rot, imstk::Geometry::TransformType::ApplyToData);
-	sutureLineMesh->transform(rot, imstk::Geometry::TransformType::ApplyToData);
+	Needle->getPbdBody()->setRigid(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), 1, imstk::Quatd::Identity(), imstk::Mat3d::Identity() * 0.01);
 
-	setVisualGeometry(sutureMesh);
-	// setVisualGeometry(sutureLineMesh);
-	setCollidingGeometry(sutureLineMesh);
-	setPhysicsGeometry(sutureLineMesh);
-	setPhysicsToVisualMap(std::make_shared<imstk::IsometricMap>(sutureLineMesh, sutureMesh));
+	Needle->addComponent<imstk::Needle>();
 
-	/*getVisualModel(0)->getRenderMaterial()->setColor(imstk::Color(0.9, 0.9, 0.9));
-	getVisualModel(0)->getRenderMaterial()->setShadingModel(imstk::RenderMaterial::ShadingModel::PBR);
-	getVisualModel(0)->getRenderMaterial()->setRoughness(0.5);
-	getVisualModel(0)->getRenderMaterial()->setMetalness(1.0);*/
+	{
+		std::shared_ptr<imstk::SurfaceMesh> NeedleVisGeom = std::dynamic_pointer_cast<imstk::SurfaceMesh>(Needle->getVisualGeometry());
+		NeedleVisGeom->computeVertexNormals();
+		imstk::VecDataArray<double, 3>& ImstkNorms = *NeedleVisGeom->getVertexNormals();
 
-	//std::shared_ptr<imstk::RigidBodyModel2> rbdModel = std::make_shared<imstk::RigidBodyModel2>();
-	rbdModel->getConfig()->m_gravity = imstk::Vec3d::Zero();
-	rbdModel->getConfig()->m_maxNumIterations = 5;
-	setDynamicalModel(rbdModel);
+		TArray<FVector2D> UV0;
+		TArray<FLinearColor> VertColors;
+		TArray<FProcMeshTangent> Tangents;
 
-	getRigidBody()->m_mass = 1.0;
-	getRigidBody()->m_intertiaTensor = imstk::Mat3d::Identity() * 10000.0;
-	getRigidBody()->m_initPos = imstk::Vec3d(0.0, 0.0, 0.0);
+		TArray<FVector> Verts;
+		TArray<FVector> Normals;
+		TArray<int32> Indices;
+
+		// Use normals from imstk
+		Normals.Empty();
+		for (int i = 0; i < ImstkNorms.size(); i++) {
+			Normals.Add(UMathUtil::ToUnrealFVec(ImstkNorms[i], false));
+		}
+
+		// Get vertex data from imstk
+		Verts = UMathUtil::ToUnrealFVecArray(NeedleVisGeom->getVertexPositions(), true);
+
+		Indices = UMathUtil::ToUnrealIntArray(NeedleVisGeom->getTriangleIndices());
+
+		// Create the mesh sections on the procedural meshes
+		ProcMeshComp->CreateMeshSection_LinearColor(0, Verts, Indices, Normals, UV0, VertColors, Tangents, false);
+	}
+
+	SubsystemInstance->ActiveScene->addSceneObject(Needle);
+	ImstkCollidingObject = Needle;
+	Super::bIsInitialized = true;
+
+}
+
+FVector UNeedleObject::GetVertexPosition(int Vert)
+{
+	return UMathUtil::ToUnrealFVec(std::dynamic_pointer_cast<imstk::LineMesh>(Needle->getPhysicsGeometry())->getVertexPosition(Vert), true);
+}
+
+
+// Called every frame
+void UNeedleObject::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Owner->SetActorLocationAndRotation(UMathUtil::ToUnrealFVec((*Needle->getPbdBody()->vertices)[0], true), UMathUtil::ToUnrealFQuat((*Needle->getPbdBody()->orientations)[0]));
+}
+
+void UNeedleObject::UnInit()
+{
+	Super::UnInit();
+
 }

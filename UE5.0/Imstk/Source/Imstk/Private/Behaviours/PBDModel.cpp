@@ -11,11 +11,15 @@
 #include "KismetProceduralMeshLibrary.h"
 #include "imstkPbdConstraintContainer.h"
 #include "imstkPbdFemTetConstraint.h"
+#include "imstkPbdModelConfig.h"
 
 #include "imstkCleanMesh.h"
 #include "imstkMeshIO.h"
 
 #include "Engine/GameEngine.h"
+
+
+#include "imstkGeometryUtilities.h"
 
 UPBDModel::UPBDModel() : UDeformableModel()
 {
@@ -36,7 +40,7 @@ UPBDModel::UPBDModel() : UDeformableModel()
 
 void UPBDModel::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {
-	GeomFilter.GeomType = EGeometryType::SurfaceMesh;
+	//GeomFilter.GeomType = EGeometryType::SurfaceMesh;
 
 	FName PropertyName = (PropertyChangedEvent.Property != NULL) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
 
@@ -91,6 +95,9 @@ void UPBDModel::InitializeComponent()
 		// Make the subsystem tick first to update the imstk scene before updating the model in unreal
 		AddTickPrerequisiteActor((AActor*)SubsystemInstance);
 
+		if (bRigidBody)
+			return;
+
 		if (UProceduralMeshComponent* Comp = (UProceduralMeshComponent*)Owner->GetComponentByClass(UProceduralMeshComponent::StaticClass()))
 		{
 			MeshComp = Comp;
@@ -99,6 +106,7 @@ void UPBDModel::InitializeComponent()
 		{
 			// Create procedural mesh, convert static mesh to procedural and then disable static mesh
 			MeshComp = NewObject<UProceduralMeshComponent>(this);
+			MeshComp->SetWorldScale3D(StaticMesh->GetComponentScale());
 			// If including scale, scale gets applied twice
 			MeshComp->AttachToComponent(Owner->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 			MeshComp->RegisterComponent();
@@ -122,61 +130,123 @@ void UPBDModel::InitializeComponent()
 void UPBDModel::Init()
 {
 	Super::Init();
-	if (GeomFilter.GeomType != EGeometryType::PointSet && GeomFilter.GeomType != EGeometryType::SurfaceMesh) {
+	if (GeomFilter.GeomType != EGeometryType::PointSet && GeomFilter.GeomType != EGeometryType::SurfaceMesh && !bRigidBody) {
 		if (GEngine) {
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "PBDModels can only be PointSets or SurfaceMeshes");
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Non Rigid PBDModels can only be PointSets or SurfaceMeshes");
 		}
-		UE_LOG(LogTemp, Error, TEXT("PBDModels can only be PointSets or SurfaceMeshes"));
+		UE_LOG(LogTemp, Error, TEXT("Non Rigid PBDModels can only be PointSets or SurfaceMeshes"));
 		return;
 	}
 
 	PbdObject = std::make_shared<imstk::PbdObject>(TCHAR_TO_UTF8(*(Owner->GetName())));
 
-	// Configure model
-	std::shared_ptr<imstk::PbdModelConfig> PbdConfig = std::make_shared<imstk::PbdModelConfig>();
+	std::shared_ptr<imstk::PbdModel> PbdModel;
 
-	if (bUseDistanceConstraint)
-		PbdConfig->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Distance, DistanceConstraint);
+	if (bSharedModel)
+		PbdModel = SubsystemInstance->PbdModel;
+	else
+		PbdModel = std::make_shared<imstk::PbdModel>();
 
-	if (bUseDihedralConstraint && !TetrahedralMesh && GeomFilter.GeomType != EGeometryType::PointSet)
-		PbdConfig->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Dihedral, DihedralConstraint);
+	if (bRigidBody) {
+		std::shared_ptr<imstk::Geometry> Geom = GetImstkGeometry();
+		/*if (!bVisualGeometryFromFile)
+			PbdObject->setVisualGeometry(Geom);
+		else
+			PbdObject->setVisualGeometry(imstk::MeshIO::read(std::string(TCHAR_TO_UTF8(*(ContentDir + VisualGeometryFilePath)))));
 
-	if (bUseVolumeConstraint && TetrahedralMesh)
-		PbdConfig->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Volume, VolumeConstraint);
+		if (!bCollidingGeometryFromFile)
+			PbdObject->setCollidingGeometry(Geom);
+		else
+			PbdObject->setCollidingGeometry(imstk::MeshIO::read(std::string(TCHAR_TO_UTF8(*(ContentDir + CollidingGeometryFilePath)))));
 
-	if (bUseConstantDensityConstraint) // Untested
-		PbdConfig->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::ConstantDensity, ConstantDensityConstraint);
+		if (!bVisualGeometryFromFile)
+			PbdObject->setPhysicsGeometry(Geom);
+		else
+			PbdObject->setPhysicsGeometry(imstk::MeshIO::read(std::string(TCHAR_TO_UTF8(*(ContentDir + PhysicsGeometryFilePath)))));*/
 
-	if (bUseAreaConstraint && GeomFilter.GeomType != EGeometryType::PointSet) // Untested
-		PbdConfig->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Area, AreaConstraint);
+		PbdObject->setVisualGeometry(Geom);
+		PbdObject->setCollidingGeometry(Geom);
+		PbdObject->setPhysicsGeometry(Geom);
+		PbdObject->setDynamicalModel(PbdModel);
 
-	if (bUseFEMConstraint && TetrahedralMesh) {
-		PbdConfig->m_femParams->m_YoungModulus = YoungsModulus;
-		PbdConfig->m_femParams->m_PoissonRatio = PossionsRatio;
-		PbdConfig->enableFemConstraint(static_cast<imstk::PbdFemConstraint::MaterialType>(MaterialType.GetValue()));
-		PbdConfig->m_doPartitioning = false;
+		PbdObject->getPbdBody()->setRigid(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), Mass, imstk::Quatd::Identity(), imstk::Mat3d::Identity() * RBInertiaMultiplier);
+
+		ImstkCollidingObject = PbdObject;
+
+		SubsystemInstance->ActiveScene->addSceneObject(PbdObject);
+
+		Super::bIsInitialized = true;
+		return;
 	}
 
-	PbdConfig->m_uniformMassValue = Mass;
 
-	// If the object should have separate gravity from the rest of the scene
-	if (bIndividualGravity)
-		PbdConfig->m_gravity = UMathUtil::ToImstkVec3d(Gravity, true);
-	else
-		PbdConfig->m_gravity = UMathUtil::ToImstkVec3d(SubsystemInstance->Gravity, true);
 
-	PbdConfig->m_iterations = 5;
-	PbdConfig->m_viscousDampingCoeff = ViscousDampingCoeff;
-	PbdConfig->m_contactStiffness = ContactStiffness;
+	if (temp) {
+		PbdModel = SubsystemInstance->PbdModel;
+		std::shared_ptr<imstk::TetrahedralMesh> prismMesh = imstk::GeometryUtils::toTetGrid(imstk::Vec3d(0, 0, 0), imstk::Vec3d(4.0, 4.0, 4.0), imstk::Vec3i(5, 5, 5));
+		std::shared_ptr<imstk::SurfaceMesh>     surfMesh = prismMesh->extractSurfaceMesh();
 
-	// If the object should have separate delta time from the rest of the scene
-	if (bIndividualDT)
-		PbdConfig->m_dt = IndividualDT;
-	else
-		PbdConfig->m_dt = SubsystemInstance->TickInterval;
+		/*std::shared_ptr<imstk::PbdModelConfig> pbdParams = PbdModel->getConfig();
+		pbdParams->m_gravity = imstk::Vec3d(0.0, 0.0, 0.0);
+		pbdParams->m_dt = 0.005;
+		pbdParams->m_iterations = 8;
+		pbdParams->m_linearDampingCoeff = 0.003;*/
 
-	std::shared_ptr<imstk::PbdModel> PbdModel = std::make_shared<imstk::PbdModel>();
+		//PbdObject = std::make_shared<imstk::PbdObject>("test");
 
+		PbdObject->setPhysicsGeometry(surfMesh);
+		PbdObject->setCollidingGeometry(surfMesh);
+		PbdObject->setVisualGeometry(surfMesh);
+		PbdObject->setDynamicalModel(PbdModel);
+		PbdObject->getPbdBody()->uniformMassValue = 0.05;
+		// Use volume+distance constraints, worse results. More performant (can use larger mesh)
+		PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Dihedral, 1000.0,
+			PbdObject->getPbdBody()->bodyHandle);
+		PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Distance, 500.0,
+			PbdObject->getPbdBody()->bodyHandle);
+		// Fix the borders
+		std::shared_ptr<imstk::VecDataArray<double, 3>> vertices = surfMesh->getVertexPositions();
+		for (int i = 0; i < surfMesh->getNumVertices(); i++)
+		{
+			const imstk::Vec3d& pos = (*vertices)[i];
+			if (pos[1] <=  - 4 * 0.5)
+			{
+				PbdObject->getPbdBody()->fixedNodeIds.push_back(i);
+			}
+		}
+
+		ImstkCollidingObject = PbdObject;
+
+		SubsystemInstance->ActiveScene->addSceneObject(PbdObject);
+
+		TArray<FVector2D> UV0;
+		TArray<FColor> VertColors;
+		TArray<FProcMeshTangent> Tangents;
+
+		TArray<FVector> Verts;
+		TArray<FVector> Normals;
+		TArray<int32> Triangles = UMathUtil::ToUnrealIntArray(surfMesh->getTriangleIndices());
+
+		Verts = UMathUtil::ToUnrealFVecArray(surfMesh->getVertexPositions(), true);
+		MeshComp->CreateMeshSection(0, Verts, Triangles, Normals, UV0, VertColors, Tangents, false);
+
+
+		Super::bIsInitialized = true;
+		return;
+	}
+
+
+
+
+
+
+
+
+
+
+
+	//UStaticMeshComponent* StaticMesh = (UStaticMeshComponent*)Owner->GetComponentByClass(UStaticMeshComponent::StaticClass());
+	
 	// Create and set imstk geometry to unreal values
 	if (!TetrahedralMesh) {
 		// Create the PbdObject using the geometry of the static mesh
@@ -189,7 +259,6 @@ void UPBDModel::Init()
 			return;
 		}
 
-
 		std::shared_ptr<imstk::SurfaceMesh> CleanedMesh;
 		if (bCleanMesh) {
 			std::shared_ptr<imstk::SurfaceMesh> SurfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom);
@@ -199,13 +268,13 @@ void UPBDModel::Init()
 			Clean.update();
 			CleanedMesh = Clean.getOutputMesh();
 
-			CleanedMesh->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
-			CleanedMesh->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
-			CleanedMesh->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+			CleanedMesh->scale(UMathUtil::ToImstkVec3d(MeshComp->GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
+			CleanedMesh->rotate(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
+			CleanedMesh->translate(UMathUtil::ToImstkVec3d(MeshComp->GetComponentLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 
-			Geom->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
-			Geom->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
-			Geom->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+			Geom->scale(UMathUtil::ToImstkVec3d(MeshComp->GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
+			Geom->rotate(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
+			Geom->translate(UMathUtil::ToImstkVec3d(MeshComp->GetComponentLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 			//std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom)->computeUVSeamVertexGroups();
 			//Geom->updatePostTransformData();
 			std::shared_ptr<imstk::PointwiseMap> Map = std::make_shared<imstk::PointwiseMap>(CleanedMesh, SurfMesh);
@@ -216,20 +285,20 @@ void UPBDModel::Init()
 
 			PbdObject->setCollidingGeometry(CleanedMesh);
 			PbdObject->setPhysicsGeometry(CleanedMesh);
-			PbdModel->setModelGeometry(CleanedMesh);
+			//PbdModel->setModelGeometry(CleanedMesh);
 
 
 		}
 		else {
-			Geom->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
-			Geom->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
-			Geom->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+			Geom->scale(UMathUtil::ToImstkVec3d(MeshComp->GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
+			Geom->rotate(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
+			Geom->translate(UMathUtil::ToImstkVec3d(MeshComp->GetComponentLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 			std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom)->computeUVSeamVertexGroups();
 			Geom->updatePostTransformData();
 
 			PbdObject->setCollidingGeometry(Geom);
 			PbdObject->setPhysicsGeometry(Geom);
-			PbdModel->setModelGeometry(Geom);
+			//PbdModel->setModelGeometry(Geom);
 		}
 
 		/*std::shared_ptr<imstk::SurfaceMesh> SurfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom);
@@ -245,16 +314,15 @@ void UPBDModel::Init()
 		// Use the assigned tetrahedral mesh and extract its surface mesh
 		std::shared_ptr<imstk::TetrahedralMesh> TetMesh = TetrahedralMesh->GetTetrahedralMesh();
 
-		TetMesh->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
-		TetMesh->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
-		TetMesh->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+		TetMesh->scale(UMathUtil::ToImstkVec3d(MeshComp->GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
+		TetMesh->rotate(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
+		TetMesh->translate(UMathUtil::ToImstkVec3d(MeshComp->GetComponentLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 		TetMesh->updatePostTransformData();
 
-		std::shared_ptr<imstk::SurfaceMesh> SurfMesh;
-
+		std::shared_ptr<imstk::SurfaceMesh> ExtractedSurfMesh = TetMesh->extractSurfaceMesh();;
+		std::shared_ptr<imstk::SurfaceMesh> VisualSurfMesh;
 		if (bGenerateSurfaceFromTetrahedral) {
-			SurfMesh = TetMesh->extractSurfaceMesh();
-
+			VisualSurfMesh = ExtractedSurfMesh;
 			// Create a procedural mesh section and override the existing one using the values from the extracted surface mesh
 			TArray<FVector2D> UV0;
 			TArray<FColor> VertColors;
@@ -262,48 +330,80 @@ void UPBDModel::Init()
 
 			TArray<FVector> Verts;
 			TArray<FVector> Normals;
-			TArray<int32> Triangles = UMathUtil::ToUnrealIntArray(SurfMesh->getTriangleIndices());
+			TArray<int32> Triangles = UMathUtil::ToUnrealIntArray(ExtractedSurfMesh->getTriangleIndices());
 
-			Verts = UMathUtil::ToUnrealFVecArray(SurfMesh->getVertexPositions(), true);
+			Verts = UMathUtil::ToUnrealFVecArray(ExtractedSurfMesh->getVertexPositions(), true);
 			MeshComp->CreateMeshSection(0, Verts, Triangles, Normals, UV0, VertColors, Tangents, false);
 		}
 		else {
-			SurfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(GetImstkGeometry());
-			SurfMesh->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
-			SurfMesh->rotate(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
-			SurfMesh->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
-			SurfMesh->updatePostTransformData();
+			VisualSurfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(GetImstkGeometry());
+			VisualSurfMesh->scale(UMathUtil::ToImstkVec3d(MeshComp->GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
+			VisualSurfMesh->rotate(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
+			VisualSurfMesh->translate(UMathUtil::ToImstkVec3d(MeshComp->GetComponentLocation(), true), imstk::Geometry::TransformType::ApplyToData);
+			VisualSurfMesh->updatePostTransformData();
 		}
 
-		PbdObject->setCollidingGeometry(SurfMesh);
-		PbdObject->setVisualGeometry(SurfMesh);
+		PbdObject->setCollidingGeometry(ExtractedSurfMesh);
+		PbdObject->setVisualGeometry(VisualSurfMesh);
+		PbdObject->setPhysicsToCollidingMap(std::make_shared<imstk::PointwiseMap>(TetMesh, ExtractedSurfMesh));
 		if (bGenerateSurfaceFromTetrahedral)
-			PbdObject->setPhysicsToCollidingMap(std::make_shared<imstk::PointwiseMap>(TetMesh, SurfMesh));
+			PbdObject->setPhysicsToVisualMap(std::make_shared<imstk::PointwiseMap>(TetMesh, VisualSurfMesh));
 		else
-			PbdObject->setPhysicsToCollidingMap(std::make_shared<imstk::PointToTetMap>(TetMesh, SurfMesh));
+			PbdObject->setPhysicsToVisualMap(std::make_shared<imstk::PointToTetMap>(TetMesh, VisualSurfMesh));
 
 		PbdObject->setPhysicsGeometry(TetMesh);
-		PbdModel->setModelGeometry(TetMesh);
+		//PbdModel->setModelGeometry(TetMesh);
 	}
-
+	PbdObject->setDynamicalModel(PbdModel);
 	// Fix vertices of the model with either the set boundaries or with specified vertices
 	ProcessBoundaryConditions();
 
+	PbdObject->getPbdBody()->uniformMassValue = Mass;
+	PbdModel->getConfig()->setBodyDamping(PbdObject->getPbdBody()->bodyHandle, DampingCoeff);
+
 	for (const int Num : FixedNodes) {
-		PbdConfig->m_fixedNodeIds.push_back(Num);
+		PbdObject->getPbdBody()->fixedNodeIds.push_back(Num);
 	}
 
-	PbdModel->configure(PbdConfig);
+	// Configure model
+	if (bUseDistanceConstraint)
+		PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Distance, DistanceConstraint, PbdObject->getPbdBody()->bodyHandle);
 
-	/*if (bUseFEMConstraint && TetrahedralMesh) {
-		std::shared_ptr<imstk::PbdConstraintContainer> Constraints = PbdModel->getConstraints();
-		for (auto Constraint : Constraints->getConstraints()) {
-			if (auto FemTetConstraint = std::dynamic_pointer_cast<imstk::PbdFemTetConstraint>(Constraint))
-				FemTetConstraint->setInverstionHandling(false);
-		}
-	}*/
+	if (bUseDihedralConstraint && !TetrahedralMesh && GeomFilter.GeomType != EGeometryType::PointSet)
+		PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Dihedral, DihedralConstraint, PbdObject->getPbdBody()->bodyHandle);
 
-	PbdObject->setDynamicalModel(PbdModel);
+	if (bUseVolumeConstraint && TetrahedralMesh)
+		PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Volume, VolumeConstraint, PbdObject->getPbdBody()->bodyHandle);
+
+	if (bUseConstantDensityConstraint) // Untested
+		PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::ConstantDensity, ConstantDensityConstraint, PbdObject->getPbdBody()->bodyHandle);
+
+	if (bUseAreaConstraint && GeomFilter.GeomType != EGeometryType::PointSet) // Untested
+		PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Area, AreaConstraint, PbdObject->getPbdBody()->bodyHandle);
+
+	if (bUseFEMConstraint && TetrahedralMesh) {
+		PbdModel->getConfig()->m_femParams->m_YoungModulus = YoungsModulus;
+		PbdModel->getConfig()->m_femParams->m_PoissonRatio = PossionsRatio;
+		PbdModel->getConfig()->enableFemConstraint(static_cast<imstk::PbdFemConstraint::MaterialType>(MaterialType.GetValue()), PbdObject->getPbdBody()->bodyHandle);
+		PbdModel->getConfig()->m_doPartitioning = false;
+	}
+
+	// If the object should have separate gravity from the rest of the scene
+	if (bIndividualGravity && !bSharedModel)
+		PbdModel->getConfig()->m_gravity = UMathUtil::ToImstkVec3d(Gravity, true);
+	else
+		PbdModel->getConfig()->m_gravity = UMathUtil::ToImstkVec3d(SubsystemInstance->Gravity, true);
+
+	if (!bSharedModel) {
+		PbdModel->getConfig()->m_iterations = ModelIterations;
+		//PbdModel->getConfig()->m_collisionIterations = CollisionIterations;
+	}
+
+	// If the object should have separate delta time from the rest of the scene
+	if (bIndividualDT && !bSharedModel)
+		PbdModel->getConfig()->m_dt = IndividualDT;
+	else
+		PbdModel->getConfig()->m_dt = SubsystemInstance->TickInterval;
 
 	ImstkCollidingObject = PbdObject;
 
@@ -326,6 +426,7 @@ void UPBDModel::Init()
 	// Set the owner to origin of the game since imstk values are world values
 	Owner->SetActorLocation(FVector::ZeroVector);
 	Owner->SetActorRotation(FQuat::Identity);
+	MeshComp->SetWorldScale3D(FVector::OneVector);
 
 	Super::bIsInitialized = true;
 
@@ -345,6 +446,11 @@ void UPBDModel::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 void UPBDModel::UpdateModel()
 {
+	if (bRigidBody) {
+		Owner->SetActorLocationAndRotation(UMathUtil::ToUnrealFVec((*PbdObject->getPbdBody()->vertices)[0], true), UMathUtil::ToUnrealFQuat((*PbdObject->getPbdBody()->orientations)[0]));
+		return;
+	}
+
 	// Cache MeshGeom to avoid dynamic pointer cast every frame
 	if (!MeshGeom && !PointSetGeom) {
 		if (GeomFilter.GeomType != EGeometryType::PointSet) {

@@ -23,7 +23,7 @@ public:
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent);
 
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		TEnumAsByte<EDefaultModelPreset> Preset = EDefaultModelPreset::SurfaceMeshPreset;
 
 	/** Initializes the static colliding object in imstk and adds it to the scene

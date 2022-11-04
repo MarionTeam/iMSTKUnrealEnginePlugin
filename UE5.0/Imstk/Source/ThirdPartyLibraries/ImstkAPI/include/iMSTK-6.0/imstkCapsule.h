@@ -29,6 +29,7 @@ public:
         setOrientation(orientation);
         setRadius(radius);
         setLength(length);
+        updatePostTransformData();
     }
 
     ~Capsule() override = default;
@@ -74,6 +75,15 @@ public:
     ///
     void updatePostTransformData() const override;
 
+    ///
+    /// \brief Polymorphic clone, hides the declaration in superclass
+    /// return own type
+    ///
+    std::unique_ptr<Capsule> clone()
+    {
+        return std::unique_ptr<Capsule>(cloneImplementation());
+    }
+
 protected:
     void applyTransform(const Mat4d& m) override;
 
@@ -81,5 +91,11 @@ protected:
     mutable double m_radiusPostTransform = 1.0; ///< Radius after transform
     double m_length = 1.0;                      ///< Length between the centers of two hemispheres
     mutable double m_lengthPostTransform = 1.0; ///< Length after transform
+
+private:
+    Capsule* cloneImplementation() const
+    {
+        return new Capsule(*this);
+    }
 };
 } // namespace imstk

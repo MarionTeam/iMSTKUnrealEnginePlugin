@@ -43,7 +43,7 @@ void UCustomController::PostEditChangeProperty(struct FPropertyChangedEvent& Pro
 			ToolType = EToolType::GraspingTool;
 			GraspStiffness = 1.0;
 			GraspType = EGraspType::CellGrasp;
-			GraspCollisionType = ECollisionInteractionType::PointSetToCapsuleCD;
+			//GraspCollisionType = ECollisionInteractionType::PointSetToCapsuleCD;
 			bForceTool = true;
 			break;
 		case 2:
@@ -140,16 +140,19 @@ void UCustomController::InitController()
 	RbdModel->getConfig()->m_velocityDamping = VelocityDamping;
 	RbdModel->getConfig()->m_angularVelocityDamping = AngularVelocityDamping;
 	RbdModel->getConfig()->m_maxNumConstraints = MaxNumConstraints;
-	ToolObj->setDynamicalModel(RbdModel);
 
-	ToolObj->getRigidBody()->m_mass = Mass;
-	ToolObj->getRigidBody()->m_intertiaTensor = imstk::Mat3d::Identity() * InertiaTensorMultiplier;
-	ToolObj->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3d(GetComponentLocation(), true));
+	RigidToolObj = std::dynamic_pointer_cast<imstk::RigidObject2>(ToolObj);
+
+	RigidToolObj->setDynamicalModel(RbdModel);
+
+	RigidToolObj->getRigidBody()->m_mass = Mass;
+	RigidToolObj->getRigidBody()->m_intertiaTensor = imstk::Mat3d::Identity() * InertiaTensorMultiplier;
+	RigidToolObj->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3d(GetComponentLocation(), true));
 
 	if (MeshComp)
-		ToolObj->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()));
+		RigidToolObj->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()));
 	else
-		ToolObj->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(GetComponentRotation().Quaternion()));
+		RigidToolObj->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(GetComponentRotation().Quaternion()));
 
 	SubsystemInstance->ActiveScene->addSceneObject(ToolObj);
 
@@ -189,8 +192,8 @@ FVector UCustomController::UpdateImstkPosRot(FVector WorldPos, FQuat Orientation
 		}
 
 		// TODO: Should probably change to edit the position and orientation rather than creating new each time
-		ToolObj->getRigidBody()->m_orientation = new imstk::Quatd(UMathUtil::ToImstkQuat(Orientation));
-		ToolObj->getRigidBody()->m_pos = new imstk::Vec3d(Position);
+		RigidToolObj->getRigidBody()->m_orientation = new imstk::Quatd(UMathUtil::ToImstkQuat(Orientation));
+		RigidToolObj->getRigidBody()->m_pos = new imstk::Vec3d(Position);
 	}
 	else
 	{
@@ -201,19 +204,19 @@ FVector UCustomController::UpdateImstkPosRot(FVector WorldPos, FQuat Orientation
 
 		if (bIgnoreAngularForce) {
 			// TODO: update this to the force movement version in suturing controller
-			imstk::Vec3d fS = (UMathUtil::ToImstkVec3d(WorldPos, true) - ToolObj->getRigidBody()->getPosition()) * SpringForce; // Spring force
-			imstk::Vec3d fD = -ToolObj->getRigidBody()->getVelocity() * DamperForce; // Spring damping
-			(*ToolObj->getRigidBody()->m_force) += (fS + fD);
+			imstk::Vec3d fS = (UMathUtil::ToImstkVec3d(WorldPos, true) - RigidToolObj->getRigidBody()->getPosition()) * SpringForce; // Spring force
+			imstk::Vec3d fD = -RigidToolObj->getRigidBody()->getVelocity() * DamperForce; // Spring damping
+			(*RigidToolObj->getRigidBody()->m_force) += (fS + fD);
 
-			ToolObj->getRigidBody()->m_orientation = new imstk::Quatd(UMathUtil::ToImstkQuat(Orientation));
+			RigidToolObj->getRigidBody()->m_orientation = new imstk::Quatd(UMathUtil::ToImstkQuat(Orientation));
 		}
 		else {
-			const imstk::Vec3d& CurrPos = ToolObj->getRigidBody()->getPosition();
-			const imstk::Quatd& CurrOrientation = ToolObj->getRigidBody()->getOrientation();
-			const imstk::Vec3d& CurrVelocity = ToolObj->getRigidBody()->getVelocity();
-			const imstk::Vec3d& CurrAngularVelocity = ToolObj->getRigidBody()->getAngularVelocity();
-			imstk::Vec3d& CurrForce = *ToolObj->getRigidBody()->m_force;
-			imstk::Vec3d& CurrTorque = *ToolObj->getRigidBody()->m_torque;
+			const imstk::Vec3d& CurrPos = RigidToolObj->getRigidBody()->getPosition();
+			const imstk::Quatd& CurrOrientation = RigidToolObj->getRigidBody()->getOrientation();
+			const imstk::Vec3d& CurrVelocity = RigidToolObj->getRigidBody()->getVelocity();
+			const imstk::Vec3d& CurrAngularVelocity = RigidToolObj->getRigidBody()->getAngularVelocity();
+			imstk::Vec3d& CurrForce = *RigidToolObj->getRigidBody()->m_force;
+			imstk::Vec3d& CurrTorque = *RigidToolObj->getRigidBody()->m_torque;
 
 			const imstk::Vec3d& DevicePos = UMathUtil::ToImstkVec3d(WorldPos, true);
 			const imstk::Quatd& DeviceOrientation = UMathUtil::ToImstkQuat(Orientation);
@@ -225,7 +228,7 @@ FVector UCustomController::UpdateImstkPosRot(FVector WorldPos, FQuat Orientation
 				const double MaxLinearKs = UMathUtil::ToImstkVec3d(LinearKs, true).maxCoeff();
 				LinearKd = 2.0 * std::sqrt(Mass * MaxLinearKs);
 
-				const imstk::Mat3d Inertia = ToolObj->getRigidBody()->getIntertiaTensor();
+				const imstk::Mat3d Inertia = RigidToolObj->getRigidBody()->getIntertiaTensor();
 				// Currently kd is not a 3d vector though it could be.
 				// So here we make an approximation. Either:
 				//  - Use one colums eigenvalue (maxCoeff)
@@ -263,7 +266,7 @@ FVector UCustomController::UpdateImstkPosRot(FVector WorldPos, FQuat Orientation
 
 
 	if (GEngine && bPrintImstkPos) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true).ToString());
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, UMathUtil::ToUnrealFVec(RigidToolObj->getRigidBody()->getPosition(), true).ToString());
 	}
 
 	return UMathUtil::ToUnrealFVec(Position, true);
@@ -273,10 +276,10 @@ void UCustomController::UpdateUnrealPosRot()
 {
 	// Since mesh comp and controller can have different orientations, only orient the controller to update and keep rotation offset for the mesh component
 	if (MeshComp) {
-		MeshComp->SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true), UMathUtil::ToUnrealFQuat(ToolObj->getRigidBody()->getOrientation()).Rotator());
+		MeshComp->SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec(RigidToolObj->getRigidBody()->getPosition(), true), UMathUtil::ToUnrealFQuat(RigidToolObj->getRigidBody()->getOrientation()).Rotator());
 		return;
 	}
-	SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true), UMathUtil::ToUnrealFQuat(ToolObj->getRigidBody()->getOrientation()));
+	SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec(RigidToolObj->getRigidBody()->getPosition(), true), UMathUtil::ToUnrealFQuat(RigidToolObj->getRigidBody()->getOrientation()));
 	/*GetOwner()->SetActorLocation(UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true));
 	GetOwner()->SetActorRotation(UMathUtil::ToUnrealFQuat(ToolObj->getRigidBody()->getOrientation()));*/
 }
@@ -322,7 +325,7 @@ void UCustomController::BeginCellGrasp()
 	if (ToolPickings.Num() > 0) {
 		if (GraspType == EGraspType::CellGrasp) {
 			for (std::shared_ptr<imstk::PbdObjectGrasping> ToolPicking : ToolPickings) {
-				ToolPicking->beginCellGrasp(std::dynamic_pointer_cast<imstk::AnalyticalGeometry>(ToolObj->getCollidingGeometry()), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(GraspCollisionType))));
+				ToolPicking->beginCellGrasp(std::dynamic_pointer_cast<imstk::AnalyticalGeometry>(ToolObj->getCollidingGeometry()));
 			}
 		}
 	}
@@ -426,7 +429,7 @@ void UCustomController::BeginCut()
 
 FVector UCustomController::GetControlleriMSTKPosition()
 {
-	return UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true);
+	return UMathUtil::ToUnrealFVec(RigidToolObj->getRigidBody()->getPosition(), true);
 }
 
 void UCustomController::SetGhostComponents(USceneComponent* SceneComponent, TArray<UStaticMeshComponent*> StaticMeshComponents)
@@ -438,6 +441,5 @@ void UCustomController::SetGhostComponents(USceneComponent* SceneComponent, TArr
 void UCustomController::UnInit()
 {
 	Super::UnInit();
-
-
+	RigidToolObj.reset();
 }

@@ -27,38 +27,24 @@ public:
 	virtual void InitializeComponent() override;
 	virtual void InitController() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		double InertiaTensorMultiplier = 10000;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		double Mass = 1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		double ForceThreshold = 0.0001;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
-		bool bForceTool = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "ToolSettings")
-		double LinearKs = 10000.0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "ToolSettings")
-		double AngularKs = 100000000.0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "ToolSettings")
-		double LinearKd = 10000.0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "ToolSettings")
-		double AngularKd = 300;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "ToolSettings")
-		double ForceScaling = 0.00001;
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "!bForceTool", EditConditionHides), BlueprintReadWrite, Category = "iMSTK")
+		bool bHapticTool = false;
 
-	// Spring force of the force applied to the tool
-	//UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "ToolSettings")
-	//	float SpringForce = 10000;
-	//// Spring damping of the force applied to the tool
-	//UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "ToolSettings")
-	//	float SpringDamping = 100;
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "!bHapticTool", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|Force")
+		bool bForceTool = false;
 	
 	// Material of the ghost model for the needle
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "ToolSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "iMSTK|Force")
 		UMaterial* GhostMaterial;
 
-	std::shared_ptr<NeedleObject> Needle;
+	std::shared_ptr<imstk::RigidObject2> Needle;
 
 	// Required to be set in the construction blueprint
 	UPROPERTY()
@@ -68,13 +54,13 @@ public:
 	* @param InputMeshComp Static mesh component to be set
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|SuturingController")
 		void SetThread(UPBDThread* Input);
 
 	/** Stitch along the thread attached to the needle
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|SuturingController")
 		void Stitch();
 
 	// Procedural mesh component created and attached to the object to visualize the needle
@@ -90,14 +76,56 @@ public:
 	* @param Orientation Orientation to move the needle to
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|SuturingController")
 		void MoveNeedleToLocation(FVector Location, FQuat Orientation);
+
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|SuturingController")
+		virtual void UpdateUnrealPosRot();
 
 	/** Sets the needle interaction on the controller for stitching
 	* @param Input inputted needle interaction
 	* @return None
 	*/
 	void SetNeedleInteraction(std::shared_ptr<NeedleInteraction> Input);
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|Force")
+		bool bIgnoreAngularForce = true;
+
+	// Spring force of the force applied to the tool
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool && bIgnoreAngularForce", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|Force")
+		float SpringForce = 10000;
+
+	// Spring damping of the force applied to the tool
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool && bIgnoreAngularForce", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|Force")
+		float DamperForce = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool || bHapticTool", EditConditionHides), Category = "iMSTK|Force")
+		double LinearKs = 8000000.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool || bHapticTool", EditConditionHides), Category = "iMSTK|Force")
+		double AngularKs = 10000.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "iMSTK|Force")
+		double LinearKd = 10000.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "iMSTK|Force")
+		double AngularKd = 300.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool || bHapticTool", EditConditionHides), Category = "iMSTK|Force")
+		double ForceScaling = 1;
+
+	UPROPERTY(EditAnywhere, Meta = (ClampMin = "0"), Category = "iMSTK|Force")
+		double TranslationScaling = 1.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bHapticTool", EditConditionHides), Category = "iMSTK|Force")
+		bool bUseCriticalDamping = true;
+	UPROPERTY(EditAnywhere, Category = "iMSTK|Force")
+		bool bUseForceSmoothening = true;
+	UPROPERTY(EditAnywhere, Meta = (ClampMin = "0"), Category = "iMSTK|Force")
+		int SmoothingKernelSize = 15;
+
+	imstk::Vec3d AngularSpringForce = imstk::Vec3d::Zero();
+	imstk::Vec3d AngularDamperForce = imstk::Vec3d::Zero();
 
 protected:
 	/** Updates the position and rotation of the object in iMSTK to the position given. If the controller is a force tool then applies a force to the position rather than directly setting it.
@@ -106,12 +134,13 @@ protected:
 	* @return None
 	*/
 	virtual void UpdateImstkPosRot(FVector Location, FQuat Orientation);
-	virtual void UpdateUnrealPosRot();
 	
 	// Cached line mesh of the needle object
 	std::shared_ptr<imstk::LineMesh> NeedleLineMesh;
 
 	std::shared_ptr<NeedleInteraction> SutureInteraction;
+
+	std::shared_ptr<imstk::DeviceClient> HapticDeviceClient;
 
 public:
 	virtual void UnInit() override;

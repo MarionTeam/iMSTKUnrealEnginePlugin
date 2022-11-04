@@ -48,11 +48,11 @@ struct FMeshDataStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		TArray<FVector> Verts;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		TArray<int32> Indices;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		TArray<FVector> Normals;
 
 };
@@ -89,10 +89,10 @@ struct FSphereGeomStruct : public FGeometryTypeStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "iMSTK")
 		double Radius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, BlueprintReadWrite, Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, BlueprintReadWrite, Category = "iMSTK")
 		FVector GeometryOffset;
 
 	FSphereGeomStruct() { Radius = 1; GeometryOffset = FVector::ZeroVector; };
@@ -110,7 +110,7 @@ struct FSurfaceMeshGeomStruct : public FGeometryTypeStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		bool bFlipNormals;
 
 	FSurfaceMeshGeomStruct() { bFlipNormals = false; };
@@ -135,11 +135,11 @@ struct FCapsuleGeomStruct : public FGeometryTypeStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "iMSTK")
 		double Radius = 0.01;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "iMSTK")
 		double Length = 0.01;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		FVector GeometryOffset;
 
 	FCapsuleGeomStruct() { Radius = 1; Length = 1; GeometryOffset = FVector::ZeroVector; };
@@ -157,11 +157,11 @@ struct FCylinderGeomStruct : public FGeometryTypeStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "iMSTK")
 		double Radius = 0.01;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "iMSTK")
 		double Length = 0.01;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		FVector GeometryOffset;
 
 	FCylinderGeomStruct() { Radius = 1; Length = 1; GeometryOffset = FVector::ZeroVector; };
@@ -202,7 +202,7 @@ struct FOrientedBoxGeomStruct : public FGeometryTypeStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		FVector Extents;
 
 	FOrientedBoxGeomStruct() { Extents = FVector::ZeroVector; };
@@ -220,7 +220,7 @@ struct FPlaneGeomStruct : public FGeometryTypeStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		FVector Normal;
 
 	FPlaneGeomStruct() { Normal = FVector::ZeroVector; };
@@ -238,7 +238,7 @@ struct FLineMeshGeomStruct : public FGeometryTypeStruct
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		TArray<FVector> Vertices;
 
 	FLineMeshGeomStruct() { Vertices = TArray<FVector>(); };
@@ -257,33 +257,33 @@ struct FGeometryFilter
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		TEnumAsByte<EGeometryType> GeomType;
 
 	// Structs for each shape that can be created in Imstk
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::Sphere", EditConditionHides), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::Sphere", EditConditionHides), Category = "iMSTK")
 		FSphereGeomStruct SphereStruct;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::SurfaceMesh", EditConditionHides), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::SurfaceMesh", EditConditionHides), Category = "iMSTK")
 		FSurfaceMeshGeomStruct MeshStruct;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::Capsule", EditConditionHides), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::Capsule", EditConditionHides), Category = "iMSTK")
 		FCapsuleGeomStruct CapsuleStruct;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::Cylinder", EditConditionHides), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::Cylinder", EditConditionHides), Category = "iMSTK")
 		FCylinderGeomStruct CylinderStruct;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::PointSet", EditConditionHides), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::PointSet", EditConditionHides), Category = "iMSTK")
 		FPointSetGeomStruct PointSetStruct;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::OrientedBox", EditConditionHides), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::OrientedBox", EditConditionHides), Category = "iMSTK")
 		FOrientedBoxGeomStruct OrientedBoxStruct;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::Plane", EditConditionHides), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::Plane", EditConditionHides), Category = "iMSTK")
 		FPlaneGeomStruct PlaneStruct;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::LineMesh", EditConditionHides), Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GeomType == EGeometryType::LineMesh", EditConditionHides), Category = "iMSTK")
 		FLineMeshGeomStruct LineMeshStruct;
 
 public:

@@ -56,32 +56,35 @@ public:
 	ECollisionInteractionType CollisionType = ECollisionInteractionType::Auto;
 	
 	// The first model in the interaction that the collision will be made between. Can be set in blueprint. 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Collision Interaction")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
 		UDynamicalModel* Model1;
 
 	// The second model in the interaction that the collision will be made between. Can be set in blueprint. 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Collision Interaction")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
 		UDynamicalModel* Model2;
 
 	// Friction of the interaction
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Collision Interaction")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
 		float Friction;
 
 	// Stiffness of the interaction
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Collision Interaction")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
 		float Stiffness;
 
 	// Restitution of the interaction
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Collision Interaction")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
 		float Restitution;
 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Collision Interaction")
-		int CollisionIterations = 5;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
+		float RigidBodyCompliance;
+
+	/*UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Collision Interaction")
+		int CollisionIterations = 5;*/
 
 	/** Initializes the interaction within iMSTK between the set models set on the CollisionInteraction
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "iMSTKCollision")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Collision Interaction")
 		virtual void Init() override;
 protected:
 	/** Determines the type of collision using the models set on the CollisionInteraction

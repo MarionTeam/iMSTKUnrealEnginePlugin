@@ -42,20 +42,23 @@ public:
 
 	virtual void InitializeComponent() override;
 
+	UPROPERTY(EditAnywhere, Category = "iMSTK|Model")
+		bool bSharedModel = false;
+
 	// Set the object to have separate gravity from the rest of the scene in iMSTK
-	UPROPERTY(EditAnywhere, Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "!bSharedModel", EditConditionHides), Category = "iMSTK|Model")
 		bool bIndividualGravity = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIndividualGravity == true", EditConditionHides), Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIndividualGravity && !bSharedModel", EditConditionHides), Category = "iMSTK|Model")
 		FVector Gravity;
 
 	// Set the object to have a separate time step from the rest of the scene in iMSTK
-	UPROPERTY(EditAnywhere, Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "!bSharedModel", EditConditionHides), Category = "iMSTK|Model")
 		bool bIndividualDT = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIndividualDT == true", EditConditionHides, ClampMin = "0"), Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIndividualDT && !bSharedModel", EditConditionHides, ClampMin = "0"), Category = "iMSTK|Model")
 		double IndividualDT = 0.01;
 
 	// Geometry of the model
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced|Geometry")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|Geometry")
 		FGeometryFilter GeomFilter;
 
 protected:
@@ -84,18 +87,18 @@ public:
 	virtual void UnInit() override;
 
 	// Print the location of the object converted to Unreal from iMSTK
-	UPROPERTY(EditAnywhere, Category = "Debugging")
+	UPROPERTY(EditAnywhere, Category = "iMSTK|Debugging")
 		bool bPrintPositionInformation = false;
 
 	/** Calculates and returns the scale applied to Unreal's basic shapes in order to have the same shape as iMSTK's geometry
 	* @return FVector - Scale of the geometry or zero vector if not implemented
 	*/
-	UFUNCTION(BlueprintCallable, Category = "iMSTK")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|DynamicalModel")
 		FVector GetGeomScale();
 
 	/** Returns the amount the geometry is offset within iMSTK
 	* @return FVector - Offset of the geometry or zero vector if not implemented
 	*/
-	UFUNCTION(BlueprintCallable, Category = "iMSTK")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|DynamicalModel")
 		FVector GetGeomOffset();
 };

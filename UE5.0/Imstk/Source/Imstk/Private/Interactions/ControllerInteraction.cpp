@@ -9,6 +9,7 @@
 #include "StaticModel.h"
 #include "SuturingController.h"
 #include "Suturing/NeedleInteraction.h"
+#include "imstkPuncturable.h"
 
 #include "imstkPBDObjectCollision.h"
 #include "imstkRigidObjectCollision.h"
@@ -26,6 +27,8 @@
 
 #include "imstkSurfaceMeshCut.h"
 
+#include "HapticController.h"
+
 void UControllerInteraction::Init()
 {
 	if (Model1 == nullptr) {
@@ -42,6 +45,7 @@ void UControllerInteraction::Init()
 
 	UImstkSubsystem* SubsystemInstance = GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>();
 
+
 	// Initialize the interaction depending on the controller type
 	// TODO: maybe change this to a separate class for each interaction type (or keep like this since there are a limited number of interaction types that will likely be added in iMSTK)
 	// Separating would make more modular
@@ -49,6 +53,7 @@ void UControllerInteraction::Init()
 	USuturingController* SuturCont = Cast<USuturingController>(Controller);
 	if (SuturCont) {
 		if (Cast<UDeformableModel>(Model1)) {
+			Model1->ImstkCollidingObject->addComponent<imstk::Puncturable>();
 			auto SutureInteraction = std::make_shared<NeedleInteraction>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), SuturCont->Needle, std::dynamic_pointer_cast<imstk::PbdObject>(SuturCont->Thread->ImstkCollidingObject));
 			SubsystemInstance->ActiveScene->addInteraction(SutureInteraction);
 			SuturCont->SetNeedleInteraction(SutureInteraction);
@@ -66,11 +71,15 @@ void UControllerInteraction::Init()
 		if (Cast<UDeformableModel>(Model1)) {
 			std::shared_ptr<imstk::PbdObjectGrasping> ToolPicking;
 			if (Controller->GraspType == EGraspType::VertexGrasp) {
-				ToolPicking = std::make_shared<imstk::PbdRigidObjectGrasping>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), Controller->GetToolObj());
+				if (std::shared_ptr<imstk::RigidObject2> RigidObjectTool = std::dynamic_pointer_cast<imstk::RigidObject2>(Controller->GetToolObj()))
+					ToolPicking = std::make_shared<imstk::PbdRigidObjectGrasping>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), RigidObjectTool);
+				else
+					ToolPicking = std::make_shared<imstk::PbdObjectGrasping>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), std::dynamic_pointer_cast<imstk::PbdObject>(Controller->GetToolObj()));
 			}
 			else if (Controller->GraspType == EGraspType::RayPointGrasp || Controller->GraspType == EGraspType::CellGrasp) {
-				ToolPicking = std::make_shared<imstk::PbdObjectGrasping>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject));
+				ToolPicking = std::make_shared<imstk::PbdObjectGrasping>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), std::dynamic_pointer_cast<imstk::PbdObject>(Controller->GetToolObj()));
 			}
+			ToolPicking->setCompliance(GraspCompliance);
 			ToolPicking->setName("PbdObjectGrasping_" + Model1->ImstkCollidingObject->getName() + "_" + Controller->GetToolObj()->getName());
 			ToolPicking->setStiffness(Controller->GraspStiffness);
 			SubsystemInstance->ActiveScene->addInteraction(ToolPicking);
@@ -80,7 +89,7 @@ void UControllerInteraction::Init()
 		else {
 			UE_LOG(LogTemp, Error, TEXT("Wrong model types, Model1 must be a deformable model. Grasping interaction could not be created between %s and %s."), Model1->ImstkCollidingObject->getName().c_str(), Controller->GetToolObj()->getName().c_str());
 			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Wrong model types, Model1 must be a deformable model. Grasping interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str())+".");
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Wrong model types, Model1 must be a deformable model. Grasping interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
 			return;
 		}
 	}
@@ -114,8 +123,7 @@ void UControllerInteraction::Init()
 				Controller->AddCutting(SMC, PBD->PbdObject);*/
 				Controller->AddCutObject(PBD->PbdObject);
 			}
-			//SubsystemInstance->ActiveScene->addInteraction(Cutting);
-			Cutting->setCutEpsilon(Controller->CutEpsilon);
+			Cutting->setEpsilon(Controller->CutEpsilon);
 			Controller->AddCutting(Cutting);
 			return;
 		}
@@ -129,7 +137,7 @@ void UControllerInteraction::Init()
 
 	if (Controller->ToolType == EToolType::LevelSetTool) {
 		if (Cast<ULevelSetModel>(Model1)) {
-			std::shared_ptr<imstk::RigidObjectLevelSetCollision> interaction = std::make_shared<imstk::RigidObjectLevelSetCollision>(Controller->GetToolObj(), ((ULevelSetModel*)Model1)->LevelSetObj);
+			std::shared_ptr<imstk::RigidObjectLevelSetCollision> interaction = std::make_shared<imstk::RigidObjectLevelSetCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Controller->GetToolObj()), ((ULevelSetModel*)Model1)->LevelSetObj);
 			{
 				auto colHandlerA = std::dynamic_pointer_cast<imstk::RigidBodyCH>(interaction->getCollisionHandlingA());
 				colHandlerA->setUseFriction(false);
@@ -165,7 +173,7 @@ void UControllerInteraction::Init()
 	// Create interaction and add to scene
 	if (Cast<URBDModel>(Model1) || Cast<UStaticModel>(Model1))
 	{
-		std::shared_ptr<imstk::RigidObjectCollision> Interaction = std::make_shared<imstk::RigidObjectCollision>(Controller->GetToolObj(), std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+		std::shared_ptr<imstk::RigidObjectCollision> Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Controller->GetToolObj()), std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
 		Interaction->setFriction(Friction);
 		Interaction->setBaumgarteStabilization(Stiffness);
 		//std::dynamic_pointer_cast<imstk::MeshToMeshBruteForceCD>(Interaction->getCollisionDetection())->setGenerateEdgeEdgeContacts(true);
@@ -176,9 +184,8 @@ void UControllerInteraction::Init()
 	{
 		std::shared_ptr<imstk::PbdObjectCollision> Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), Controller->GetToolObj(), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
 		Interaction->setFriction(Friction);
-		Interaction->setRestitution(0);
-		// TODO: not sure if this is needed (says default is true), but its done in some of the examples
-		//std::dynamic_pointer_cast<imstk::MeshToMeshBruteForceCD>(Interaction->getCollisionDetection())->setGenerateEdgeEdgeContacts(true);
+		Interaction->setRestitution(Restitution);
+		Interaction->setRigidBodyCompliance(RigidBodyCompliance);
 		SubsystemInstance->ActiveScene->addInteraction(Interaction);
 		Controller->AddCollision(Interaction);
 	}

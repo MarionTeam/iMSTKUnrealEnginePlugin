@@ -1,57 +1,65 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/*
+** This file is part of the Interactive Medical Simulation Toolkit (iMSTK)
+** iMSTK is distributed under the Apache License, Version 2.0.
+** See accompanying NOTICE for details.
+*/
 
+#pragma once
 
 #include "SurfaceInsertionConstraint.h"
 
+using namespace imstk;
+
 void
 SurfaceInsertionConstraint::initConstraint(
-	imstk::Vec3d          insertionPoint,
-	imstk::VertexMassPair ptB1,
-	imstk::VertexMassPair ptB2,
-	imstk::VertexMassPair ptB3,
-	imstk::Vec3d          contactPt,
-	imstk::Vec3d          barycentricPt,
-	double         stiffnessA,
-	double         stiffnessB)
+    const Vec3d& insertionPoint,
+    const PbdParticleId& ptB1,
+    const PbdParticleId& ptB2,
+    const PbdParticleId& ptB3,
+    const Vec3d& contactPt,
+    const Vec3d& barycentricPt,
+    double               stiffnessA,
+    double               stiffnessB)
 {
-	m_insertionPoint = insertionPoint;
-	m_contactPt = contactPt;
-	m_barycentricPt = barycentricPt;
-	m_bodiesSecond[0] = ptB1;
-	m_bodiesSecond[1] = ptB2;
-	m_bodiesSecond[2] = ptB3;
-	m_stiffnessA = stiffnessA;
-	m_stiffnessB = stiffnessB;
+    m_insertionPoint = insertionPoint;
+    m_contactPt = contactPt;
+    m_barycentricPt = barycentricPt;
+
+    //m_particles[0] = { -1, 0 }; // Not two-way
+    m_particles[0] = ptB1;
+    m_particles[1] = ptB2;
+    m_particles[2] = ptB3;
+
+    m_stiffness[0] = stiffnessA;
+    m_stiffness[1] = stiffnessB;
 }
 
 bool
-SurfaceInsertionConstraint::computeValueAndGradient(
-	double& c,
-	std::vector<imstk::Vec3d>& dcdxA,
-	std::vector<imstk::Vec3d>& dcdxB) const
+SurfaceInsertionConstraint::computeValueAndGradient(PbdState& bodies,
+    double& c, std::vector<Vec3d>& dcdx)
 {
-	// Get current position of puncture point
-	// Move triangle to match motion of needle
+    // Get current position of puncture point
+    // Move triangle to match motion of needle
 
-	imstk::Vec3d diff = m_contactPt - m_insertionPoint;
+    Vec3d diff = m_contactPt - m_insertionPoint;
 
-	c = diff.norm();
+    c = diff.norm();
 
-	// If sufficiently close, do not solve constraint
-	if (c < 1E-8)
-	{
-		return false;
-	}
+    // If sufficiently close, do not solve constraint
+    if (c < 1E-8)
+    {
+        return false;
+    }
 
-	diff.normalize();// gradient dcdx
+    diff.normalize();// gradient dcdx
 
-	// Weight by berycentric coordinates
-	dcdxB[0] = diff * m_barycentricPt[0];
-	dcdxB[1] = diff * m_barycentricPt[1];
-	dcdxB[2] = diff * m_barycentricPt[2];
+    // Dont adjust position of needle, force mesh to follow needle
+    //dcdx[0] = Vec3d::Zero(); // Not two-way
 
-	// Dont adjust position of needle, force mesh to follow needle
-	dcdxA[0] = imstk::Vec3d::Zero();
+    // Weight by berycentric coordinates
+    dcdx[0] = diff * m_barycentricPt[0];
+    dcdx[1] = diff * m_barycentricPt[1];
+    dcdx[2] = diff * m_barycentricPt[2];
 
-	return true;
+    return true;
 }

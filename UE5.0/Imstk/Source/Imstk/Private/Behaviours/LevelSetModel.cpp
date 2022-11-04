@@ -386,8 +386,8 @@ LevelSetObject::createVisualModels()
 		if (surfMesh->getNumVertices() > 0 && m_chunksGenerated.count(i) == 0)
 		{
 			//LOG(WARNING) << "New visual";
-			std::shared_ptr<imstk::VisualModel> surfMeshModel = std::make_shared<imstk::VisualModel>();
-			surfMeshModel->setGeometry(m_isoExtract->getOutput(i));
+			/*std::shared_ptr<imstk::VisualModel> surfMeshModel = std::make_shared<imstk::VisualModel>();
+			surfMeshModel->setGeometry(m_isoExtract->getOutput(i));*/
 
 			TArray<FVector2D> UV0;
 			/*for (int j = 0; j < surfMesh->getNumVertices(); j++) {
@@ -414,7 +414,7 @@ LevelSetObject::createVisualModels()
 				auto* MaterialInstance = UMaterialInstanceDynamic::Create(Material, Material);
 				MeshComp->SetMaterial(i, MaterialInstance);
 			}
-			addVisualModel(surfMeshModel);
+			//addVisualModel(surfMeshModel);
 			m_chunksGenerated.insert(i);
 		}
 	}

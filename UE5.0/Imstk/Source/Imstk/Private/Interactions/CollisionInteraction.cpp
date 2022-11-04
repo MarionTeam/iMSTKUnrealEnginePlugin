@@ -3,7 +3,7 @@
 
 #include "CollisionInteraction.h"
 
-#include "DeformableModel.h"
+#include "PBDModel.h"
 #include "RBDModel.h"
 #include "StaticModel.h"
 #include "PBDThread.h"
@@ -17,6 +17,7 @@
 #include "ImstkSettings.h"
 #include "Engine/Engine.h"
 
+//TODO: Might not need anymore!
 ECollisionInteractionType UCollisionInteraction::GetAutoCollisionType(std::shared_ptr<imstk::Geometry> Geom1, std::shared_ptr<imstk::Geometry> Geom2)
 {
 	// Cast both models to determine what types they are and return the corresponding CollisionInteractionType for each combination of imstk geometries 
@@ -30,8 +31,6 @@ ECollisionInteractionType UCollisionInteraction::GetAutoCollisionType(std::share
 	else if (std::dynamic_pointer_cast<imstk::LineMesh>(Geom1) && std::dynamic_pointer_cast<imstk::LineMesh>(Geom2)) {
 		return ECollisionInteractionType::LineMeshToLineMeshCCD;
 	}
-	// TODO: Check if this is fixed
-	/*
 	else if ((std::dynamic_pointer_cast<imstk::Sphere>(Geom1) && std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom1) && std::dynamic_pointer_cast<imstk::Sphere>(Geom2))) {
 		return ECollisionInteractionType::SurfaceMeshToSphereCD;
@@ -39,7 +38,7 @@ ECollisionInteractionType UCollisionInteraction::GetAutoCollisionType(std::share
 	else if ((std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom1) && std::dynamic_pointer_cast<imstk::Capsule>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::Capsule>(Geom1) && std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom2))) {
 		return ECollisionInteractionType::SurfaceMeshToCapsuleCD;
-	}*/
+	}
 	else if ((std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom1) && std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::PointSet>(Geom1) && std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom2)) ||
 		(std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom1) && std::dynamic_pointer_cast<imstk::PointSet>(Geom2)) ||
@@ -102,36 +101,36 @@ void UCollisionInteraction::Init()
 	// If GetAutoCollisionType returns Auto, then collision type was not found. Therefore return
 	if (CollisionType == ECollisionInteractionType::Auto)
 		return;
-
+	//TODO: redo this
 	// Create interaction and add to scene
 	UImstkSubsystem* SubsystemInstance = GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>();
 	std::shared_ptr<imstk::CollisionInteraction> Interaction;
 	if (Cast<UPBDThread>(Model1) && Cast<UPBDThread>(Model2)) {
-		Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), std::dynamic_pointer_cast<imstk::PbdObject>(Model2->ImstkCollidingObject), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+		Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), std::dynamic_pointer_cast<imstk::PbdObject>(Model2->ImstkCollidingObject));// , std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
 	}
 	else if (Cast<URBDModel>(Model1) && Cast<URBDModel>(Model2))
 	{
-		Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), std::dynamic_pointer_cast<imstk::RigidObject2>(Model2->ImstkCollidingObject), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+		Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), std::dynamic_pointer_cast<imstk::RigidObject2>(Model2->ImstkCollidingObject));//, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
 	}
 	else if (Cast<URBDModel>(Model1) && Cast<UStaticModel>(Model2))
 	{
-		Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), Model2->ImstkCollidingObject, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+		Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), Model2->ImstkCollidingObject);//, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
 	}
 	else if (Cast<UStaticModel>(Model1) && Cast<URBDModel>(Model2))
 	{
-		Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Model2->ImstkCollidingObject), Model1->ImstkCollidingObject, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+		Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Model2->ImstkCollidingObject), Model1->ImstkCollidingObject);//, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
 	}
-	else if (Cast<UDeformableModel>(Model1) && Cast<UDeformableModel>(Model2))
+	else if (Cast<UPBDModel>(Model1) && Cast<UPBDModel>(Model2))
 	{
-		Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), std::dynamic_pointer_cast<imstk::PbdObject>(Model2->ImstkCollidingObject), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+		Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), std::dynamic_pointer_cast<imstk::PbdObject>(Model2->ImstkCollidingObject));
 	}
-	else if (Cast<UDeformableModel>(Model1) && (Cast<UStaticModel>(Model2) || Cast<URBDModel>(Model2)))
+	else if (Cast<UPBDModel>(Model1) && (Cast<UStaticModel>(Model2) || Cast<URBDModel>(Model2)))
 	{
-		Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), Model2->ImstkCollidingObject, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+		Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), Model2->ImstkCollidingObject);
 	}
 	else if ((Cast<UStaticModel>(Model1) || Cast<URBDModel>(Model1)) && Cast<UDeformableModel>(Model2))
 	{
-		Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model2->ImstkCollidingObject), Model1->ImstkCollidingObject, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+		Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model2->ImstkCollidingObject), Model1->ImstkCollidingObject);//, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
 	}
 	else {
 		if (GEngine) 
@@ -150,12 +149,15 @@ void UCollisionInteraction::Init()
 	{
 		PBDInteraction->setFriction(Friction);
 		PBDInteraction->setRestitution(Restitution);
+		PBDInteraction->setDeformableStiffnessA(Stiffness);
+		PBDInteraction->setDeformableStiffnessB(Stiffness);
+		PBDInteraction->setRigidBodyCompliance(RigidBodyCompliance);
 	}
 
-	if (std::dynamic_pointer_cast<imstk::PbdCollisionHandling>(Interaction->getCollisionHandlingAB())) {
+	/*if (std::dynamic_pointer_cast<imstk::PbdCollisionHandling>(Interaction->getCollisionHandlingAB())) {
 		auto colHandler = std::dynamic_pointer_cast<imstk::PbdCollisionHandling>(Interaction->getCollisionHandlingAB());
 		colHandler->getCollisionSolver()->setCollisionIterations(CollisionIterations);
-	}	
+	}*/	
 
 	SubsystemInstance->ActiveScene->addInteraction(Interaction);
 

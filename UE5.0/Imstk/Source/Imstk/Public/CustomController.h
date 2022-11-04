@@ -34,7 +34,7 @@ public:
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent);
 
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		TEnumAsByte<EControllerPreset> Preset = EControllerPreset::CollidingPreset;
 
 	virtual void InitializeComponent() override;
@@ -50,7 +50,7 @@ public:
 	* @param bUpdateUnrealPosRot - Updates the position and rotation of the Unreal Actor if true
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		void MoveControllerToLocation(FVector Location, FQuat Orientation, bool bUpdateUnrealPosRot = true);
 
 	/** Projects a ray with the specified start and direction onto the supplied plane to find a point of intersection and moves the iMSTK object to that location.
@@ -60,7 +60,7 @@ public:
 	* @param bUpdateUnrealPosRot - Updates the position and rotation of the Unreal Actor if true
 	* @return The intersection location between the projected ray and the plane
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		FVector MoveControllerToRaycastOnPlane(FVector RayStart, FVector RayDir, FQuat Orientation, UDynamicalModel* PlaneActor, bool bUpdateUnrealPosRot = true);
 
 protected:
@@ -81,13 +81,13 @@ protected:
 	/** Starts a vertex grasp if the tool is set to a grasping tool and a PbdObjectGrasping interaction are set on the controller
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		void BeginVertexGrasp();
 
 	/** Starts a cell grasp if the tool is set to a grasping tool and a PbdObjectGrasping interaction are set on the controller
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		void BeginCellGrasp();
 
 	/** Starts a ray point grasp from RayStart in the direction provided if the tool is set to a grasping tool and a PbdObjectGrasping interaction are set on the controller
@@ -95,94 +95,93 @@ protected:
 	* @param RayDir Direction of the ray to be cast
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		void BeginRayPointGrasp(FVector RayStart, FVector RayDir);
 
 	/** Ends the current grasp
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		void EndGrasp();
 
 	/** Creates a stitching interaction between the two vertices of the line mesh tool. Requires geometry to be set to a LineMeshTool.
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		void BeginStitch();
 
 	/** Applies the cut for each PbdObjectCutting interaction on the controller. Requires geometry to be set to a SurfaceMeshTool.
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		void BeginCut();
 
 	// Mass of the object in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		float Mass = 0.2;
 
-	//TODO: set default values for these
 	// Velocity damping of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|RigidBody")
 		float VelocityDamping = 1.0;
 
 	// Angular velocity damping of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|RigidBody")
 		float AngularVelocityDamping = 1.0;
 
 	// Maximum iterations of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|RigidBody")
 		int MaxNumIterations = 8;
 
 	// Maximum constraints of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|RigidBody")
 		int MaxNumConstraints = 40;
 
 	// Inertia tensor of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "iMSTK|RigidBody")
 		float InertiaTensorMultiplier = 1.0;
 
 	// Moves the tool using force rather than moving directly to the position given
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|ForceTool")
 		bool bForceTool = false;
 
 	// Material of the ghost models 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool", EditConditionHides), Category = "iMSTK|ForceTool")
 		UMaterial* GhostMaterial;
 
 	/** Sets the components used for the ghost object on force tools
 	* @param SceneComponent - Pointer to the empty parent USceneComponent that holds the UStaticMeshComponents
 	* @param StaticMeshComponents - Array of pointers to UStaticMeshComponents that represent the ghost model
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|CustomController")
 		void SetGhostComponents(USceneComponent* SceneComponent, TArray<UStaticMeshComponent*> StaticMeshComponents);
 
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "General|Advanced|ForceTool")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|Force")
 		bool bIgnoreAngularForce = true;
 
 	// Spring force of the force applied to the tool
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool && bIgnoreAngularForce", EditConditionHides), BlueprintReadWrite, Category = "General|Advanced|ForceTool")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool && bIgnoreAngularForce", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|Force")
 		float SpringForce = 10000;
 
 	// Spring damping of the force applied to the tool
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool && bIgnoreAngularForce", EditConditionHides), BlueprintReadWrite, Category = "General|Advanced|ForceTool")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool && bIgnoreAngularForce", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|Force")
 		float DamperForce = 100;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "General|Advanced|ForceTool")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|Force")
 		FVector LinearKs = FVector(8000000.0, 8000000.0, 8000000.0);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "General|Advanced|ForceTool")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|Force")
 		FVector AngularKs = FVector(10000.0, 10000.0, 10000.0);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "General|Advanced|ForceTool")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|Force")
 		double LinearKd = 10000.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "General|Advanced|ForceTool")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|Force")
 		double AngularKd = 300.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "General|Advanced|ForceTool")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|Force")
 		double ForceScale = 1;
 
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|CustomController")
 		FVector GetControlleriMSTKPosition();
 
 	//imstk::Vec3d SpringForce = imstk::Vec3d::Zero();
@@ -192,7 +191,7 @@ protected:
 	imstk::Vec3d AngularDamperForce = imstk::Vec3d::Zero();
 
 	// Prints the position of the object to the screen
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debugging")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|Debugging")
 		bool bPrintImstkPos = false;
 
 	// Pointer to the empty parent USceneComponent that holds the UStaticMeshComponents. This is what will be moved around the scene to preserve offsets on the UStaticMeshComponents
@@ -203,6 +202,8 @@ protected:
 	UPROPERTY()
 		TArray<UStaticMeshComponent*> GhostMeshes;
 
+	// Cached pointer of the tool as a rigid object to avoid constant dynamic casts
+	std::shared_ptr<imstk::RigidObject2> RigidToolObj;
 public:
 	virtual void UnInit() override;
 

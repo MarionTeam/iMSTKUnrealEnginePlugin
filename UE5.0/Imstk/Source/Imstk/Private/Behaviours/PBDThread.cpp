@@ -4,6 +4,7 @@
 #include "PBDThread.h"
 #include "ImstkSettings.h"
 #include "imstkPbdModel.h"
+#include "imstkPbdModelConfig.h"
 
 
 void UPBDThread::InitializeComponent()
@@ -62,51 +63,52 @@ void UPBDThread::Init()
 	}
 
 	StringMesh->initialize(VerticesPtr, SegmentsPtr);
-	
+
+	std::shared_ptr<imstk::PbdModel> PbdModel;
+	if (bSharedModel)
+		PbdModel = SubsystemInstance->PbdModel;
+	else
+		PbdModel = std::make_shared<imstk::PbdModel>();
+
 	// Configure model
-	std::shared_ptr<imstk::PbdModelConfig> PbdConfig = std::make_shared<imstk::PbdModelConfig>();
-
-	if (bUseDistanceConstraint)
-		PbdConfig->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Distance, DistanceConstraint);
-
-	if (bUseBendConstraint) {
-		PbdConfig->enableBendConstraint(BendStiffness, 1);
-		//PbdConfig->enableBendConstraint(BendStiffness, 2);
-	}
-	
-
-	PbdConfig->m_uniformMassValue = Mass / NumVerts;
-
 	// If object has separate gravity and delta time than the rest of the scene
-	if (bIndividualGravity)
-		PbdConfig->m_gravity = UMathUtil::ToImstkVec3d(Gravity, true);
+	if (bIndividualGravity && !bSharedModel)
+		PbdModel->getConfig()->m_gravity = UMathUtil::ToImstkVec3d(Gravity, true);
 	else
-		PbdConfig->m_gravity = UMathUtil::ToImstkVec3d(SubsystemInstance->Gravity, true);
+		PbdModel->getConfig()->m_gravity = UMathUtil::ToImstkVec3d(SubsystemInstance->Gravity, true);
 
-	if (bIndividualDT)
-		PbdConfig->m_dt = IndividualDT;
+	// If the object should have separate delta time from the rest of the scene
+	if (bIndividualDT && !bSharedModel)
+		PbdModel->getConfig()->m_dt = IndividualDT;
 	else
-		PbdConfig->m_dt = SubsystemInstance->TickInterval;
-
-	PbdConfig->m_iterations = ModelIterations;
-	PbdConfig->m_viscousDampingCoeff = ViscousDampingCoeff;
-
-	std::shared_ptr<imstk::PbdModel> PbdModel = std::make_shared<imstk::PbdModel>();
-	PbdModel->configure(PbdConfig);
-	PbdModel->setModelGeometry(StringMesh);
+		PbdModel->getConfig()->m_dt = SubsystemInstance->TickInterval;
 
 	PbdObject->setVisualGeometry(StringMesh);
 	PbdObject->setPhysicsGeometry(StringMesh);
 	PbdObject->setCollidingGeometry(StringMesh);
 	PbdObject->setDynamicalModel(PbdModel);
 
+	PbdModel->getConfig()->setBodyDamping(PbdObject->getPbdBody()->bodyHandle, DampingCoeff);
+
+	PbdObject->getPbdBody()->uniformMassValue = Mass;
+
+	if (!bSharedModel) 
+		PbdModel->getConfig()->m_iterations = ModelIterations;
+
+	if (bUseDistanceConstraint)
+		PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Distance, DistanceConstraint, PbdObject->getPbdBody()->bodyHandle);
+
+	if (bUseBendConstraint) 
+		PbdModel->getConfig()->enableBendConstraint(BendStiffness, 1, true, PbdObject->getPbdBody()->bodyHandle);
+	
+
 	ImstkCollidingObject = PbdObject;
 	Geometry = StringMesh;
 
 	ProcessBoundaryConditions();
 
-	for (const int num : FixedNodes) {
-		PbdConfig->m_fixedNodeIds.push_back(num);
+	for (const int Num : FixedNodes) {
+		PbdObject->getPbdBody()->fixedNodeIds.push_back(Num);
 	}
 
 	SubsystemInstance->ActiveScene->addSceneObject(PbdObject);

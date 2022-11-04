@@ -9,7 +9,7 @@
 
 /** \file ControllerInteraction.h
  *  \brief Class used to create and represent an interaction between controller and object
- *  \details Can be created in blueprint to make the iMSTK collision interaction and initialized using the iMSTK subsystem. Requires Model1 and Controller to be set. Collision type may be left as auto to automatically determine the collision type. 
+ *  \details Can be created in blueprint to make the iMSTK collision interaction and initialized using the iMSTK subsystem. Requires Model1 and Controller to be set. Collision type may be left as auto to automatically determine the collision type.
  *           Note: Model2 does not need to be set
  */
 UCLASS()
@@ -18,9 +18,12 @@ class IMSTK_API UControllerInteraction : public UCollisionInteraction
 	GENERATED_BODY()
 
 public:
+	//TODO: probably move into its own class
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Controller Interaction")
+		double GraspCompliance = 0.0001;
 
 	// Controller in the interaction 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Collision Interaction")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Controller Interaction")
 		UImstkController* Controller;
 
 	/** Initializes the interaction between model and controller

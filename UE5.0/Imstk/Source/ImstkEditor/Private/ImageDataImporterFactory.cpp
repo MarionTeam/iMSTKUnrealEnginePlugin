@@ -21,7 +21,7 @@ UImageDataImporterFactory::UImageDataImporterFactory(const FObjectInitializer& O
 	bEditorImport = true;
 }
 
-//TODO: Maybe make a menu pop up to decide some of the choices here (such as smoothing masks etc)
+//TODO: Maybe make a menu pop up to decide some of the choices here
 UObject* UImageDataImporterFactory::FactoryCreateFile(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, const FString& Filename, const TCHAR* Parms, FFeedbackContext* Warn, bool& bOutOperationCanceled)
 {
 
@@ -43,7 +43,7 @@ UObject* UImageDataImporterFactory::FactoryCreateFile(UClass* InClass, UObject* 
 	}
 	else
 	{
-		// TODO: Unity has stuff for Line mesh as well but not sure if that can be done because all meshes are triangle based
+		
 		return nullptr;
 	}
 }

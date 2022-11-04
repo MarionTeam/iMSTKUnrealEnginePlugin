@@ -72,7 +72,7 @@ protected:
 	bool bIsInitialized = false;
 
 	// iMSTK Rigid object of the tool
-	std::shared_ptr<imstk::RigidObject2> ToolObj;
+	std::shared_ptr<imstk::DynamicObject> ToolObj;
 
 	// Array containing grasping interactions
 	TArray<std::shared_ptr<imstk::PbdObjectGrasping>> ToolPickings;
@@ -101,55 +101,51 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void InitializeComponent() override;
 
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK")
 		bool IsInitialized();
 
 	// Geometry of the tool
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ToolSettings")
 		TEnumAsByte<EToolGeometry> ToolGeometry;*/
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		FGeometryFilter ToolGeomFilter;
 
 	// Type of tool. Determines the action performed by the tool
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|ToolSettings")
 		TEnumAsByte<EToolType> ToolType;
 
 	// Type of grasp performed by the tool
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "iMSTK|ToolSettings")
 		TEnumAsByte<EGraspType> GraspType;
 
 	// Stiffness of the grasp performed by the tool
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "iMSTK|ToolSettings")
 		float GraspStiffness = 1.0;
 
-	// TODO: Do not pick auto! Change to remove auto from collision types?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "GraspType == EGraspType::CellGrasp && ToolType == EToolType::GraspingTool", EditConditionHides), Category = "General|Advanced")
-		TEnumAsByte<ECollisionInteractionType> GraspCollisionType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::CuttingTool", EditConditionHides), Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::CuttingTool", EditConditionHides), Category = "iMSTK|ToolSettings")
 		float CutEpsilon = 1.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::LevelSetTool", EditConditionHides, ClampMin = "0.01"), Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::LevelSetTool", EditConditionHides, ClampMin = "0.01"), Category = "iMSTK|ToolSettings")
 		float VelocityScaling = 1.0;
 
 	/** Setter for the static mesh component. Required to be set in the construction of the blueprint for surface mesh tools.
 	* @param InputMeshComp Static mesh component to be set
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		void SetStaticMeshComp(UStaticMeshComponent* InputMeshComp);
 
 	/** Disables the collisions of the object in iMSTK
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		void DisableAllCollisions();
 
 	/** Enables the collisions of the object in iMSTK
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		void EnableAllCollisions();
 
 	/** Initializes the controller in imstk
@@ -160,7 +156,7 @@ public:
 	/** Returns the rigid object for the tool
 	* @return Rigid object for the tool
 	*/
-	std::shared_ptr<imstk::RigidObject2> GetToolObj();
+	std::shared_ptr<imstk::DynamicObject> GetToolObj();
 
 	/** Adds a grasping interaction to the tool. Multiple can be assigned to grasp more than one object
 	* @param InputPicking Grasping interaction to be added to the tool
@@ -191,13 +187,13 @@ public:
 	/** Calculates and returns the scale applied to Unreal's basic shapes in order to have the same shape as iMSTK's geometry
 	* @return FVector - Scale of the geometry or zero vector if not implemented
 	*/
-	UFUNCTION(BlueprintCallable, Category = "iMSTK")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		FVector GetGeomScale();
 
 	/** Returns the amount the geometry is offset within iMSTK
 	* @return FVector - Offset of the geometry or zero vector if not implemented
 	*/
-	UFUNCTION(BlueprintCallable, Category = "iMSTK")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		FVector GetGeomOffset();
 public:
 	// Called from the subsystem to clear shared pointers

@@ -34,63 +34,47 @@ public:
 	//	UTetrahedralMeshAsset* TetrahedralMesh;
 
 	// Mass of the PBDModel
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		double Mass = 1.0;
 
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
+		double DampingCoeff = 0.01;
+
 	// Viscous damping coefficient of the PBDModel
-	UPROPERTY(EditAnywhere, Category = "General|Advanced")
-		double ViscousDampingCoeff = 0.01;
+	/*UPROPERTY(EditAnywhere, Category = "General|Advanced")
+		double ViscousDampingCoeff = 0.01;*/
 
 	// Number of iterations of the PBDModel
-	UPROPERTY(EditAnywhere, Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "!bSharedModel", EditConditionHides), Category = "iMSTK|PBDModel")
 		int ModelIterations = 1;
 
 	// Contact stiffness of the PBDmodel
-	UPROPERTY(EditAnywhere, Category = "General|Advanced")
-		double ContactStiffness = 1.0;
+	/*UPROPERTY(EditAnywhere, Category = "General|Advanced")
+		double ContactStiffness = 1.0;*/
 
-	UPROPERTY(EditAnywhere, Category = "General|Advanced|Constraints")
+	UPROPERTY(EditAnywhere, Category = "iMSTK|Constraints")
 		bool bUseDistanceConstraint = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseDistanceConstraint", EditConditionHides), Category = "General|Advanced|Constraints")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseDistanceConstraint", EditConditionHides), Category = "iMSTK|Constraints")
 		float DistanceConstraint = 0.0;
 
-	/*UPROPERTY(EditAnywhere, meta = (EditCondition = "TetrahedralMesh == nullptr", EditConditionHides), Category = "Constraints")
-		bool bUseDihedralConstraint = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseDihedralConstraint && TetrahedralMesh == nullptr", EditConditionHides), Category = "Constraints")
-		float DihedralConstraint = 0.0;
-
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "TetrahedralMesh != nullptr", EditConditionHides), Category = "Constraints")
-		bool bUseVolumeConstraint = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseVolumeConstraint && TetrahedralMesh != nullptr", EditConditionHides), Category = "Constraints")
-		float VolumeConstraint = 0.0;
-
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "TetrahedralMesh != nullptr", EditConditionHides), Category = "Constraints")
-		bool bUseFEMConstraint = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseFEMConstraint && TetrahedralMesh != nullptr", EditConditionHides), Category = "Constraints")
-		float YoungsModulus = 0.0;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseFEMConstraint && TetrahedralMesh != nullptr", EditConditionHides), Category = "Constraints")
-		float PossionsRatio = 0.0;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseFEMConstraint && TetrahedralMesh != nullptr", EditConditionHides), Category = "Constraints")
-		TEnumAsByte<FemConstraintMaterial> MaterialType = FemConstraintMaterial::StVK;*/
-
-	UPROPERTY(EditAnywhere, Category = "General|Advanced|Constraints")
+	UPROPERTY(EditAnywhere, Category = "iMSTK|Constraints")
 		bool bUseConstantDensityConstraint = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseConstantDensityConstraint", EditConditionHides), Category = "General|Advanced|Constraints")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseConstantDensityConstraint", EditConditionHides), Category = "iMSTK|Constraints")
 		float ConstantDensityConstraint = 0.0;
 
-	UPROPERTY(EditAnywhere, Category = "General|Advanced|Constraints")
+	UPROPERTY(EditAnywhere, Category = "iMSTK|Constraints")
 		bool bUseAreaConstraint = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseAreaConstraint", EditConditionHides), Category = "General|Advanced|Constraints")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseAreaConstraint", EditConditionHides), Category = "iMSTK|Constraints")
 		float AreaConstraint = 0.0;
 
 	/** Fixes the listed vertices on the PBDModel. If assigned, the boundary conditions will be ignored*/
-	UPROPERTY(EditAnywhere, Category = "Boundaries")
+	UPROPERTY(EditAnywhere, Category = "iMSTK|Boundaries")
 		TArray<int> FixedNodes;
 	/** Vertices of the model within these actors will be fixed. These actors will be destroyed when starting the game*/
-	UPROPERTY(EditAnywhere, Category = "Boundaries")
+	UPROPERTY(EditAnywhere, Category = "iMSTK|Boundaries")
 		TArray<AActor*> BoundaryConditionActors;
 	/** Inverts the actor boundaries and fixes all vertices that are not in the actor's mesh*/
-	UPROPERTY(EditAnywhere, Category = "Boundaries")
+	UPROPERTY(EditAnywhere, Category = "iMSTK|Boundaries")
 		bool bInverseBoundary;
 
 	// Called every frame

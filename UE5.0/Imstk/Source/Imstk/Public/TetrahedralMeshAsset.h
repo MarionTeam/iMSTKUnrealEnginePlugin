@@ -29,10 +29,10 @@ public:
 	std::shared_ptr<imstk::TetrahedralMesh> GetTetrahedralMesh();
 
 	// Vertex positions of the tetrahedral mesh
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		TArray<FVector> Vertices;
 
 	// Tetrehedra indices of the mesh
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		TArray<uint32> Indices;
 };

@@ -145,6 +145,15 @@ public:
     ///
     void clear() override;
 
+    ///
+    /// \brief Polymorphic clone, hides the declaration in superclass
+    /// return own type
+    ///
+    std::unique_ptr<ImageData> clone()
+    {
+        return std::unique_ptr<ImageData>(cloneImplementation());
+    }
+
 private:
     // ImageData does not use transform, consider splitting into separate class
     using Geometry::translate;
@@ -163,6 +172,9 @@ protected:
     Vec3d m_origin     = Vec3d(0.0, 0.0, 0.0);
     Vec3d m_spacing    = Vec3d(1.0, 1.0, 1.0);
     Vec3d m_invSpacing = Vec3d(1.0, 1.0, 1.0);
-    Vec6d m_bounds;
+    Vec6d m_bounds     = Vec6d::Zero();
+
+private:
+    ImageData* cloneImplementation() const;
 };
 } // namespace imstk

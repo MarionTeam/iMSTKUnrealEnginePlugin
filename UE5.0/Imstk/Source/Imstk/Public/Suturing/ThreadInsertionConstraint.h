@@ -1,47 +1,45 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/*
+** This file is part of the Interactive Medical Simulation Toolkit (iMSTK)
+** iMSTK is distributed under the Apache License, Version 2.0.
+** See accompanying NOTICE for details.
+*/
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "imstkPbdCollisionConstraint.h"
-#include "imstkMath.h"
-#include "imstkVecDataArray.h"
+#include "imstkRbdConstraint.h"
 
-/**
- * 
- */
-class IMSTK_API ThreadInsertionConstraint : public imstk::PbdCollisionConstraint
+using namespace imstk;
+
+///
+/// \class ThreadInsertionConstraint
+///
+/// \brief Constrains an point on a line mesh to a PBD surface mesh
+///
+class ThreadInsertionConstraint : public PbdCollisionConstraint
 {
-private:
-
-	imstk::Vec2d m_threadBaryPt;
-	imstk::Vec3d m_triangleBaryPt;
-	imstk::Vec3d m_triInsertionPoint;
-	imstk::Vec3d m_threadInsertionPoint;
-
 public:
+    ThreadInsertionConstraint() : PbdCollisionConstraint(2, 3) { }
+    ~ThreadInsertionConstraint() override = default;
 
-	ThreadInsertionConstraint() : imstk::PbdCollisionConstraint(2, 3) // (num thread verts, num triangle verts)
-	{
-	}
+    void initConstraint(
+        const PbdState& bodies,
+        const PbdParticleId& ptA1,
+        const PbdParticleId& ptA2,
+        const Vec2d& threadBaryPoint,
+        const PbdParticleId& ptB1,
+        const PbdParticleId& ptB2,
+        const PbdParticleId& ptB3,
+        const Vec3d& triBaryPoint,
+        double               stiffnessA,
+        double               stiffnessB);
 
-	~ThreadInsertionConstraint() override = default;
+    bool computeValueAndGradient(PbdState& bodies,
+        double& c, std::vector<Vec3d>& dcdx) override;
 
-public:
-
-	void initConstraint(
-		imstk::VertexMassPair ptA1,
-		imstk::VertexMassPair ptA2,
-		imstk::Vec2d          threadBaryPoint,
-		imstk::VertexMassPair ptB1,
-		imstk::VertexMassPair ptB2,
-		imstk::VertexMassPair ptB3,
-		imstk::Vec3d          triBaryPoint,
-		double         stiffnessA,
-		double         stiffnessB);
-
-	bool computeValueAndGradient(
-		double& c,
-		std::vector<imstk::Vec3d>& dcdxA,
-		std::vector<imstk::Vec3d>& dcdxB) const override;
+protected:
+    Vec2d m_threadBaryPt;
+    Vec3d m_triangleBaryPt;
+    Vec3d m_triInsertionPoint;
+    Vec3d m_threadInsertionPoint;
 };

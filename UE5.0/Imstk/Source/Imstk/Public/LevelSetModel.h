@@ -90,20 +90,20 @@ public:
 	virtual void Init() override;
 
 	// Image data asset to generate the iMSTK object from
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		UImageDataAsset* ImageData;
 
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "ImageData == nullptr", EditConditionHides), Category = "General")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "ImageData == nullptr", EditConditionHides), Category = "iMSTK")
 		FIntVector Dimensions = FIntVector(1, 1, 1);
 
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "ImageData == nullptr", EditConditionHides), Category = "General")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "ImageData == nullptr", EditConditionHides), Category = "iMSTK")
 		AActor* BoundingActor;
 
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		FIntVector NumChunks = FIntVector(1, 1, 1);
 
 	// The material to be set on each section of the mesh (TODO)
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		UMaterial* ImageMaterial;
 
 	// The iMSTK LevelSet Object
@@ -125,7 +125,7 @@ protected:
 		UProceduralMeshComponent* MeshComp;
 
 	// The mesh component to represent the LevelSet when using the editor. Will be disabled upon starting the game
-	UPROPERTY(BlueprintReadWrite, Category = "General")
+	UPROPERTY(BlueprintReadWrite, Category = "iMSTK")
 		UProceduralMeshComponent* EditorMeshComp;
 
 	std::shared_ptr<imstk::SurfaceMesh> GetSurfaceMeshFromStatic();

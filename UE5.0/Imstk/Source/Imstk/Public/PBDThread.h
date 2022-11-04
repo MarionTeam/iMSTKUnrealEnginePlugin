@@ -11,7 +11,7 @@
 /**
  *   
  */
-UCLASS(ClassGroup = (Imstk), meta = (BlueprintSpawnableComponent), hidecategories = ("General|Geometry"))
+UCLASS(ClassGroup = (Imstk), meta = (BlueprintSpawnableComponent), hidecategories = ("iMSTK|Geometry"))
 class IMSTK_API UPBDThread : public UDeformableModel
 {
 	GENERATED_BODY()
@@ -22,12 +22,12 @@ public:
 
 	// Zeros the tangents for the spine in Unreal 
     // TODO: maybe remove this option
-	UPROPERTY(EditAnywhere, Category = "General|Advanced")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		bool bZeroTangents = false;
 
-	UPROPERTY(EditAnywhere, Category = "General|Advanced|Constraints")
+	UPROPERTY(EditAnywhere, Category = "iMSTK|Constraints")
 		bool bUseBendConstraint = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseBendConstraint", EditConditionHides), Category = "General|Advanced|Constraints")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bUseBendConstraint", EditConditionHides), Category = "iMSTK|Constraints")
 		float BendStiffness = 0.0;
 
 	// Spline component attached to the Actor
@@ -55,7 +55,7 @@ public:
 	* @param Pos Position to move the vertex to
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Imstk")
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|PBDThread")
 		void MoveVertexToLocation(int VertIndex, FVector Pos);
 
 protected:

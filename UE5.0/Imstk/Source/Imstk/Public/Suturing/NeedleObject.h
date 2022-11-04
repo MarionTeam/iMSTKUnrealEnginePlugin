@@ -3,82 +3,54 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "imstkRigidObject2.h"
-#include "imstkMacros.h"
+#include "PbdModel.h"
+#include "imstkPbdObject.h"
 
-/**
- * 
+#include "NeedleObject.generated.h"
+
+/** \file NeedleObject.h
+ *  \brief Attach to a blank actor to create a needle 
+ *  \details
  */
-
-class IMSTK_API NeedleObject : public imstk::RigidObject2
+UCLASS(ClassGroup = (Imstk), meta = (BlueprintSpawnableComponent))
+class IMSTK_API UNeedleObject : public UPBDModel
 {
+	GENERATED_BODY()
+
 public:
-	enum class CollisionState
-	{
-		REMOVED,
-		TOUCHING,
-		INSERTED
-	};
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	enum class PrevCollisionState
-	{
-		REMOVED,
-		INSERTED
-	};
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
-	NeedleObject(std::shared_ptr<imstk::RigidBodyModel2> rbdModel, USceneComponent* Comp);
-	virtual ~NeedleObject() = default;
+	virtual void InitializeComponent() override;
 
-	IMSTK_TYPE_NAME(NeedleObject)
+	/** Initializes the object that is defined in editor through the geometry filter
+	* @return None
+	*/
+	virtual void Init() override;
 
-	SIGNAL(NeedleObject, inserted);
-	SIGNAL(NeedleObject, removed);
-
-	void setCollisionState(const CollisionState state)
-	{
-		// If current state is inserted and previous was not inserted
-		if (m_collisionState == CollisionState::INSERTED && state != CollisionState::INSERTED)
-		{
-			this->postEvent(imstk::Event(removed()));
-		}
-		// If current state not inserted and previous inserted
-		else if (m_collisionState != CollisionState::INSERTED && state == CollisionState::INSERTED)
-		{
-			this->postEvent(imstk::Event(inserted()));
-		}
-		m_collisionState = state;
-	}
-
-	void setPrevCollisionState(const PrevCollisionState state)
-	{
-		// If current state is inserted and previous was not inserted
-		if (m_prevCollisionState == PrevCollisionState::INSERTED && state != PrevCollisionState::INSERTED)
-		{
-			this->postEvent(imstk::Event(removed()));
-		}
-		// If current state not inserted and previous inserted
-		else if (m_prevCollisionState != PrevCollisionState::INSERTED && state == PrevCollisionState::INSERTED)
-		{
-			this->postEvent(imstk::Event(inserted()));
-		}
-		m_prevCollisionState = state;
-	}
-
-	CollisionState getCollisionState() const { return m_collisionState; }
-	PrevCollisionState getPrevCollisionState() const { return m_prevCollisionState; }
-
-	///
-	/// \brief sets/gets the minimum force that needs to be applied for puncture to occru.
-	/// Note: These are only useful if haptics are being used. Otherwise another metric must
-	/// be used.
-	/// @{
-	void setForceThreshold(const double forceThreshold) { m_forceThreshold = forceThreshold; }
-	double getForceThreshold() const { return m_forceThreshold; }
-	///  @}
+	/** Returns a vertex's position on the line mesh of the needle
+	* @param Vert Integer for the vertex position to be returned
+	* @return FVector containing the position of the input vertex in unreal space
+	*/
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Needle")
+		FVector GetVertexPosition(int Vert = 0);
 
 protected:
-	CollisionState     m_collisionState = CollisionState::REMOVED;
-	PrevCollisionState m_prevCollisionState = PrevCollisionState::REMOVED;
 
-	double m_forceThreshold = 5.0;
+	/** Called during TickComponent to move the Unreal object in order to match the Imstk simulation
+	* @return None.
+	*/
+	//void UpdatePosRot();
+
+	// Object is created during Init and used in Imstk simulation
+	std::shared_ptr<imstk::PbdObject> Needle;
+
+	UPROPERTY()
+		UProceduralMeshComponent* ProcMeshComp;
+
+public:
+	virtual void UnInit() override;
 };

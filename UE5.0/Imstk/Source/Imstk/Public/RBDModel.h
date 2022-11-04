@@ -19,7 +19,7 @@ class IMSTK_API URBDModel : public UDynamicalModel
 
 public:
 	// Mass of the rigid object set in editor
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		double Mass = 1.0;
 
 	// Called every frame
@@ -32,7 +32,7 @@ public:
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent);
 
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		TEnumAsByte<EDefaultModelPreset> Preset = EDefaultModelPreset::SurfaceMeshPreset;
 
 	/** Initializes the rigid object that is defined in editor through the geometry filter

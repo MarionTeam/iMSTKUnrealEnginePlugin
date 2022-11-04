@@ -59,7 +59,7 @@ void UImstkController::InitController()
 	
 }
 
-std::shared_ptr<imstk::RigidObject2> UImstkController::GetToolObj()
+std::shared_ptr<imstk::DynamicObject> UImstkController::GetToolObj()
 {
 	return ToolObj;
 }

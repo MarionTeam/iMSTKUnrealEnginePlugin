@@ -168,6 +168,11 @@ public:
     void computeVertexTangents();
 
     ///
+    /// \brief compute the barycentric weights of a given point in 3D space for a given the triangle
+    ///
+    Vec3d computeBarycentricWeights(const int tetId, const Vec3d& pos) const override;
+
+    ///
     /// \brief Rewire the node order and triangle connectivity to optimize for memory layout
     ///  The intended use is for large meshes that doesn't fit into CPU/GPU memory.
     ///  \todo Further optimization to find a 1-d uninterrupted sub-graph at each iteration.
@@ -198,7 +203,19 @@ public:
     void setTriangleIndices(std::shared_ptr<VecDataArray<int, 3>> indices) { setCells(indices); }
     std::shared_ptr<VecDataArray<int, 3>> getTriangleIndices() const { return getCells(); }
 
+    ///
+    /// \brief Polymorphic clone, hides the declaration in superclass
+    /// return own type
+    ///
+    std::unique_ptr<SurfaceMesh> clone()
+    {
+        return std::unique_ptr<SurfaceMesh>(cloneImplementation());
+    }
+
 protected:
     std::map<NormalGroup, std::shared_ptr<std::vector<size_t>>> m_UVSeamVertexGroups;
+
+private:
+    SurfaceMesh* cloneImplementation() const;
 };
 } // namespace imstk

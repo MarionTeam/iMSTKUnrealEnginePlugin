@@ -6,7 +6,8 @@
 
 #pragma once
 
-#include "imstkCollisionInteraction.h"
+#include "imstkSceneObject.h"
+#include "imstkCellMesh.h"
 #include "imstkMacros.h"
 
 #include <unordered_set>
@@ -20,11 +21,11 @@ class PbdObject;
 class SurfaceMesh;
 
 ///
-/// \class PbdObjectCuttingPair
+/// \class PbdObjectCutting
 ///
-/// \brief This class defines a cutting interaction between a PbdObject and a CollidingObject
-/// call apply to perform the cut given the current states of both objects. A discrete cut is
-/// performed, not for calling continuously.
+/// \brief This class defines a cutting interaction between a PbdObject and
+/// a CollidingObject. PbdObjectCutting::apply can be used to perform a discrete
+/// cut given the current states of both objects.
 ///
 class PbdObjectCutting : public SceneObject
 {
@@ -35,11 +36,17 @@ public:
     IMSTK_TYPE_NAME(PbdObjectCutting)
 
     ///
+    /// \brief Epsilon controls the distance a point needs to be to
+    /// be considered "inside" the cutting zone
+    /// @{
+    double getEpsilon() const { return m_epsilon; }
+    void setEpsilon(const double eps) { m_epsilon = eps; }
+    /// @}
+
+    ///
     /// \brief Applies the cut when called
     ///
     void apply();
-
-    void setCutEpsilon(float input);
 
 protected:
     ///
@@ -60,8 +67,25 @@ protected:
     ///
     /// \brief Add new elements to pbdObj
     ///
-    void addTriangles(std::shared_ptr<SurfaceMesh> pbdMesh,
-                      std::shared_ptr<VecDataArray<int, 3>> elements);
+    template<int N>
+    void addCells(std::shared_ptr<CellMesh<N>> pbdMesh,
+                  std::shared_ptr<VecDataArray<int, N>> newCells)
+    {
+        std::shared_ptr<VecDataArray<int, N>> cells     = pbdMesh->getCells();
+        const int                             nCells    = cells->size();
+        const int                             nNewCells = newCells->size();
+
+        cells->reserve(nCells + nNewCells);
+        for (int i = 0; i < nNewCells; i++)
+        {
+            const Vec3i& cell = (*newCells)[i];
+            cells->push_back(cell);
+            for (int j = 0; j < N; j++)
+            {
+                m_addConstraintVertices->insert(cell[j]);
+            }
+        }
+    }
 
     ///
     /// \brief Modify existing elements of pbdObj
@@ -70,12 +94,12 @@ protected:
                          std::shared_ptr<std::vector<size_t>> elementIndices,
                          std::shared_ptr<VecDataArray<int, 3>> elements);
 
+    double m_epsilon = 0.1;
+
     std::shared_ptr<PbdObject>       m_objA = nullptr;
     std::shared_ptr<CollidingObject> m_objB = nullptr;
 
     std::shared_ptr<std::unordered_set<size_t>> m_removeConstraintVertices = std::make_shared<std::unordered_set<size_t>>();
     std::shared_ptr<std::unordered_set<size_t>> m_addConstraintVertices    = std::make_shared<std::unordered_set<size_t>>();
-
-    float m_cutEpsilon = 1.0;
 };
 } // namespace imstk

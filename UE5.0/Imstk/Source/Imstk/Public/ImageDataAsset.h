@@ -29,23 +29,23 @@ public:
 	std::shared_ptr<imstk::ImageData> GetImageData();
 
 	// Spacing of the image data
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		FVector Spacing;
 
 	// Origin of the image data
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		FVector Origin;
 
 	// Dimensions of the image data
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		FVector Dimensions;
 
 	// Scalars of the image data
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		TArray<double> Scalars;
 
 	// Number of image components of the image data
-	UPROPERTY(EditAnywhere, Category = "General")
+	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		int ImageComponents;
 
 	
