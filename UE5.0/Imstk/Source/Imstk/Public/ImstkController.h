@@ -141,6 +141,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::TetrahedralCuttingTool", EditConditionHides, ClampMin = "0.01"), Category = "iMSTK|ToolSettings")
 		float PlaneWidth = 1.0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::TetrahedralCuttingTool", EditConditionHides, ClampMin = "0.01"), Category = "iMSTK|ToolSettings")
+		float PlaneHeight = 1.0;
+
 	/** Setter for the static mesh component. Required to be set in the construction of the blueprint for surface mesh tools.
 	* @param InputMeshComp Static mesh component to be set
 	* @return None

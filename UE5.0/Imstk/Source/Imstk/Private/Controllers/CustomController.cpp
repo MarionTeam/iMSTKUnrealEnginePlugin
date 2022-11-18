@@ -498,7 +498,7 @@ bool UCustomController::BeginTetrahedralCut()
 			TetVerts[2] = TissueVertices[tet[2]];
 			TetVerts[3] = TissueVertices[tet[3]];
 
-			if (SplitTest(TetVerts, PlanePos, Left, PlaneHalfWidth, Forward, PlaneHalfWidth, N))
+			if (SplitTest(TetVerts, PlanePos, Left, PlaneHalfWidth, Forward, PlaneHeight, N))
 			{
 				TetCuttings[j]->removeCellOnApply(i);
 				bRemoved = true;
