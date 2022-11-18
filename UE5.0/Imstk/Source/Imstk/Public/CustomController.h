@@ -117,7 +117,7 @@ protected:
 		void BeginCut();
 
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		void BeginTetrahedralCut();
+		bool BeginTetrahedralCut();
 
 	bool SplitTest(const std::array<imstk::Vec3d, 4>& InputTetVerts,
 		const imstk::Vec3d& PlaneOrigin,

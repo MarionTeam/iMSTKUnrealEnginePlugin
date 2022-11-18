@@ -462,9 +462,10 @@ void UCustomController::BeginCut()
 	}
 }
 
-void UCustomController::BeginTetrahedralCut()
+bool UCustomController::BeginTetrahedralCut()
 {
 	auto ToolGeom = std::dynamic_pointer_cast<imstk::SurfaceMesh>(ToolObj->getCollidingGeometry());
+	bool bRemovedAny = false;
 
 	for (int j = 0; j < TetObjects.Num(); j++) {
 		bool bRemoved = false;
@@ -501,6 +502,7 @@ void UCustomController::BeginTetrahedralCut()
 			{
 				TetCuttings[j]->removeCellOnApply(i);
 				bRemoved = true;
+				bRemovedAny = true;
 			}
 		}
 		TetCuttings[j]->apply();
@@ -509,6 +511,8 @@ void UCustomController::BeginTetrahedralCut()
 			TetObjects[j]->UpdateVisualFromTet();
 		}
 	}
+
+	return bRemovedAny;
 }
 
 bool UCustomController::SplitTest(const std::array<imstk::Vec3d, 4>& InputTetVerts,
