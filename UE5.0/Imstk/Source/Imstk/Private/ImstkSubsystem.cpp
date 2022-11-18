@@ -14,31 +14,41 @@
 #include "ImstkController.h"
 #include "imstkPbdModelConfig.h"
 
+// Physics Substepping
+#include "AllowWindowsPlatformTypes.h"
+#include "PhysicsEngine/PhysicsSettings.h"
+#include "HideWindowsPlatformTypes.h"
+#include "Kismet/GameplayStatics.h"
 
 
-#include "imstkCamera.h"
-#include "imstkCapsule.h"
-#include "imstkDirectionalLight.h"
-#include "imstkGeometryUtilities.h"
-#include "imstkKeyboardDeviceClient.h"
-#include "imstkKeyboardSceneControl.h"
-#include "imstkMouseDeviceClient.h"
-#include "imstkMouseSceneControl.h"
-#include "imstkObjectControllerGhost.h"
-#include "imstkPbdModel.h"
-#include "imstkPbdModelConfig.h"
-#include "imstkPbdObject.h"
-#include "imstkPbdObjectCollision.h"
-#include "imstkPbdObjectController.h"
-#include "imstkPbdRigidBaryPointToPointConstraint.h"
-#include "imstkPbdRigidObjectGrasping.h"
-#include "imstkRenderMaterial.h"
-#include "imstkScene.h"
-#include "imstkSceneManager.h"
-#include "imstkSimulationManager.h"
-#include "imstkSimulationUtils.h"
-#include "imstkVisualModel.h"
+
+//#include "imstkCamera.h"
+//#include "imstkCapsule.h"
+//#include "imstkDirectionalLight.h"
+//#include "imstkGeometryUtilities.h"
+//#include "imstkKeyboardDeviceClient.h"
+//#include "imstkKeyboardSceneControl.h"
+//#include "imstkMouseDeviceClient.h"
+//#include "imstkMouseSceneControl.h"
+//#include "imstkObjectControllerGhost.h"
+//#include "imstkPbdModel.h"
+//#include "imstkPbdModelConfig.h"
+//#include "imstkPbdObject.h"
+//#include "imstkPbdObjectCollision.h"
+//#include "imstkPbdObjectController.h"
+//#include "imstkPbdRigidBaryPointToPointConstraint.h"
+//#include "imstkPbdRigidObjectGrasping.h"
+//#include "imstkRenderMaterial.h"
+//#include "imstkScene.h"
+//#include "imstkSceneManager.h"
+//#include "imstkSimulationManager.h"
+//#include "imstkSimulationUtils.h"
+//#include "imstkVisualModel.h"
+
 //#include "imstkVTKViewer.h"
+//#include "imstkPbdPointTriangleConstraint.h"
+//#include "imstkPbdContactConstraint.h"
+
 #include "imstkMeshIO.h"
 #include "imstkDeviceManager.h"
 #include "imstkDeviceManagerFactory.h"
@@ -50,6 +60,23 @@
 #include "SavePackage.h"
 #endif
 
+static float prevTime = 0;
+
+void FImstkSubsystemAsyncCallback::OnPreSimulate_Internal()
+{
+	GetConsumerInput_Internal()->SubsystemInstance->UpdateSimulation(GetDeltaTime_Internal());
+
+	/*float time = UGameplayStatics::GetRealTimeSeconds(GetConsumerInput_Internal()->SubsystemInstance->GetWorld()) - prevTime;
+
+	prevTime = UGameplayStatics::GetRealTimeSeconds(GetConsumerInput_Internal()->SubsystemInstance->GetWorld());
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::SanitizeFloat(time));
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::SanitizeFloat(GetDeltaTime_Internal()));*/
+}
+
+void FImstkSubsystemAsyncCallback::OnContactModification_Internal(Chaos::FCollisionContactModifier& Modifier)
+{
+}
 
 
 //void FImstkSubsystemTickFunction::ExecuteTick(float DeltaTime, enum ELevelTick TickType, ENamedThreads::Type CurrentThread, const FGraphEventRef& MyCompletionGraphEvent)
@@ -78,6 +105,20 @@ void UImstkSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void UImstkSubsystem::ImstkInit()
 {
+	if (UImstkSettings::IsUseAsyncPhysics()) {
+
+		UPhysicsSettings* Settings = UPhysicsSettings::Get();
+		//Settings->bSubstepping = true;
+		//Settings->bSubsteppingAsync = true;
+		Settings->bTickPhysicsAsync = true;
+		Settings->AsyncFixedTimeStepSize = TickInterval;
+
+	}
+	else {
+		UPhysicsSettings* Settings = UPhysicsSettings::Get();
+		Settings->bTickPhysicsAsync = false;
+	}
+
 	UMathUtil::SetScale(SceneScale);
 
 	SceneManager = std::make_shared<imstk::SceneManager>();
@@ -146,6 +187,14 @@ void UImstkSubsystem::ImstkInit()
 	//	HapticManager->init();
 	//	GetWorld()->GetTimerManager().SetTimer(HapticsTimer, this, &UImstkSubsystem::UpdateHaptics, TickInterval, true);
 	//}
+
+	if (UImstkSettings::IsUseAsyncPhysics()) {
+		AsyncScene = GetWorld()->GetPhysicsScene();
+		OnAsyncScenePreTickHandle = AsyncScene->OnPhysScenePreTick.AddUObject(this, &UImstkSubsystem::AsyncScenePreTick);
+		// Cannot set the delta time of the solver directly so it must be run twice to update the timestep
+		//((Chaos::FPBDRigidsSolver*)AsyncScene->GetSolver());
+		AsyncObject = AsyncScene->GetSolver()->CreateAndRegisterSimCallbackObject_External<FImstkSubsystemAsyncCallback>();
+	}
 
 
 #if WITH_EDITOR
@@ -272,6 +321,12 @@ void UImstkSubsystem::ImstkInit()
 #endif
 }
 
+void UImstkSubsystem::AsyncScenePreTick(FPhysScene* PhysScene, float DeltaTime) 
+{
+	FImstkSubsystemAsyncInput* AsyncInput = AsyncObject->GetProducerInputData_External();
+	AsyncInput->SubsystemInstance = this;
+}
+
 void UImstkSubsystem::UpdateSimulation(float DeltaTime)
 {
 	if (!bIsPaused && bIsInitialized) {
@@ -303,6 +358,12 @@ bool UImstkSubsystem::IsSimulationPaused()
 
 void UImstkSubsystem::Deinitialize()
 {
+	AsyncScene->OnPhysScenePreTick.Remove(OnAsyncScenePreTickHandle);
+	if (AsyncObject != nullptr)
+	{
+		AsyncScene->GetSolver()->UnregisterAndFreeSimCallbackObject_External(AsyncObject);
+	}
+
 	if (CurrentHapticsThread && HapticsThread) {
 		CurrentHapticsThread->Suspend(true);
 		HapticsThread->bStopThread = true;
@@ -356,89 +417,89 @@ bool UImstkSubsystem::IsSubsystemInitialized() {
 
 
 
-static std::shared_ptr<imstk::PbdObject>
-makePbdObjSurface(
-	const std::string& name,
-	std::shared_ptr<imstk::PbdModel> model,
-	const imstk::Vec3d& size,
-	const imstk::Vec3i& dim,
-	const imstk::Vec3d& center)
-{
-	auto prismObj = std::make_shared<imstk::PbdObject>(name);
+//static std::shared_ptr<imstk::PbdObject>
+//makePbdObjSurface(
+//	const std::string& name,
+//	std::shared_ptr<imstk::PbdModel> model,
+//	const imstk::Vec3d& size,
+//	const imstk::Vec3i& dim,
+//	const imstk::Vec3d& center)
+//{
+//	auto prismObj = std::make_shared<imstk::PbdObject>(name);
+//
+//	// Setup the Geometry
+//	std::shared_ptr<imstk::TetrahedralMesh> prismMesh = imstk::MeshIO::read<imstk::TetrahedralMesh>("C:/WorkStuff/UnmodifiedTest/build/install/data/textured_organs/heart_volume.vtk");
+//	std::shared_ptr<imstk::SurfaceMesh>     surfMesh = prismMesh->extractSurfaceMesh();
+//	//std::shared_ptr<TetrahedralMesh> prismMesh = MeshIO::read<TetrahedralMesh>(iMSTK_DATA_ROOT "/textured_organs/heart_volume.vtk");
+//	//std::shared_ptr<SurfaceMesh>     surfMesh = prismMesh->extractSurfaceMesh();
+//
+//	// Setup the Object
+//	prismObj->setPhysicsGeometry(surfMesh);
+//	prismObj->setCollidingGeometry(surfMesh);
+//	prismObj->setVisualGeometry(surfMesh);
+//	prismObj->getVisualModel(0)->getRenderMaterial()->setDisplayMode(imstk::RenderMaterial::DisplayMode::Wireframe);
+//	prismObj->setDynamicalModel(model);
+//	prismObj->getPbdBody()->uniformMassValue = 0.05;
+//	// Use volume+distance constraints, worse results. More performant (can use larger mesh)
+//	model->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Dihedral, 1000.0,
+//		prismObj->getPbdBody()->bodyHandle);
+//	model->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Distance, 500.0,
+//		prismObj->getPbdBody()->bodyHandle);
+//	// Fix the borders
+//	std::shared_ptr<imstk::VecDataArray<double, 3>> vertices = surfMesh->getVertexPositions();
+//	for (int i = 0; i < surfMesh->getNumVertices(); i++)
+//	{
+//		const imstk::Vec3d& pos = (*vertices)[i];
+//		if (pos[1] <= center[1] - size[1] * 0.5)
+//		{
+//			prismObj->getPbdBody()->fixedNodeIds.push_back(i);
+//		}
+//	}
+//
+//	return prismObj;
+//}
 
-	// Setup the Geometry
-	std::shared_ptr<imstk::TetrahedralMesh> prismMesh = imstk::GeometryUtils::toTetGrid(center, size, dim);
-	std::shared_ptr<imstk::SurfaceMesh>     surfMesh = prismMesh->extractSurfaceMesh();
-	//std::shared_ptr<TetrahedralMesh> prismMesh = MeshIO::read<TetrahedralMesh>(iMSTK_DATA_ROOT "/textured_organs/heart_volume.vtk");
-	//std::shared_ptr<SurfaceMesh>     surfMesh = prismMesh->extractSurfaceMesh();
-
-	// Setup the Object
-	prismObj->setPhysicsGeometry(surfMesh);
-	prismObj->setCollidingGeometry(surfMesh);
-	prismObj->setVisualGeometry(surfMesh);
-	prismObj->getVisualModel(0)->getRenderMaterial()->setDisplayMode(imstk::RenderMaterial::DisplayMode::Wireframe);
-	prismObj->setDynamicalModel(model);
-	prismObj->getPbdBody()->uniformMassValue = 0.05;
-	// Use volume+distance constraints, worse results. More performant (can use larger mesh)
-	model->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Dihedral, 1000.0,
-		prismObj->getPbdBody()->bodyHandle);
-	model->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Distance, 500.0,
-		prismObj->getPbdBody()->bodyHandle);
-	// Fix the borders
-	std::shared_ptr<imstk::VecDataArray<double, 3>> vertices = surfMesh->getVertexPositions();
-	for (int i = 0; i < surfMesh->getNumVertices(); i++)
-	{
-		const imstk::Vec3d& pos = (*vertices)[i];
-		if (pos[1] <= center[1] - size[1] * 0.5)
-		{
-			prismObj->getPbdBody()->fixedNodeIds.push_back(i);
-		}
-	}
-
-	return prismObj;
-}
-
-static std::shared_ptr<imstk::PbdObject>
-makeCapsuleToolObj(std::shared_ptr<imstk::PbdModel> model)
-{
-	auto toolGeometry = std::make_shared<imstk::Capsule>();
-	toolGeometry->setRadius(0.5);
-	toolGeometry->setLength(1);
-	toolGeometry->setPosition(imstk::Vec3d(0.0, 0.0, 0.0));
-	toolGeometry->setOrientation(imstk::Quatd(0.707, 0.0, 0.0, 0.707));
-
-	auto toolObj = std::make_shared<imstk::PbdObject>("Tool");
-
-	// Create the object
-	toolObj->setVisualGeometry(toolGeometry);
-	toolObj->setPhysicsGeometry(toolGeometry);
-	toolObj->setCollidingGeometry(toolGeometry);
-	toolObj->setDynamicalModel(model);
-	toolObj->getPbdBody()->setRigid(
-		imstk::Vec3d(0.0, 5.0, 2.0),
-		1.0,
-		imstk::Quatd::Identity(),
-		imstk::Mat3d::Identity() * 1.0);
-
-	toolObj->getVisualModel(0)->getRenderMaterial()->setOpacity(0.9);
-
-	// Add a component for controlling via another device
-	auto controller = toolObj->addComponent<imstk::PbdObjectController>();
-	controller->setControlledObject(toolObj);
-	controller->setTranslationScaling(50.0);
-	controller->setLinearKs(5000.0);
-	controller->setAngularKs(1000.0);
-	controller->setUseCritDamping(true);
-	controller->setForceScaling(0.001);
-	controller->setSmoothingKernelSize(15);
-	controller->setUseForceSmoothening(true);
-
-	// Add extra component to tool for the ghost
-	auto controllerGhost = toolObj->addComponent<imstk::ObjectControllerGhost>();
-	controllerGhost->setController(controller);
-
-	return toolObj;
-}
+//static std::shared_ptr<imstk::PbdObject>
+//makeCapsuleToolObj(std::shared_ptr<imstk::PbdModel> model)
+//{
+//	auto toolGeometry = std::make_shared<imstk::Capsule>();
+//	toolGeometry->setRadius(0.5);
+//	toolGeometry->setLength(1);
+//	toolGeometry->setPosition(imstk::Vec3d(0.0, 0.0, 0.0));
+//	toolGeometry->setOrientation(imstk::Quatd(0.707, 0.0, 0.0, 0.707));
+//
+//	auto toolObj = std::make_shared<imstk::PbdObject>("Tool");
+//
+//	// Create the object
+//	toolObj->setVisualGeometry(toolGeometry);
+//	toolObj->setPhysicsGeometry(toolGeometry);
+//	toolObj->setCollidingGeometry(toolGeometry);
+//	toolObj->setDynamicalModel(model);
+//	toolObj->getPbdBody()->setRigid(
+//		imstk::Vec3d(0.0, 5.0, 2.0),
+//		1.0,
+//		imstk::Quatd::Identity(),
+//		imstk::Mat3d::Identity() * 1.0);
+//
+//	toolObj->getVisualModel(0)->getRenderMaterial()->setOpacity(0.9);
+//
+//	// Add a component for controlling via another device
+//	auto controller = toolObj->addComponent<imstk::PbdObjectController>();
+//	controller->setControlledObject(toolObj);
+//	controller->setTranslationScaling(50.0);
+//	controller->setLinearKs(5000.0);
+//	controller->setAngularKs(1000.0);
+//	controller->setUseCritDamping(true);
+//	controller->setForceScaling(0.01);
+//	controller->setSmoothingKernelSize(15);
+//	controller->setUseForceSmoothening(true);
+//
+//	// Add extra component to tool for the ghost
+//	auto controllerGhost = toolObj->addComponent<imstk::ObjectControllerGhost>();
+//	controllerGhost->setController(controller);
+//
+//	return toolObj;
+//}
 
 void UImstkSubsystem::ImstkTest() {
 	//// Setup logger (write to file and stdout)
@@ -470,8 +531,8 @@ void UImstkSubsystem::ImstkTest() {
 	//scene->addSceneObject(toolObj);
 
 	//// Add collision
-	//auto pbdToolCollision = std::make_shared<imstk::PbdObjectCollision>(pbdObj, toolObj, "SurfaceMeshToCapsuleCD");
-	//pbdToolCollision->setRigidBodyCompliance(0.0001); // Helps with smoothness
+	//auto pbdToolCollision = std::make_shared<imstk::PbdObjectCollision>(pbdObj, toolObj);
+	////pbdToolCollision->setRigidBodyCompliance(0.0001); // Helps with smoothness
 	//scene->addInteraction(pbdToolCollision);
 
 	//// Create new picking with constraints
@@ -500,7 +561,7 @@ void UImstkSubsystem::ImstkTest() {
 	//	auto driver = std::make_shared<imstk::SimulationManager>();
 	//	driver->addModule(viewer);
 	//	driver->addModule(sceneManager);
-	//	driver->setDesiredDt(0.002);
+	//	driver->setDesiredDt(0.005);
 
 	//	auto controller = toolObj->getComponent<imstk::PbdObjectController>();
 	//	// Setup default haptics manager
@@ -578,6 +639,13 @@ void UImstkSubsystem::ImstkTest() {
 
 	//	driver->start();
 	//}
+
+
+
+	/*imstk::Logger::getInstance().addFileSink("simulation", std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())));
+	auto TriangleToBodyTest = std::make_shared<imstk::PbdTriangleToBodyConstraint>();
+	TriangleToBodyTest->TestCorrectVelocity();
+	imstk::Logger::getInstance().destroy();*/
 }
 void UImstkSubsystem::UpdateHaptics()
 {

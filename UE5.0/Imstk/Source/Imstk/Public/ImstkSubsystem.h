@@ -18,6 +18,12 @@
 #include "HAL/RunnableThread.h"
 #include "HapticsThread.h"
 
+// Async
+#include "Chaos/SimCallbackInput.h"
+#include "Chaos/SimCallbackObject.h"
+//#include "Chaos/GeometryParticlesfwd.h"
+//#include "PhysicsProxy/SingleParticlePhysicsProxyFwd.h"
+
 #include "ImstkSubsystem.generated.h"
 
 //#define CHECK_NULL(Pointer, LogClass, Message) if(Pointer) UE_LOG(LogClass, Error, TEXT(Message)); return
@@ -33,6 +39,31 @@ class UImstkController;
 //
 //	virtual void ExecuteTick(float DeltaTime, ELevelTick TickType, ENamedThreads::Type CurrentThread, const FGraphEventRef& MyCompletionGraphEvent) override;
 //};
+
+struct FImstkSubsystemAsyncInput : public Chaos::FSimCallbackInput
+{
+	UImstkSubsystem* SubsystemInstance;
+	// Required method
+	void Reset()
+	{
+	}
+};
+
+// Output from the physics thread
+struct FImstkSubsystemAsyncOutput : public Chaos::FSimCallbackOutput
+{
+	// Required method
+	void Reset()
+	{
+	}
+};
+
+class FImstkSubsystemAsyncCallback : public Chaos::TSimCallbackObject<FImstkSubsystemAsyncInput, FImstkSubsystemAsyncOutput> {
+	virtual void OnPreSimulate_Internal() override;
+
+	// Not used.
+	virtual void OnContactModification_Internal(Chaos::FCollisionContactModifier& Modifier) override;
+};
 
 
 /** \file ImstkSubsystem.h
@@ -109,7 +140,7 @@ public:
 	std::shared_ptr<imstk::Scene> ActiveScene;
 	std::shared_ptr<imstk::DeviceManager> HapticManager = nullptr;
 
-	// Fixed deltatime of the iMSTK scene if realtime is not set
+	// Fixed deltatime of the iMSTK scene if realtime is not set. Note: if using async physics the editor must be run twice to update the value change
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK")
 		float TickInterval = 0.01;
 
@@ -162,4 +193,13 @@ public:
 	bool IsSubsystemInitialized();
 
 	virtual void Deinitialize() override;
+
+	public:
+		void AsyncScenePreTick(FPhysScene* PhysScene, float DeltaTime);
+
+private:
+	// For async
+	FImstkSubsystemAsyncCallback* AsyncObject;
+	FPhysScene_Chaos* AsyncScene;
+	FDelegateHandle OnAsyncScenePreTickHandle;
 };

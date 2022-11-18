@@ -15,6 +15,7 @@
 
 #include "imstkCleanMesh.h"
 #include "imstkMeshIO.h"
+#include "imstkVisualModel.h"
 
 #include "Engine/GameEngine.h"
 
@@ -464,6 +465,12 @@ void UPBDModel::UpdateModel()
 		CleanMeshGeom = std::dynamic_pointer_cast<imstk::SurfaceMesh>(PbdObject->getCollidingGeometry());
 	}
 
+	/*auto PhysGeom = std::dynamic_pointer_cast<imstk::SurfaceMesh>(PbdObject->getPhysicsGeometry());
+	for (auto vert : *PhysGeom->getVertexPositions()) {
+		LOG(WARNING) << "x: " <<vert.x() << " y: " << vert.y() << " z: " << vert.z();
+	}*/
+
+
 	// Update the procedural mesh to positions from imstk
 	// Currently only supports vertex positions and normals
 	if (MeshComp) {
@@ -546,6 +553,50 @@ void UPBDModel::UpdateModel()
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, Owner->GetName() + ": " + UMathUtil::ToUnrealFVec(PbdObject->getCollidingGeometry()->getCenter(), true).ToString());
 		}
 	}
+}
+
+void UPBDModel::UpdateVisualFromTet() 
+{
+	std::shared_ptr<imstk::TetrahedralMesh> TetMesh = std::dynamic_pointer_cast<imstk::TetrahedralMesh>(PbdObject->getPhysicsGeometry());
+	std::shared_ptr<imstk::SurfaceMesh> ExtractedSurfMesh = TetMesh->extractSurfaceMesh();
+	if (PbdObject->getVisualModel(0))
+		PbdObject->removeVisualModel(PbdObject->getVisualModel(0));
+
+	PbdObject->setCollidingGeometry(ExtractedSurfMesh);
+
+	auto VisModel = std::make_shared<imstk::VisualModel>();
+	VisModel->setGeometry(ExtractedSurfMesh);
+
+	MeshGeom = ExtractedSurfMesh;
+	PbdObject->addVisualModel(VisModel);
+	//PbdObject->setVisualGeometry(ExtractedSurfMesh);
+
+	//PbdObject->getPhysicsToCollidingMap()->compute();
+	//PbdObject->getPhysicsToVisualMap()->compute();
+
+	TArray<FVector2D> UV0;
+	TArray<FColor> VertColors;
+	TArray<FProcMeshTangent> Tangents;
+
+	TArray<FVector> Verts;
+	TArray<FVector> Normals;
+	//ExtractedSurfMesh->computeVertexNormals();
+	//imstk::VecDataArray<double, 3>& ImstkNorms = *ExtractedSurfMesh->getVertexNormals();
+	//// Use normals from imstk
+	//Normals.Empty();
+	//for (int i = 0; i < ImstkNorms.size(); i++) {
+	//	Normals.Add(UMathUtil::ToUnrealFVec(ImstkNorms[i], false));
+	//}
+	TArray<int32> Triangles = UMathUtil::ToUnrealIntArray(ExtractedSurfMesh->getTriangleIndices());
+
+	Verts = UMathUtil::ToUnrealFVecArray(ExtractedSurfMesh->getVertexPositions(), true);
+	MeshComp->ClearMeshSection(0);
+	MeshComp->CreateMeshSection(0, Verts, Triangles, Normals, UV0, VertColors, Tangents, false);
+
+	auto Map = std::make_shared<imstk::PointwiseMap>(TetMesh, ExtractedSurfMesh);
+	PbdObject->setPhysicsToCollidingMap(Map);
+	PbdObject->setPhysicsToVisualMap(Map);
+	Map->compute();
 }
 
 void UPBDModel::UnInit()

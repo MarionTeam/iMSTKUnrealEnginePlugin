@@ -11,8 +11,10 @@
 #include "imstkPbdRigidObjectGrasping.h"
 #include "imstkPbdObjectCutting.h"
 #include "imstkSurfaceMeshCut.h"
+#include "imstkPbdObjectCellRemoval.h"
 #include "CollisionInteraction.h"
 #include "GeometryFilter.h"
+#include "PBDModel.h"
 #include "ImstkController.generated.h"
 
 class UImstkSubsystem;
@@ -24,7 +26,8 @@ enum EToolGeometry
 	LineMeshTool,
 	SphereTool,
 	CapsuleTool,
-	SurfaceMeshTool
+	SurfaceMeshTool,
+	PlaneTool
 };
 
 // Type of grasp for the tool
@@ -44,7 +47,8 @@ enum EToolType
 	StitchingTool,
 	CollidingTool,
 	CuttingTool,
-	LevelSetTool
+	LevelSetTool,
+	TetrahedralCuttingTool
 };
 
 
@@ -84,6 +88,11 @@ protected:
 	TArray<std::shared_ptr<imstk::PbdObjectCutting>> Cuttings;
 
 	TArray<std::shared_ptr<imstk::PbdObject>> CutObjects;
+
+	// Array containing tet cutting interactions
+	TArray<std::shared_ptr<imstk::PbdObjectCellRemoval>> TetCuttings;
+
+	TArray<UPBDModel*> TetObjects;
 
 	//TArray<TPair<std::shared_ptr<imstk::SurfaceMeshCut>, std::shared_ptr<imstk::PbdObject>>> VisualMeshCuttings;
 	
@@ -128,6 +137,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::LevelSetTool", EditConditionHides, ClampMin = "0.01"), Category = "iMSTK|ToolSettings")
 		float VelocityScaling = 1.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::TetrahedralCuttingTool", EditConditionHides, ClampMin = "0.01"), Category = "iMSTK|ToolSettings")
+		float PlaneWidth = 1.0;
 
 	/** Setter for the static mesh component. Required to be set in the construction of the blueprint for surface mesh tools.
 	* @param InputMeshComp Static mesh component to be set
@@ -177,6 +189,10 @@ public:
 	void AddCutting(std::shared_ptr<imstk::PbdObjectCutting> InputCutting);
 
 	void AddCutObject(std::shared_ptr<imstk::PbdObject> InputObject);
+
+	void AddTetCutting(std::shared_ptr<imstk::PbdObjectCellRemoval> InputCutting);
+	
+	void AddTetObject(UPBDModel* InputObject);
 
 	/** Adds a Collision interaction to the tool. Multiple can be assigned to collide with more than one object. Array is used to disable and enable the collisions
 	* @param InputCollision Collision interaction to be added to the tool

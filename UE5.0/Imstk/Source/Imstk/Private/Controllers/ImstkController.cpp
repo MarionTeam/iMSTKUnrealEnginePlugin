@@ -109,6 +109,16 @@ void UImstkController::AddCollision(std::shared_ptr<imstk::CollisionInteraction>
 	this->Collisions.Add(InputCollision);
 }
 
+void UImstkController::AddTetCutting(std::shared_ptr<imstk::PbdObjectCellRemoval> InputCutting)
+{
+	this->TetCuttings.Add(InputCutting);
+}
+
+void UImstkController::AddTetObject(UPBDModel* InputObject)
+{
+	this->TetObjects.Add(InputObject);
+}
+
 void UImstkController::SetStaticMeshComp(UStaticMeshComponent* InputMeshComp) 
 {
 	this->MeshComp = InputMeshComp;

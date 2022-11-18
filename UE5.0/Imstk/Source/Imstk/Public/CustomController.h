@@ -116,28 +116,40 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		void BeginCut();
 
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
+		void BeginTetrahedralCut();
+
+	bool SplitTest(const std::array<imstk::Vec3d, 4>& InputTetVerts,
+		const imstk::Vec3d& PlaneOrigin,
+		const imstk::Vec3d& U, const double Width,
+		const imstk::Vec3d& V, const double Height,
+		const imstk::Vec3d& N);
+
+	bool IsIntersect(const double A, const double B, const double C, const double D);
+
 	// Mass of the object in iMSTK
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		float Mass = 0.2;
 
+	// TODO: separate into a factory for the tool object?
 	// Velocity damping of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|RigidBody")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolType != EToolType::TetrahedralCuttingTool", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|RigidBody")
 		float VelocityDamping = 1.0;
 
 	// Angular velocity damping of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|RigidBody")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolType != EToolType::TetrahedralCuttingTool", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|RigidBody")
 		float AngularVelocityDamping = 1.0;
 
 	// Maximum iterations of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|RigidBody")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolType != EToolType::TetrahedralCuttingTool", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|RigidBody")
 		int MaxNumIterations = 8;
 
 	// Maximum constraints of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|RigidBody")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolType != EToolType::TetrahedralCuttingTool", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|RigidBody")
 		int MaxNumConstraints = 40;
 
 	// Inertia tensor of the tool's rigid body in iMSTK
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "iMSTK|RigidBody")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolType != EToolType::TetrahedralCuttingTool", EditConditionHides), BlueprintReadWrite, Meta = (ClampMin = "0.01"), Category = "iMSTK|RigidBody")
 		float InertiaTensorMultiplier = 1.0;
 
 	// Moves the tool using force rather than moving directly to the position given
@@ -204,6 +216,8 @@ protected:
 
 	// Cached pointer of the tool as a rigid object to avoid constant dynamic casts
 	std::shared_ptr<imstk::RigidObject2> RigidToolObj;
+
+	std::shared_ptr<imstk::PbdObject> PbdToolObj;
 public:
 	virtual void UnInit() override;
 

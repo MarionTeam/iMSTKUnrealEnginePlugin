@@ -21,6 +21,8 @@
 #include "imstkPbdConstraintContainer.h"
 #include "imstkPbdSolver.h"
 
+#include "imstkTetrahedralMesh.h"
+
 #include "DrawDebugHelpers.h"
 
 void UCustomController::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
@@ -93,7 +95,8 @@ void UCustomController::InitController()
 	Super::InitController();
 
 	if (ToolGeomFilter.GeomType != EGeometryType::Sphere && ToolGeomFilter.GeomType != EGeometryType::Capsule &&
-		ToolGeomFilter.GeomType != EGeometryType::LineMesh && ToolGeomFilter.GeomType != EGeometryType::SurfaceMesh) {
+		ToolGeomFilter.GeomType != EGeometryType::LineMesh && ToolGeomFilter.GeomType != EGeometryType::SurfaceMesh &&
+		ToolGeomFilter.GeomType != EGeometryType::Plane) {
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Error: Geometry type not implemented for controllers. Please select sphere, capsule, line mesh or surface mesh");
 		UE_LOG(LogTemp, Error, TEXT("Error: Geometry type not implemented for controllers. Please select sphere, capsule, line mesh or surface mesh"));;
@@ -104,7 +107,8 @@ void UCustomController::InitController()
 	// Check if the selected geometry type matches the tool type
 	if ((ToolType == EToolType::GraspingTool && (ToolGeomFilter.GeomType != EGeometryType::Sphere && ToolGeomFilter.GeomType != EGeometryType::Capsule)) ||
 		(ToolType == EToolType::StitchingTool && ToolGeomFilter.GeomType != EGeometryType::LineMesh) ||
-		(ToolType == EToolType::CuttingTool && ToolGeomFilter.GeomType != EGeometryType::SurfaceMesh)) {
+		(ToolType == EToolType::CuttingTool && ToolGeomFilter.GeomType != EGeometryType::SurfaceMesh) ||
+		(ToolType == EToolType::TetrahedralCuttingTool && ToolGeomFilter.GeomType != EGeometryType::Plane)) {
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Error: Controller type to Geometry mismatch");
 		UE_LOG(LogTemp, Error, TEXT("Error: Controller type to Geometry mismatch"));;
@@ -127,40 +131,62 @@ void UCustomController::InitController()
 			}
 		}
 	}
+	if (ToolType != EToolType::TetrahedralCuttingTool) {
+		ToolObj = std::make_shared<imstk::RigidObject2>(TCHAR_TO_UTF8(*this->GetName()));
+		ToolObj->setVisualGeometry(ToolGeom);
+		ToolObj->setCollidingGeometry(ToolGeom);
+		ToolObj->setPhysicsGeometry(ToolGeom);
 
-	ToolObj = std::make_shared<imstk::RigidObject2>(TCHAR_TO_UTF8(*this->GetName()));
-	ToolObj->setVisualGeometry(ToolGeom);
-	ToolObj->setCollidingGeometry(ToolGeom);
-	ToolObj->setPhysicsGeometry(ToolGeom);
+		// Configure the model
+		std::shared_ptr<imstk::RigidBodyModel2> RbdModel = std::make_shared<imstk::RigidBodyModel2>();
+		RbdModel->getConfig()->m_gravity = imstk::Vec3d::Zero();
+		RbdModel->getConfig()->m_maxNumIterations = MaxNumIterations;
+		RbdModel->getConfig()->m_velocityDamping = VelocityDamping;
+		RbdModel->getConfig()->m_angularVelocityDamping = AngularVelocityDamping;
+		RbdModel->getConfig()->m_maxNumConstraints = MaxNumConstraints;
 
-	// Configure the model
-	std::shared_ptr<imstk::RigidBodyModel2> RbdModel = std::make_shared<imstk::RigidBodyModel2>();
-	RbdModel->getConfig()->m_gravity = imstk::Vec3d::Zero();
-	RbdModel->getConfig()->m_maxNumIterations = MaxNumIterations;
-	RbdModel->getConfig()->m_velocityDamping = VelocityDamping;
-	RbdModel->getConfig()->m_angularVelocityDamping = AngularVelocityDamping;
-	RbdModel->getConfig()->m_maxNumConstraints = MaxNumConstraints;
+		RigidToolObj = std::dynamic_pointer_cast<imstk::RigidObject2>(ToolObj);
 
-	RigidToolObj = std::dynamic_pointer_cast<imstk::RigidObject2>(ToolObj);
+		RigidToolObj->setDynamicalModel(RbdModel);
 
-	RigidToolObj->setDynamicalModel(RbdModel);
+		RigidToolObj->getRigidBody()->m_mass = Mass;
+		RigidToolObj->getRigidBody()->m_intertiaTensor = imstk::Mat3d::Identity() * InertiaTensorMultiplier;
+		RigidToolObj->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3d(GetComponentLocation(), true));
 
-	RigidToolObj->getRigidBody()->m_mass = Mass;
-	RigidToolObj->getRigidBody()->m_intertiaTensor = imstk::Mat3d::Identity() * InertiaTensorMultiplier;
-	RigidToolObj->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3d(GetComponentLocation(), true));
+		if (MeshComp)
+			RigidToolObj->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()));
+		else
+			RigidToolObj->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(GetComponentRotation().Quaternion()));
 
-	if (MeshComp)
-		RigidToolObj->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()));
-	else
-		RigidToolObj->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(GetComponentRotation().Quaternion()));
+		if (GhostMaterial && GhostSceneComp) {
+			auto* MaterialInstance = UMaterialInstanceDynamic::Create(GhostMaterial, GhostMaterial);
+			for (UStaticMeshComponent* Mesh : GhostMeshes)
+				Mesh->SetMaterial(0, MaterialInstance);
+		}
+	}
+	else {
+		// TODO: this is hard coded for only tissue cut with a plane
+
+		std::shared_ptr<imstk::Plane> PlaneGeom = std::dynamic_pointer_cast<imstk::Plane>(ToolGeom);
+		PlaneGeom->setWidth(Super::PlaneWidth);
+		std::shared_ptr<imstk::SurfaceMesh> SurfGeom = imstk::GeometryUtils::toSurfaceMesh(PlaneGeom);
+
+		PbdToolObj = std::make_shared<imstk::PbdObject>(TCHAR_TO_UTF8(*this->GetName()));
+		ToolObj = PbdToolObj;
+
+		ToolObj->setVisualGeometry(SurfGeom);
+		ToolObj->setCollidingGeometry(SurfGeom);
+		ToolObj->setPhysicsGeometry(SurfGeom);
+		ToolObj->setDynamicalModel(SubsystemInstance->PbdModel);
+
+		PbdToolObj->getPbdBody()->setRigid(
+			imstk::Vec3d(0.0, 0.0, 0.0),         // Position
+			Mass,                                // Mass
+			imstk::Quatd::Identity(),            // Orientation
+			imstk::Mat3d::Identity() * 1);       // Inertia
+	}
 
 	SubsystemInstance->ActiveScene->addSceneObject(ToolObj);
-
-	if (GhostMaterial && GhostSceneComp) {
-		auto* MaterialInstance = UMaterialInstanceDynamic::Create(GhostMaterial, GhostMaterial);
-		for (UStaticMeshComponent* Mesh : GhostMeshes)
-			Mesh->SetMaterial(0, MaterialInstance);
-	}
 
 	Super::bIsInitialized = true;
 }
@@ -192,8 +218,14 @@ FVector UCustomController::UpdateImstkPosRot(FVector WorldPos, FQuat Orientation
 		}
 
 		// TODO: Should probably change to edit the position and orientation rather than creating new each time
-		RigidToolObj->getRigidBody()->m_orientation = new imstk::Quatd(UMathUtil::ToImstkQuat(Orientation));
-		RigidToolObj->getRigidBody()->m_pos = new imstk::Vec3d(Position);
+		if (RigidToolObj) {
+			RigidToolObj->getRigidBody()->m_orientation = new imstk::Quatd(UMathUtil::ToImstkQuat(Orientation));
+			RigidToolObj->getRigidBody()->m_pos = new imstk::Vec3d(Position);
+		}
+		else if (PbdToolObj) {
+			(*PbdToolObj->getPbdBody()->vertices)[0] = Position;
+			(*PbdToolObj->getPbdBody()->orientations)[0] = UMathUtil::ToImstkQuat(Orientation);
+		}
 	}
 	else
 	{
@@ -279,7 +311,10 @@ void UCustomController::UpdateUnrealPosRot()
 		MeshComp->SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec(RigidToolObj->getRigidBody()->getPosition(), true), UMathUtil::ToUnrealFQuat(RigidToolObj->getRigidBody()->getOrientation()).Rotator());
 		return;
 	}
-	SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec(RigidToolObj->getRigidBody()->getPosition(), true), UMathUtil::ToUnrealFQuat(RigidToolObj->getRigidBody()->getOrientation()));
+	if (RigidToolObj)
+		SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec(RigidToolObj->getRigidBody()->getPosition(), true), UMathUtil::ToUnrealFQuat(RigidToolObj->getRigidBody()->getOrientation()));
+	else if(PbdToolObj)
+		SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec((*PbdToolObj->getPbdBody()->vertices)[0], true), UMathUtil::ToUnrealFQuat((*PbdToolObj->getPbdBody()->orientations)[0]));
 	/*GetOwner()->SetActorLocation(UMathUtil::ToUnrealFVec(ToolObj->getRigidBody()->getPosition(), true));
 	GetOwner()->SetActorRotation(UMathUtil::ToUnrealFQuat(ToolObj->getRigidBody()->getOrientation()));*/
 }
@@ -425,6 +460,118 @@ void UCustomController::BeginCut()
 			//}
 		}
 	}
+}
+
+void UCustomController::BeginTetrahedralCut()
+{
+	auto ToolGeom = std::dynamic_pointer_cast<imstk::SurfaceMesh>(ToolObj->getCollidingGeometry());
+
+	for (int j = 0; j < TetObjects.Num(); j++) {
+		bool bRemoved = false;
+		auto TissueMesh = std::dynamic_pointer_cast<imstk::TetrahedralMesh>(TetObjects[j]->PbdObject->getPhysicsGeometry());
+
+		// TODO: hardcoded for plane in this direction
+		// Default config of the tool is pointing downwards on y
+		const imstk::Mat3d Rot = ToolGeom->getRotation();
+		const imstk::Vec3d Forward = (Rot * imstk::Vec3d(0.0, 0.0, 1.0)).normalized();
+		const imstk::Vec3d Left = (Rot * imstk::Vec3d(1.0, 0.0, 0.0)).normalized();
+		const imstk::Vec3d N = (Rot * imstk::Vec3d(0.0, 1.0, 0.0)).normalized();
+
+		const imstk::Vec3d PlanePos = ToolGeom->getTranslation();
+		const imstk::Vec3d PlaneNormal = N;
+		const double PlaneHalfWidth = Super::PlaneWidth * 0.5;
+
+		std::shared_ptr<imstk::VecDataArray<double, 3>> TissueVerticesPtr = TissueMesh->getVertexPositions();
+		std::shared_ptr<imstk::VecDataArray<int, 4>> TissueIndicesPtr = TissueMesh->getCells();
+		imstk::VecDataArray<double, 3>& TissueVertices = *TissueVerticesPtr;
+		imstk::VecDataArray<int, 4>& TissueIndices = *TissueIndicesPtr;
+
+		// Compute which tets should be removed
+		//std::unordered_set<int> RemovedTets;
+		for (int i = 0; i < TissueIndices.size(); i++)
+		{
+			imstk::Vec4i& tet = TissueIndices[i];
+			std::array<imstk::Vec3d, 4> TetVerts;
+			TetVerts[0] = TissueVertices[tet[0]];
+			TetVerts[1] = TissueVertices[tet[1]];
+			TetVerts[2] = TissueVertices[tet[2]];
+			TetVerts[3] = TissueVertices[tet[3]];
+
+			if (SplitTest(TetVerts, PlanePos, Left, PlaneHalfWidth, Forward, PlaneHalfWidth, N))
+			{
+				TetCuttings[j]->removeCellOnApply(i);
+				bRemoved = true;
+			}
+		}
+		TetCuttings[j]->apply();
+
+		if (bRemoved) {
+			TetObjects[j]->UpdateVisualFromTet();
+		}
+	}
+}
+
+bool UCustomController::SplitTest(const std::array<imstk::Vec3d, 4>& InputTetVerts,
+	const imstk::Vec3d& PlaneOrigin,
+	const imstk::Vec3d& U, const double Width,
+	const imstk::Vec3d& V, const double Height,
+	const imstk::Vec3d& N) 
+{
+	bool  side[4];
+	imstk::Vec3d proj[4];
+	int   outCount = 0; // Num vertices that lie in front of plane
+	int   inCount = 0; // Num vertices that lie behind plane
+	for (int i = 0; i < 4; i++)
+	{
+		const imstk::Vec3d& vert = InputTetVerts[i];
+		proj[i][2] = (vert - PlaneOrigin).dot(N);
+		if (proj[i][2] >= 0)
+		{
+			outCount++;
+			side[i] = false;
+		}
+		if (proj[i][2] < 0)
+		{
+			side[i] = true;
+			inCount++;
+		}
+	}
+	// If all vertices lie on one side then it's not intersecting
+	if (outCount == 0 || inCount == 0)
+	{
+		return false;
+	}
+
+	// Next cull by projection of bounds on plane (in a SAT manner)
+	imstk::Vec2d min = imstk::Vec2d(IMSTK_DOUBLE_MAX, IMSTK_DOUBLE_MAX);
+	imstk::Vec2d max = imstk::Vec2d(IMSTK_DOUBLE_MIN, IMSTK_DOUBLE_MIN);
+	for (int i = 0; i < 4; i++)
+	{
+		// Project onto the basis of the plane
+		const imstk::Vec3d& vert = InputTetVerts[i];
+		proj[i][0] = (vert - PlaneOrigin).dot(U);
+		proj[i][1] = (vert - PlaneOrigin).dot(V);
+
+		min[0] = std::min(proj[i][0], min[0]);
+		max[0] = std::max(proj[i][0], max[0]);
+
+		min[1] = std::min(proj[i][1], min[1]);
+		max[1] = std::max(proj[i][1], max[1]);
+	}
+
+	// If either range is not intersecting then the plane is not within the
+	// bounds of the finite plane/quad
+	if (!IsIntersect(min[0], max[0], -Width, Width)
+		|| !IsIntersect(min[1], max[1], -Height, Height))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool UCustomController::IsIntersect(const double A, const double B, const double C, const double D) {
+	return ((A <= D && A >= C) || (C <= B && C >= A)) ? true : false;
 }
 
 FVector UCustomController::GetControlleriMSTKPosition()

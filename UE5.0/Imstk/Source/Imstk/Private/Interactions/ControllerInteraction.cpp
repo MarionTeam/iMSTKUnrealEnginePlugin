@@ -25,6 +25,8 @@
 #include "imstkRigidBodyCH.h"
 #include "imstkLevelSetCH.h"
 
+#include "imstkPbdObjectCellRemoval.h"
+
 #include "imstkSurfaceMeshCut.h"
 
 #include "HapticController.h"
@@ -162,6 +164,21 @@ void UControllerInteraction::Init()
 		}
 	}
 
+	if (Controller->ToolType == EToolType::TetrahedralCuttingTool) {
+		if (UPBDModel* PBD = Cast<UPBDModel>(Model1)) {
+			std::shared_ptr<imstk::PbdObjectCellRemoval> CellRemoval = std::make_shared<imstk::PbdObjectCellRemoval>(PBD->PbdObject);
+			Controller->AddTetCutting(CellRemoval);
+			Controller->AddTetObject(PBD);
+			return;
+		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Wrong model types, Model1 must be a deformable model. Cutting interaction could not be created between %s and %s."), Model1->ImstkCollidingObject->getName().c_str(), Controller->GetToolObj()->getName().c_str());
+			if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Wrong model types, Model1 must be a deformable model. Cutting interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
+			return;
+		}
+	}
+
 	// Determine the collision type if set to auto
 	if (CollisionType == ECollisionInteractionType::Auto)
 		CollisionType = GetAutoCollisionType(Controller->GetToolObj()->getCollidingGeometry(), Model1->GetImstkGeometry());
@@ -182,10 +199,13 @@ void UControllerInteraction::Init()
 	}
 	else if (Cast<UDeformableModel>(Model1))
 	{
-		std::shared_ptr<imstk::PbdObjectCollision> Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), Controller->GetToolObj(), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+		std::shared_ptr<imstk::PbdObjectCollision> Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), Controller->GetToolObj());
 		Interaction->setFriction(Friction);
 		Interaction->setRestitution(Restitution);
 		Interaction->setRigidBodyCompliance(RigidBodyCompliance);
+		Interaction->setDeformableStiffnessA(Stiffness);
+		Interaction->setDeformableStiffnessB(Stiffness);
+		//Interaction->setUseCorrectVelocity(false);
 		SubsystemInstance->ActiveScene->addInteraction(Interaction);
 		Controller->AddCollision(Interaction);
 	}

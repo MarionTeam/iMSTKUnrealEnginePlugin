@@ -22,3 +22,7 @@ bool UImstkSettings::IsUseRealtime() {
 bool UImstkSettings::IsWritingTaskGraph() {
 	return GetMutableDefault<UImstkSettings>()->bWriteTaskGraph;
 }
+
+bool UImstkSettings::IsUseAsyncPhysics() {
+	return GetMutableDefault<UImstkSettings>()->bUseAsyncPhysics;
+}

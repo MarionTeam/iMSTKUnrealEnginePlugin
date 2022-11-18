@@ -47,7 +47,8 @@ public class Imstk : ModuleRules
 				"SlateCore",
 				"UMG",
 				"DeveloperSettings",
-				"RawMesh"
+				"RawMesh",
+				"Chaos"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
@@ -59,5 +60,7 @@ public class Imstk : ModuleRules
 				// ... add any modules that your module loads dynamically here ...
 			}
 			);
+
+		SetupModulePhysicsSupport(Target);
 	}
 }
