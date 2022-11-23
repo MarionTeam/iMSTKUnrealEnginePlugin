@@ -15,9 +15,10 @@
 #include "imstkPbdModelConfig.h"
 
 // Physics Substepping
-#include "AllowWindowsPlatformTypes.h"
+#include "Windows/PreWindowsApi.h"
+#include "Windows/PostWindowsApi.h"
 #include "PhysicsEngine/PhysicsSettings.h"
-#include "HideWindowsPlatformTypes.h"
+
 #include "Kismet/GameplayStatics.h"
 
 
@@ -217,7 +218,7 @@ void UImstkSubsystem::ImstkInit()
 		if (!FPaths::FileExists(FilePath)) {
 			FString PackagePath = TEXT("/Game/TaskGraphs/") + AssetName;
 
-			UPackage* Package = CreatePackage(nullptr, *PackagePath);
+			UPackage* Package = CreatePackage(*PackagePath);
 			TaskGraph = NewObject<UTaskGraph>(Package, UTaskGraph::StaticClass(), *AssetName, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone);
 
 			FAssetRegistryModule::AssetCreated(TaskGraph);

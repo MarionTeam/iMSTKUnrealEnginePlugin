@@ -28,8 +28,8 @@ class IMSTK_API UPBDModel : public UDeformableModel
 public:
 	UPBDModel();
 
-	UPROPERTY(EditAnywhere, Category = "iMSTK")
-		bool temp = false;
+	/*UPROPERTY(EditAnywhere, Category = "iMSTK")
+		bool temp = false;*/
 
 	UPROPERTY(EditAnywhere, Category = "iMSTK|RigidBody")
 		bool bRigidBody = false;

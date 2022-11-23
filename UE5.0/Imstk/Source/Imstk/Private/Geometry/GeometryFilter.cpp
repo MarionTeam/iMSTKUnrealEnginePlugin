@@ -4,6 +4,8 @@
 #include "GeometryFilter.h"
 #include "ImstkController.h"
 
+//FGeometryType::~FGeometryType() {};
+
 std::shared_ptr<imstk::Geometry> FSphereGeomStruct::Init() const
 {
 	std::shared_ptr<imstk::Sphere> SphereGeom = std::make_shared<imstk::Sphere>();

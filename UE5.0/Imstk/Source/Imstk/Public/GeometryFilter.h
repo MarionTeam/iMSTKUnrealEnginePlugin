@@ -81,6 +81,8 @@ struct FGeometryTypeStruct
 	* @return FVector - Scale of the geometry, or zero vector if not implemented
 	*/
 	virtual FVector GetGeomScale(){ return FVector::ZeroVector; }
+
+	virtual ~FGeometryTypeStruct() {};
 };
 
 
