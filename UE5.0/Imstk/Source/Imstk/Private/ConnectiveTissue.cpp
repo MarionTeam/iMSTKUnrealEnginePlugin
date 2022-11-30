@@ -122,7 +122,7 @@ void UConnectiveTissue::InitSplines()
 		SplineMeshComponent->SetStartAndEnd(UnrealPosA, StartTangent, UnrealPosB, EndTangent, true);
 		SplineMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		SplineMeshComponent->SetForwardAxis(ForwardAxis);
-		//if (SplineMeshMaterial)
+		if (SplineMeshMaterial)
 			SplineMeshComponent->SetMaterial(0, SplineMeshMaterial);
 
 		SplineMeshComponent->UpdateMesh();
