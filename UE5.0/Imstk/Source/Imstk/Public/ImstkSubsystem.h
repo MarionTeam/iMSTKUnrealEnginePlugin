@@ -123,6 +123,8 @@ protected:
 	// Keep track of whether the scene in iMSTK is paused
 	bool bIsPaused = false;
 
+	float TimeRemaining = 0;
+
 	// Array of deformable models to assign the deltatimes of the models if using real time
 	TArray<UDeformableModel*> DeformableModels;
 

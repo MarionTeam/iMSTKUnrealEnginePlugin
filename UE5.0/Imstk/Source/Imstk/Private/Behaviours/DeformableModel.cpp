@@ -109,6 +109,15 @@ void UDeformableModel::ProcessBoundaryConditions()
 	}
 }
 
+void UDeformableModel::SetFixedVerts(TArray<int> NewFixedVerts) 
+{
+	PbdObject->getPbdBody()->fixedNodeIds.clear();
+	for (const int Num : NewFixedVerts) {
+		PbdObject->getPbdBody()->fixedNodeIds.push_back(Num);
+	}
+	PbdObject->initialize();
+}
+
 void UDeformableModel::UnInit()
 {
 	Super::UnInit();

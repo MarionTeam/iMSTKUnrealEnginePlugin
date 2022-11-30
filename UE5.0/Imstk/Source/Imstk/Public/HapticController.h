@@ -98,7 +98,6 @@ public:
 		void UpdateUnrealPosRot();
 
 
-	//TODO: currently the all bind to button 1 directly, "Button" gets deleted
 	/** Initializes grasping for the tool with the inputted button
 	* @param Button Int corresponding to the haptic button to be pressed to grasp
 	* @return None
@@ -124,6 +123,11 @@ protected:
 
 	UPROPERTY()
 		FQuat OrientationOffset = FQuat::Identity;
+
+private:
+	int GraspingButton;
+	int CuttingButton;
+
 
 public:
 	virtual void UnInit() override;

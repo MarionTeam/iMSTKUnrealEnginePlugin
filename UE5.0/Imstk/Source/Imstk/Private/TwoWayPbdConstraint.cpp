@@ -13,11 +13,11 @@ void UTwoWayPbdConstraint::Init()
 
     PbdModel->getConfig()->addPbdConstraintFunctor([=](imstk::PbdConstraintContainer& Container)
         {
-            const imstk::Vec3d endOfNeedle = (*std::dynamic_pointer_cast<imstk::LineMesh>(NeedleObj->ImstkCollidingObject->getCollidingGeometry())->getVertexPositions())[0];
+            const imstk::Vec3d EndOfNeedle = (*std::dynamic_pointer_cast<imstk::LineMesh>(NeedleObj->ImstkCollidingObject->getCollidingGeometry())->getVertexPositions())[0];
             auto attachmentConstraint = std::make_shared<imstk::PbdBodyToBodyDistanceConstraint>();
             attachmentConstraint->initConstraint(PbdModel->getBodies(),
                 { std::dynamic_pointer_cast<imstk::PbdObject>(NeedleObj->ImstkCollidingObject)->getPbdBody()->bodyHandle, 0 },
-                endOfNeedle,
+                EndOfNeedle,
                 { std::dynamic_pointer_cast<imstk::PbdObject>(Thread->ImstkCollidingObject)->getPbdBody()->bodyHandle, 0 }, 
                 RestLength,                             
                 Compliance);

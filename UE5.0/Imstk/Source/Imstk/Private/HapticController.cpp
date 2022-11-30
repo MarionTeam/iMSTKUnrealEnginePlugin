@@ -245,12 +245,13 @@ void UHapticController::UpdateUnrealPosRot()
 
 void UHapticController::InitGrasping(const int Button)
 {
+	GraspingButton = Button;
 	imstk::connect<imstk::ButtonEvent>(DeviceClient, &imstk::DeviceClient::buttonStateChanged,
 		[&](imstk::ButtonEvent* e)
 		{
 			if (e->m_buttonState == BUTTON_PRESSED)
 			{
-				if (e->m_button == 1)
+				if (e->m_button == GraspingButton)
 				{
 					for (auto Picking : ToolPickings) {
 						if(GraspType == EGraspType::VertexGrasp)
@@ -262,7 +263,7 @@ void UHapticController::InitGrasping(const int Button)
 			}
 			else if (e->m_buttonState == BUTTON_RELEASED)
 			{
-				if (e->m_button == 1)
+				if (e->m_button == GraspingButton)
 				{
 					for (auto Picking : ToolPickings)
 						Picking->endGrasp();
@@ -273,12 +274,13 @@ void UHapticController::InitGrasping(const int Button)
 
 void UHapticController::InitCutting(const int Button)
 {
+	CuttingButton = Button;
 	imstk::connect<imstk::ButtonEvent>(DeviceClient, &imstk::DeviceClient::buttonStateChanged,
 		[&](imstk::ButtonEvent* e)
 		{
 			if (e->m_buttonState == BUTTON_PRESSED)
 			{
-				if (e->m_button == 1)
+				if (e->m_button == CuttingButton)
 				{
 					for (auto Cut : Cuttings)
 						Cut->apply();

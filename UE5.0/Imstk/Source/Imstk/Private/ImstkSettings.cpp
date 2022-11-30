@@ -26,3 +26,7 @@ bool UImstkSettings::IsWritingTaskGraph() {
 bool UImstkSettings::IsUseAsyncPhysics() {
 	return GetMutableDefault<UImstkSettings>()->bUseAsyncPhysics;
 }
+
+bool UImstkSettings::IsUseSubstepping() {
+	return GetMutableDefault<UImstkSettings>()->bUseSubstepping;
+}

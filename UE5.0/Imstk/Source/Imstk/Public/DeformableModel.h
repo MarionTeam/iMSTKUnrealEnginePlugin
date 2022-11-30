@@ -100,6 +100,9 @@ public:
 
 	//virtual void OnRegister() override;
 
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|DeformableModel")
+		virtual void SetFixedVerts(TArray<int> NewFixedVerts);
+
 protected:
 	/** Helper function that determines which vertices are within the boundary condition actors to fix.
 	* @return None

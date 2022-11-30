@@ -18,8 +18,11 @@ class IMSTK_API UImstkSettings : public UDeveloperSettings
 public:
 	UImstkSettings(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(config, EditAnywhere, Category = "General", meta = (Tooltip = ""))
+	UPROPERTY(config, EditAnywhere, Category = "General", meta = (Tooltip = "Experimental!"))
 		bool bUseAsyncPhysics = false;
+
+	UPROPERTY(config, EditAnywhere, Category = "General", meta = (Tooltip = "Experimental!"))
+		bool bUseSubstepping = false;
 
 	UPROPERTY(config, EditAnywhere, Category = "General", meta = (Tooltip = "If true, deformable models will update their timesteps to line up with Unreal."))
 		bool bUseRealtime = false;
@@ -43,4 +46,6 @@ public:
 		static bool IsWritingTaskGraph();
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|Settings")
 		static bool IsUseAsyncPhysics();
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Settings")
+		static bool IsUseSubstepping();
 };

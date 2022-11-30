@@ -34,11 +34,11 @@
 void UControllerInteraction::Init()
 {
 	if (Model1 == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("%s"), ("Model1 is not assigned in collision interaction"));
+		UE_LOG(LogTemp, Error, TEXT("%s"), ("Model1 is not assigned in controller interaction"));
 		return;
 	}
 	else if (Controller == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("%s"), ("Controller is not assigned in collision interaction"));
+		UE_LOG(LogTemp, Error, TEXT("%s"), ("Controller is not assigned in interaction"));
 		return;
 	}
 
@@ -180,17 +180,17 @@ void UControllerInteraction::Init()
 	}
 
 	// Determine the collision type if set to auto
-	if (CollisionType == ECollisionInteractionType::Auto)
-		CollisionType = GetAutoCollisionType(Controller->GetToolObj()->getCollidingGeometry(), Model1->GetImstkGeometry());
+	//if (CollisionType == ECollisionInteractionType::Auto)
+	//	CollisionType = GetAutoCollisionType(Controller->GetToolObj()->getCollidingGeometry(), Model1->GetImstkGeometry());
 
-	// If GetAutoCollisionType returns Auto, then collision type was not found. Therefore return
-	if (CollisionType == ECollisionInteractionType::Auto)
-		return;
+	//// If GetAutoCollisionType returns Auto, then collision type was not found. Therefore return
+	//if (CollisionType == ECollisionInteractionType::Auto)
+	//	return;
 
 	// Create interaction and add to scene
 	if (Cast<URBDModel>(Model1) || Cast<UStaticModel>(Model1))
 	{
-		std::shared_ptr<imstk::RigidObjectCollision> Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Controller->GetToolObj()), std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+		std::shared_ptr<imstk::RigidObjectCollision> Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Controller->GetToolObj()), std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject));// , std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
 		Interaction->setFriction(Friction);
 		Interaction->setBaumgarteStabilization(Stiffness);
 		//std::dynamic_pointer_cast<imstk::MeshToMeshBruteForceCD>(Interaction->getCollisionDetection())->setGenerateEdgeEdgeContacts(true);

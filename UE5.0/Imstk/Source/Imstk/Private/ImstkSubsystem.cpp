@@ -149,7 +149,8 @@ void UImstkSubsystem::ImstkInit()
 	// Initialize behaviours (models, etc) and interactions (collisions) after
 	for (UImstkBehaviour* Behaviour : AllBehaviours)
 	{
-		Behaviour->Init();
+		if (!Behaviour->IsInitialized())
+			Behaviour->Init();
 		UDeformableModel* DModel = Cast<UDeformableModel>(Behaviour);
 		if (DModel)
 			DeformableModels.Add(DModel);
@@ -341,6 +342,14 @@ void UImstkSubsystem::UpdateSimulation(float DeltaTime)
 			SceneManager->getActiveScene()->advance(DeltaTime);
 		}
 		// TODO: may need a reference to each RBM since when they are assigned to the objects I think they copy the RBM
+		else if (UImstkSettings::IsUseSubstepping()) {
+			TimeRemaining += DeltaTime;
+			while (TimeRemaining > TickInterval)
+			{
+				SceneManager->getActiveScene()->advance(TickInterval);
+				TimeRemaining -= TickInterval;
+			}
+		}
 		else {
 			SceneManager->getActiveScene()->advance(TickInterval);
 		}
