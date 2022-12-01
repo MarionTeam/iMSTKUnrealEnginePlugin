@@ -3,6 +3,7 @@
 
 #include "HapticsThread.h"
 #include "Kismet/GameplayStatics.h"
+#include "ImstkSubsystem.h"
 
 // Sets default values
 FHapticsThread::FHapticsThread(std::shared_ptr<imstk::DeviceManager> HapticManager, UWorld* WorldReference, float TimeInterval)
@@ -16,6 +17,8 @@ bool FHapticsThread::Init()
 {
 	bStopThread = false;
 	HapticManager->init();
+
+	World->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Initialized haptics thread");
 	return true;
 }
 

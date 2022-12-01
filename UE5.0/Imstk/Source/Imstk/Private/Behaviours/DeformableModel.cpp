@@ -7,6 +7,7 @@
 #include "imstkSelectEnclosedPoints.h"
 #include "imstkTetrahedralMesh.h"
 #include "MeshDescription.h"
+#include "ImstkSettings.h"
 
 
 void UDeformableModel::InitializeComponent()
@@ -51,9 +52,11 @@ void UDeformableModel::ProcessBoundaryConditions()
 		
 		UStaticMeshComponent* BoundaryMeshComp = (UStaticMeshComponent*)Actor->GetComponentByClass(UStaticMeshComponent::StaticClass());
 		if (!BoundaryMeshComp) {
-			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "No Mesh attached to Bounding Actor for " + Owner->GetName());
-			UE_LOG(LogTemp, Error, TEXT("No Mesh attached to Boundary Condition Actor for %s"), *Owner->GetName());
+			SubsystemInstance->LogToUnrealAndImstk("No mesh attached to Bounding Actor for " + Owner->GetName());
+			continue;
+		}
+		if (!BoundaryMeshComp->GetStaticMesh()) {
+			SubsystemInstance->LogToUnrealAndImstk("No mesh attached to static mesh component of Bounding Actor for " + Owner->GetName());
 			continue;
 		}
 

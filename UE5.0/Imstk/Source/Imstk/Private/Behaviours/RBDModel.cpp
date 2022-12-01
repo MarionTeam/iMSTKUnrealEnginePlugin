@@ -110,10 +110,6 @@ void URBDModel::Init()
 
 	RigidObject->getRigidBody()->m_mass = Mass;
 
-	
-
-	
-
 	RigidObject->getRigidBody()->setInitPos(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true));
 	RigidObject->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()));
 	RigidObject->getRigidBody()->setInertiaTensor(imstk::Mat3d::Identity());
@@ -123,11 +119,7 @@ void URBDModel::Init()
 	// Set the parent colliding object to the constructed object
 	ImstkCollidingObject = RigidObject;
 
-
-	if (UImstkSettings::IsDebugging()) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "Initialized: " + Owner->GetFName().ToString());
-	}
+	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
 
 	Super::bIsInitialized = true;
 }

@@ -39,12 +39,6 @@ void ULevelSetModel::InitializeComponent()
 			// If including scale, scale gets applied twice
 			MeshComp->AttachToComponent(Owner->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 			MeshComp->RegisterComponent();
-
-			// No mesh attached error
-			/*if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "Error Initializing: " + Owner->GetName() + ". No procedural mesh component attached to actor");
-			UE_LOG(LogTemp, Error, TEXT("Error Initializing: %s. No procedural mesh component attached to actor"), *Owner->GetName());
-			SubsystemInstance->AllBehaviours.Remove(this);*/
 		}
 	}
 
@@ -70,17 +64,13 @@ void ULevelSetModel::Init()
 {
 	Super::Init();
 	if (GeomFilter.GeomType != EGeometryType::SurfaceMesh) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "LevelSetModels can only be SurfaceMeshes");
-		UE_LOG(LogTemp, Error, TEXT("LevelSetModels can only be SurfaceMeshes"));
+		SubsystemInstance->LogToUnrealAndImstk("LevelSetModels can only be SurfaceMeshes for " + Owner->GetName());
 		return;
 	}
 	if (!ImageData) {
 		std::shared_ptr<imstk::SurfaceMesh> MeshGeom = GetSurfaceMeshFromStatic();
 		if (!MeshGeom) {
-			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "Error Initializing: " + Owner->GetName() + " No static mesh attached to actor");
-			UE_LOG(LogTemp, Error, TEXT("Error Initializing: %s. No static mesh attached to actor"), *Owner->GetName());
+			SubsystemInstance->LogToUnrealAndImstk("Error Initializing: " + Owner->GetName() + " no static mesh attached to actor");
 			return;
 		}
 
@@ -99,6 +89,8 @@ void ULevelSetModel::Init()
 	MeshComp->SetWorldLocation(FVector::Zero());
 	MeshComp->SetWorldRotation(FRotator::ZeroRotator);
 
+	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
+
 	Super::bIsInitialized = true;
 }
 
@@ -111,10 +103,7 @@ void ULevelSetModel::FindBounds()
 {
 	UStaticMeshComponent* BoundaryMeshComp = (UStaticMeshComponent*)BoundingActor->GetComponentByClass(UStaticMeshComponent::StaticClass());
 	if (!BoundaryMeshComp) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "No Mesh attached to Bounding Actor for " + Owner->GetName());
-		UE_LOG(LogTemp, Error, TEXT("No Mesh attached to Bounding Actor for %s"), *Owner->GetName());
-		return;
+		SubsystemInstance->LogToUnrealAndImstk("No mesh attached to bounding actor for " + Owner->GetName());
 	}
 	UStaticMesh* BoundaryMesh = BoundaryMeshComp->GetStaticMesh();
 	FPositionVertexBuffer* VertexBuffer = &BoundaryMesh->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;

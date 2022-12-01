@@ -118,11 +118,7 @@ void UPBDModel::InitializeComponent()
 		}
 		else
 		{
-			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Error Initializing : " + Owner->GetName() + ".No mesh component attached to actor");
-			// No mesh attached error
-			UE_LOG(LogTemp, Error, TEXT("Error Initializing: %s. No mesh component attached to actor"), *Owner->GetName());
-			// TODO: Dont think removing works here since this occurs before the behaviours are set
+			SubsystemInstance->LogToUnrealAndImstk("Error Initializing : " + Owner->GetName() + ". No mesh component attached to actor");
 			SubsystemInstance->AllBehaviours.Remove(this);
 		}
 	}
@@ -132,10 +128,7 @@ void UPBDModel::Init()
 {
 	Super::Init();
 	if (GeomFilter.GeomType != EGeometryType::PointSet && GeomFilter.GeomType != EGeometryType::SurfaceMesh && !bRigidBody) {
-		if (GEngine) {
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Non Rigid PBDModels can only be PointSets or SurfaceMeshes");
-		}
-		UE_LOG(LogTemp, Error, TEXT("Non Rigid PBDModels can only be PointSets or SurfaceMeshes"));
+		SubsystemInstance->LogToUnrealAndImstk("Non Rigid PBDModels can only be PointSets or SurfaceMeshes");
 		return;
 	}
 
@@ -242,10 +235,7 @@ void UPBDModel::Init()
 		// Create the PbdObject using the geometry of the static mesh
 		std::shared_ptr<imstk::Geometry> Geom = GetImstkGeometry();
 		if (!Geom) {
-			if (GEngine) {
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Error getting colliding geometry for " + Owner->GetName());
-			}
-			UE_LOG(LogTemp, Error, TEXT("Error getting colliding geometry for %s"), *Owner->GetName());
+			SubsystemInstance->LogToUnrealAndImstk("Error getting colliding geometry for " + Owner->GetName());
 			return;
 		}
 
@@ -268,6 +258,8 @@ void UPBDModel::Init()
 			//std::dynamic_pointer_cast<imstk::SurfaceMesh>(Geom)->computeUVSeamVertexGroups();
 			//Geom->updatePostTransformData();
 			std::shared_ptr<imstk::PointwiseMap> Map = std::make_shared<imstk::PointwiseMap>(CleanedMesh, SurfMesh);
+
+			// Default value in iMSTK scaled with unreal
 			Map->setTolerance(0.00000001 * UMathUtil::GetScale());
 
 			PbdObject->setPhysicsToVisualMap(Map);
@@ -411,6 +403,8 @@ void UPBDModel::Init()
 	Owner->SetActorLocation(FVector::ZeroVector);
 	Owner->SetActorRotation(FQuat::Identity);
 	MeshComp->SetWorldScale3D(FVector::OneVector);
+
+	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
 
 	Super::bIsInitialized = true;
 

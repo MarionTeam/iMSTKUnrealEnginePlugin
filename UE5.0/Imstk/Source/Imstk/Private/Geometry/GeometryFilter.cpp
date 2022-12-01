@@ -122,9 +122,7 @@ std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UImstkController* 
 		}
 	}
 	if (Count > 1) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Warning: More than one static mesh component is attached to controller " + Controller->GetName() + ". Behaviour May not function as expected.");
-		UE_LOG(LogTemp, Warning, TEXT("Warning: More than one static mesh component is attached to controller %s. Behaviour May not function as expected."), *Controller->GetName());
+		Controller->GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Warning: More than one static mesh component is attached to controller " + Controller->GetName() + ". Behaviour May not function as expected.");
 	}
 
 

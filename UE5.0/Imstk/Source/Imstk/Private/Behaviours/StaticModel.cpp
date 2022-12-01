@@ -77,9 +77,6 @@ void UStaticModel::Init()
 
 	SubsystemInstance->ActiveScene->addSceneObject(ImstkCollidingObject);
 
-	if (UImstkSettings::IsDebugging()) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "Initialized: " + Owner->GetFName().ToString());
-	}
+	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
 	Super::bIsInitialized = true;
 }

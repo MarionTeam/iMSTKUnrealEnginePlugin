@@ -114,6 +114,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|Subsystem")
 		void UpdateSimulation(float DeltaTime);
 
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Subsystem")
+		void LogToUnrealAndImstk(FString Message);
+
 protected:
 	bool bIsCreateOnRunning = false;
 
@@ -196,8 +199,8 @@ public:
 
 	virtual void Deinitialize() override;
 
-	public:
-		void AsyncScenePreTick(FPhysScene* PhysScene, float DeltaTime);
+public:
+	void AsyncScenePreTick(FPhysScene* PhysScene, float DeltaTime);
 
 private:
 	// For async

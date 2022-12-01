@@ -33,19 +33,20 @@
 
 void UControllerInteraction::Init()
 {
+	UImstkSubsystem* SubsystemInstance = GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>();
 	if (Model1 == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("%s"), ("Model1 is not assigned in controller interaction"));
+		SubsystemInstance->LogToUnrealAndImstk("Model1 is not assigned in controller interaction");
 		return;
 	}
 	else if (Controller == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("%s"), ("Controller is not assigned in interaction"));
+		SubsystemInstance->LogToUnrealAndImstk("Controller is not assigned in controller interaction");
 		return;
 	}
 
 	if (!Model1->IsInitialized() || !Controller->IsInitialized())
 		return;
 
-	UImstkSubsystem* SubsystemInstance = GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>();
+	
 
 
 	// Initialize the interaction depending on the controller type
@@ -62,9 +63,7 @@ void UControllerInteraction::Init()
 			return;
 		}
 		else {
-			UE_LOG(LogTemp, Error, TEXT("Wrong model types, Model1 must be a deformable model. Suturing interaction could not be created between %s and %s."), Model1->ImstkCollidingObject->getName().c_str(), Controller->GetToolObj()->getName().c_str());
-			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Wrong model types, Model1 must be a deformable model. Suturing interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
+			SubsystemInstance->LogToUnrealAndImstk("Wrong model types, Model1 must be a deformable model. Suturing interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
 			return;
 		}
 	}
@@ -89,9 +88,7 @@ void UControllerInteraction::Init()
 			return;
 		}
 		else {
-			UE_LOG(LogTemp, Error, TEXT("Wrong model types, Model1 must be a deformable model. Grasping interaction could not be created between %s and %s."), Model1->ImstkCollidingObject->getName().c_str(), Controller->GetToolObj()->getName().c_str());
-			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Wrong model types, Model1 must be a deformable model. Grasping interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
+			SubsystemInstance->LogToUnrealAndImstk("Wrong model types, Model1 must be a deformable model. Grasping interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
 			return;
 		}
 	}
@@ -106,9 +103,7 @@ void UControllerInteraction::Init()
 			return;
 		}
 		else {
-			UE_LOG(LogTemp, Error, TEXT("Wrong model types, Model1 must be a deformable model. Stitching interaction could not be created between %s and %s."), Model1->ImstkCollidingObject->getName().c_str(), Controller->GetToolObj()->getName().c_str());
-			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Wrong model types, Model1 must be a deformable model. Stitching interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
+			SubsystemInstance->LogToUnrealAndImstk("Wrong model types, Model1 must be a deformable model. Stitching interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
 			return;
 		}
 	}
@@ -130,9 +125,7 @@ void UControllerInteraction::Init()
 			return;
 		}
 		else {
-			UE_LOG(LogTemp, Error, TEXT("Wrong model types, Model1 must be a deformable model. Cutting interaction could not be created between %s and %s."), Model1->ImstkCollidingObject->getName().c_str(), Controller->GetToolObj()->getName().c_str());
-			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Wrong model types, Model1 must be a deformable model. Cutting interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
+			SubsystemInstance->LogToUnrealAndImstk("Wrong model types, Model1 must be a deformable model. Cutting interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
 			return;
 		}
 	}
@@ -157,9 +150,7 @@ void UControllerInteraction::Init()
 			return;
 		}
 		else {
-			UE_LOG(LogTemp, Error, TEXT("Wrong model types, Model1 must be a LevelSet model. LevelSet interaction could not be created between %s and %s."), Model1->ImstkCollidingObject->getName().c_str(), Controller->GetToolObj()->getName().c_str());
-			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Wrong model types, Model1 must be a LevelSet model. LevelSet interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
+			SubsystemInstance->LogToUnrealAndImstk("Wrong model types, Model1 must be a LevelSet model. LevelSet interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
 			return;
 		}
 	}
@@ -172,9 +163,7 @@ void UControllerInteraction::Init()
 			return;
 		}
 		else {
-			UE_LOG(LogTemp, Error, TEXT("Wrong model types, Model1 must be a deformable model. Cutting interaction could not be created between %s and %s."), Model1->ImstkCollidingObject->getName().c_str(), Controller->GetToolObj()->getName().c_str());
-			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Wrong model types, Model1 must be a deformable model. Cutting interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
+			SubsystemInstance->LogToUnrealAndImstk("Wrong model types, Model1 must be a deformable model. Cutting interaction could not be created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()) + ".");
 			return;
 		}
 	}
@@ -210,13 +199,10 @@ void UControllerInteraction::Init()
 		Controller->AddCollision(Interaction);
 	}
 	else {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Initializing interaction between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + FString(Controller->GetToolObj()->getName().c_str()) + " failed");
-		UE_LOG(LogTemp, Error, TEXT("Initializing interaction between %s and %s failed"), Model1->ImstkCollidingObject->getName().c_str(), Controller->GetToolObj()->getName().c_str());
+		SubsystemInstance->LogToUnrealAndImstk("Creating interaction between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + FString(Controller->GetToolObj()->getName().c_str()) + " failed");
 		return;
 	}
 	if (UImstkSettings::IsDebugging()) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Interaction Initialized: " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + FString(Controller->GetToolObj()->getName().c_str()));
+		SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + FString(Controller->GetToolObj()->getName().c_str()));
 	}
 }

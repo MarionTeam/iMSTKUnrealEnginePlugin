@@ -34,9 +34,7 @@ void USuturingController::InitializeComponent()
 void USuturingController::InitController()
 {
 	if (!Thread) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "No PBDThread attached to SuturingController");
-		UE_LOG(LogTemp, Error, TEXT("No PBDThread attached to SuturingController"));
+		SubsystemInstance->LogToUnrealAndImstk("No PBDThread attached to SuturingController");
 		return;
 	}
 
@@ -146,6 +144,8 @@ void USuturingController::InitController()
 	}
 
 	SubsystemInstance->ActiveScene->addSceneObject(ToolObj);
+
+	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + GetOwner()->GetFName().ToString());
 
 	Super::bIsInitialized = true;
 }

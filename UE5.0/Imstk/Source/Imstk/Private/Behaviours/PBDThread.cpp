@@ -22,7 +22,7 @@ void UPBDThread::InitializeComponent()
 		else
 		{
 			// No spline attached error
-			UE_LOG(LogTemp, Error, TEXT("Error Initializing: %s. No spline component attached to actor"), *Owner->GetName());
+			SubsystemInstance->LogToUnrealAndImstk("Error Initializing: " + Owner->GetName()+ ". No spline component attached to actor");
 			SubsystemInstance->AllBehaviours.Remove(this);
 		}
 	}
@@ -120,6 +120,7 @@ void UPBDThread::Init()
 		}
 	}
 
+	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
 	Super::bIsInitialized = true;
 }
 

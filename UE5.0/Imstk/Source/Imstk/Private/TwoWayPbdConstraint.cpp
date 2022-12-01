@@ -23,4 +23,5 @@ void UTwoWayPbdConstraint::Init()
                 Compliance);
             Container.addConstraint(attachmentConstraint);
         });
+    GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Two way constraint initialized between " + NeedleObj->GetName() + " and " + Thread->GetName());
 }

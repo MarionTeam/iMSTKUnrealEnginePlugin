@@ -97,9 +97,7 @@ void UCustomController::InitController()
 	if (ToolGeomFilter.GeomType != EGeometryType::Sphere && ToolGeomFilter.GeomType != EGeometryType::Capsule &&
 		ToolGeomFilter.GeomType != EGeometryType::LineMesh && ToolGeomFilter.GeomType != EGeometryType::SurfaceMesh &&
 		ToolGeomFilter.GeomType != EGeometryType::Plane) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Error: Geometry type not implemented for controllers. Please select sphere, capsule, line mesh or surface mesh");
-		UE_LOG(LogTemp, Error, TEXT("Error: Geometry type not implemented for controllers. Please select sphere, capsule, line mesh or surface mesh"));;
+		SubsystemInstance->LogToUnrealAndImstk("Error: Geometry type not implemented for controllers. Please select sphere, capsule, line mesh, plane or surface mesh");
 		//SubsystemInstance->AllControllers.Remove(this); // This causes an error since it removes from the for loop it resides in
 		return;
 	}
@@ -109,9 +107,7 @@ void UCustomController::InitController()
 		(ToolType == EToolType::StitchingTool && ToolGeomFilter.GeomType != EGeometryType::LineMesh) ||
 		(ToolType == EToolType::CuttingTool && ToolGeomFilter.GeomType != EGeometryType::SurfaceMesh) ||
 		(ToolType == EToolType::TetrahedralCuttingTool && ToolGeomFilter.GeomType != EGeometryType::Plane)) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Error: Controller type to Geometry mismatch");
-		UE_LOG(LogTemp, Error, TEXT("Error: Controller type to Geometry mismatch"));;
+		SubsystemInstance->LogToUnrealAndImstk("Error: Controller type to Geometry mismatch");
 		//SubsystemInstance->AllControllers.Remove(this); // This causes an error since it removes from the for loop it resides in
 		return;
 	}
@@ -188,6 +184,7 @@ void UCustomController::InitController()
 
 	SubsystemInstance->ActiveScene->addSceneObject(ToolObj);
 
+	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + GetFName().ToString());
 	Super::bIsInitialized = true;
 }
 
@@ -349,9 +346,7 @@ void UCustomController::BeginVertexGrasp()
 		}
 	}
 	else {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "ToolPicking not assigned");
-		UE_LOG(LogTemp, Error, TEXT("ToolPicking not assigned"));
+		SubsystemInstance->LogToUnrealAndImstk("ToolPicking not assigned");
 	}
 }
 
@@ -365,9 +360,7 @@ void UCustomController::BeginCellGrasp()
 		}
 	}
 	else {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "ToolPicking not assigned");
-		UE_LOG(LogTemp, Error, TEXT("ToolPicking not assigned"));
+		SubsystemInstance->LogToUnrealAndImstk("ToolPicking not assigned");
 	}
 }
 
@@ -381,9 +374,7 @@ void UCustomController::BeginRayPointGrasp(FVector RayStart, FVector RayDir)
 		}
 	}
 	else {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "ToolPicking not assigned");
-		UE_LOG(LogTemp, Error, TEXT("ToolPicking not assigned"));
+		SubsystemInstance->LogToUnrealAndImstk("ToolPicking not assigned");
 	}
 }
 
@@ -408,6 +399,9 @@ void UCustomController::BeginStitch()
 				}
 			}
 		}
+	}
+	else {
+		SubsystemInstance->LogToUnrealAndImstk("Stitching not assigned");
 	}
 }
 
@@ -460,56 +454,64 @@ void UCustomController::BeginCut()
 			//}
 		}
 	}
+	else {
+		SubsystemInstance->LogToUnrealAndImstk("Cutting not assigned");
+	}
 }
 
 bool UCustomController::BeginTetrahedralCut()
 {
-	auto ToolGeom = std::dynamic_pointer_cast<imstk::SurfaceMesh>(ToolObj->getCollidingGeometry());
 	bool bRemovedAny = false;
+	if (TetCuttings.Num() > 0) {
+		auto ToolGeom = std::dynamic_pointer_cast<imstk::SurfaceMesh>(ToolObj->getCollidingGeometry());
 
-	for (int j = 0; j < TetObjects.Num(); j++) {
-		bool bRemoved = false;
-		auto TissueMesh = std::dynamic_pointer_cast<imstk::TetrahedralMesh>(TetObjects[j]->PbdObject->getPhysicsGeometry());
+		for (int j = 0; j < TetObjects.Num(); j++) {
+			bool bRemoved = false;
+			auto TissueMesh = std::dynamic_pointer_cast<imstk::TetrahedralMesh>(TetObjects[j]->PbdObject->getPhysicsGeometry());
 
-		// TODO: hardcoded for plane in this direction
-		// Default config of the tool is pointing downwards on y
-		const imstk::Mat3d Rot = ToolGeom->getRotation();
-		const imstk::Vec3d Forward = (Rot * imstk::Vec3d(0.0, 0.0, 1.0)).normalized();
-		const imstk::Vec3d Left = (Rot * imstk::Vec3d(1.0, 0.0, 0.0)).normalized();
-		const imstk::Vec3d N = (Rot * imstk::Vec3d(0.0, 1.0, 0.0)).normalized();
+			// TODO: hardcoded for plane in this direction
+			// Default config of the tool is pointing downwards on y
+			const imstk::Mat3d Rot = ToolGeom->getRotation();
+			const imstk::Vec3d Forward = (Rot * imstk::Vec3d(0.0, 0.0, 1.0)).normalized();
+			const imstk::Vec3d Left = (Rot * imstk::Vec3d(1.0, 0.0, 0.0)).normalized();
+			const imstk::Vec3d N = (Rot * imstk::Vec3d(0.0, 1.0, 0.0)).normalized();
 
-		const imstk::Vec3d PlanePos = ToolGeom->getTranslation();
-		const imstk::Vec3d PlaneNormal = N;
-		const double PlaneHalfWidth = Super::PlaneWidth * 0.5;
+			const imstk::Vec3d PlanePos = ToolGeom->getTranslation();
+			const imstk::Vec3d PlaneNormal = N;
+			const double PlaneHalfWidth = Super::PlaneWidth * 0.5;
 
-		std::shared_ptr<imstk::VecDataArray<double, 3>> TissueVerticesPtr = TissueMesh->getVertexPositions();
-		std::shared_ptr<imstk::VecDataArray<int, 4>> TissueIndicesPtr = TissueMesh->getCells();
-		imstk::VecDataArray<double, 3>& TissueVertices = *TissueVerticesPtr;
-		imstk::VecDataArray<int, 4>& TissueIndices = *TissueIndicesPtr;
+			std::shared_ptr<imstk::VecDataArray<double, 3>> TissueVerticesPtr = TissueMesh->getVertexPositions();
+			std::shared_ptr<imstk::VecDataArray<int, 4>> TissueIndicesPtr = TissueMesh->getCells();
+			imstk::VecDataArray<double, 3>& TissueVertices = *TissueVerticesPtr;
+			imstk::VecDataArray<int, 4>& TissueIndices = *TissueIndicesPtr;
 
-		// Compute which tets should be removed
-		//std::unordered_set<int> RemovedTets;
-		for (int i = 0; i < TissueIndices.size(); i++)
-		{
-			imstk::Vec4i& tet = TissueIndices[i];
-			std::array<imstk::Vec3d, 4> TetVerts;
-			TetVerts[0] = TissueVertices[tet[0]];
-			TetVerts[1] = TissueVertices[tet[1]];
-			TetVerts[2] = TissueVertices[tet[2]];
-			TetVerts[3] = TissueVertices[tet[3]];
-
-			if (SplitTest(TetVerts, PlanePos, Left, PlaneHalfWidth, Forward, PlaneHalfWidth, N))
+			// Compute which tets should be removed
+			//std::unordered_set<int> RemovedTets;
+			for (int i = 0; i < TissueIndices.size(); i++)
 			{
-				TetCuttings[j]->removeCellOnApply(i);
-				bRemoved = true;
-				bRemovedAny = true;
+				imstk::Vec4i& tet = TissueIndices[i];
+				std::array<imstk::Vec3d, 4> TetVerts;
+				TetVerts[0] = TissueVertices[tet[0]];
+				TetVerts[1] = TissueVertices[tet[1]];
+				TetVerts[2] = TissueVertices[tet[2]];
+				TetVerts[3] = TissueVertices[tet[3]];
+
+				if (SplitTest(TetVerts, PlanePos, Left, PlaneHalfWidth, Forward, PlaneHalfWidth, N))
+				{
+					TetCuttings[j]->removeCellOnApply(i);
+					bRemoved = true;
+					bRemovedAny = true;
+				}
+			}
+			TetCuttings[j]->apply();
+
+			if (bRemoved) {
+				TetObjects[j]->UpdateVisualFromTet();
 			}
 		}
-		TetCuttings[j]->apply();
-
-		if (bRemoved) {
-			TetObjects[j]->UpdateVisualFromTet();
-		}
+	}
+	else {
+		SubsystemInstance->LogToUnrealAndImstk("TetCut not assigned");
 	}
 
 	return bRemovedAny;

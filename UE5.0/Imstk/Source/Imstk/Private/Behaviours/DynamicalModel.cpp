@@ -31,7 +31,7 @@ std::shared_ptr<imstk::Geometry> UDynamicalModel::GetImstkGeometry()
 	// Initialize imstk geometry
 	Geometry = GeomFilter.Init(this);
 	if (!Geometry) {
-		UE_LOG(LogTemp, Error, TEXT("Imstk geometry for %s could not be created"), *Owner->GetName());
+		SubsystemInstance->LogToUnrealAndImstk("Imstk geometry for %s could not be created " + Owner->GetName());
 		return nullptr;
 	}
 	return Geometry;

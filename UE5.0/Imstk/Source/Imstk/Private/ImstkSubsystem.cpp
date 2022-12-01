@@ -170,9 +170,11 @@ void UImstkSubsystem::ImstkInit()
 	}
 
 	bIsInitialized = true;
-	if (UImstkSettings::IsDebugging())
+	if (UImstkSettings::IsDebugging()) {
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Subsystem Initialized"));
+		UE_LOG(LogTemp, Error, TEXT("Subsystem Initialized"));
+	}
 
 	if (HapticManager) {
 		HapticsThread = new FHapticsThread(HapticManager, GetWorld(), TickInterval);
@@ -364,6 +366,16 @@ void UImstkSubsystem::ToggleSimulation()
 bool UImstkSubsystem::IsSimulationPaused()
 {
 	return bIsPaused;
+}
+
+void UImstkSubsystem::LogToUnrealAndImstk(FString Message)
+{
+	if (UImstkSettings::IsDebugging()) {
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, Message);
+		UE_LOG(LogTemp, Error, TEXT("%s"), *Message);
+	}
+	LOG(WARNING) << std::string(TCHAR_TO_UTF8(*Message));
 }
 
 void UImstkSubsystem::Deinitialize()

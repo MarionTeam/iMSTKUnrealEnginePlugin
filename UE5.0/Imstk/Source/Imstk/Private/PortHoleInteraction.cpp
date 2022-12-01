@@ -19,11 +19,11 @@ void UPortHoleInteraction::Init()
 		Porthole->setCompliance(Compliance);
 	}
 	else {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Initializing porthole interaction between " + FString(Controller->GetToolObj()->getName().c_str()) + " and " + PortHoleActor->GetName() + " failed");
-		UE_LOG(LogTemp, Error, TEXT("Initializing interaction between %s and %s failed"), Controller->GetToolObj()->getName().c_str(), *PortHoleActor->GetName());
+		GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Initializing porthole interaction between " + FString(Controller->GetToolObj()->getName().c_str()) + " and " + PortHoleActor->GetName() + " failed");
 		return;
 	}
+
+	GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Porthole interaction between " + FString(Controller->GetToolObj()->getName().c_str()) + " and " + PortHoleActor->GetName() + " initialized");
 
 	//SubsystemInstance->ActiveScene->addInteraction(Porthole);
 }

@@ -71,9 +71,7 @@ void UHapticController::InitController()
 
 	if (ToolGeomFilter.GeomType != EGeometryType::Sphere && ToolGeomFilter.GeomType != EGeometryType::Capsule &&
 		ToolGeomFilter.GeomType != EGeometryType::LineMesh && ToolGeomFilter.GeomType != EGeometryType::SurfaceMesh) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Error: Geometry type not implemented for controllers. Please select sphere, capsule, line mesh or surface mesh");
-		UE_LOG(LogTemp, Error, TEXT("Error: Geometry type not implemented for controllers. Please select sphere, capsule, line mesh or surface mesh"));;
+		SubsystemInstance->LogToUnrealAndImstk("Error: Geometry type not implemented for controllers. Please select sphere, capsule, line mesh or surface mesh");
 		//SubsystemInstance->AllControllers.Remove(this); // This causes an error since it removes from the for loop it resides in
 		return;
 	}
@@ -82,9 +80,7 @@ void UHapticController::InitController()
 	if ((ToolType == EToolType::GraspingTool && (ToolGeomFilter.GeomType != EGeometryType::Sphere && ToolGeomFilter.GeomType != EGeometryType::Capsule)) ||
 		(ToolType == EToolType::StitchingTool && ToolGeomFilter.GeomType != EGeometryType::LineMesh) ||
 		(ToolType == EToolType::CuttingTool && ToolGeomFilter.GeomType != EGeometryType::SurfaceMesh)) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Error: Controller type to Geometry mismatch");
-		UE_LOG(LogTemp, Error, TEXT("Error: Controller type to Geometry mismatch"));;
+		SubsystemInstance->LogToUnrealAndImstk("Error: Controller type to Geometry mismatch");
 		//SubsystemInstance->AllControllers.Remove(this); // This causes an error since it removes from the for loop it resides in
 		return;
 	}
@@ -232,6 +228,7 @@ void UHapticController::InitController()
 
 	OrientationOffset = GetRelativeRotation().Quaternion();
 
+	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + GetFName().ToString());
 	Super::bIsInitialized = true;
 }
 
@@ -246,47 +243,58 @@ void UHapticController::UpdateUnrealPosRot()
 void UHapticController::InitGrasping(const int Button)
 {
 	GraspingButton = Button;
-	imstk::connect<imstk::ButtonEvent>(DeviceClient, &imstk::DeviceClient::buttonStateChanged,
-		[&](imstk::ButtonEvent* e)
-		{
-			if (e->m_buttonState == BUTTON_PRESSED)
+
+	if (ToolPickings.Num() > 0) {
+		imstk::connect<imstk::ButtonEvent>(DeviceClient, &imstk::DeviceClient::buttonStateChanged,
+			[&](imstk::ButtonEvent* e)
 			{
-				if (e->m_button == GraspingButton)
+				if (e->m_buttonState == BUTTON_PRESSED)
 				{
-					for (auto Picking : ToolPickings) {
-						if(GraspType == EGraspType::VertexGrasp)
-							Picking->beginVertexGrasp(std::dynamic_pointer_cast<imstk::AnalyticalGeometry>(ToolObj->getCollidingGeometry()));
-						else if(GraspType == EGraspType::CellGrasp)
-							Picking->beginCellGrasp(std::dynamic_pointer_cast<imstk::AnalyticalGeometry>(ToolObj->getCollidingGeometry()));
+					if (e->m_button == GraspingButton)
+					{
+						for (auto Picking : ToolPickings) {
+							if (GraspType == EGraspType::VertexGrasp)
+								Picking->beginVertexGrasp(std::dynamic_pointer_cast<imstk::AnalyticalGeometry>(ToolObj->getCollidingGeometry()));
+							else if (GraspType == EGraspType::CellGrasp)
+								Picking->beginCellGrasp(std::dynamic_pointer_cast<imstk::AnalyticalGeometry>(ToolObj->getCollidingGeometry()));
+						}
 					}
 				}
-			}
-			else if (e->m_buttonState == BUTTON_RELEASED)
-			{
-				if (e->m_button == GraspingButton)
+				else if (e->m_buttonState == BUTTON_RELEASED)
 				{
-					for (auto Picking : ToolPickings)
-						Picking->endGrasp();
+					if (e->m_button == GraspingButton)
+					{
+						for (auto Picking : ToolPickings)
+							Picking->endGrasp();
+					}
 				}
-			}
-		});
+			});
+	}
+	else {
+		SubsystemInstance->LogToUnrealAndImstk("ToolPicking not assigned");
+	}
 }
 
 void UHapticController::InitCutting(const int Button)
 {
 	CuttingButton = Button;
-	imstk::connect<imstk::ButtonEvent>(DeviceClient, &imstk::DeviceClient::buttonStateChanged,
-		[&](imstk::ButtonEvent* e)
-		{
-			if (e->m_buttonState == BUTTON_PRESSED)
+	if (ToolPickings.Num() > 0) {
+		imstk::connect<imstk::ButtonEvent>(DeviceClient, &imstk::DeviceClient::buttonStateChanged,
+			[&](imstk::ButtonEvent* e)
 			{
-				if (e->m_button == CuttingButton)
+				if (e->m_buttonState == BUTTON_PRESSED)
 				{
-					for (auto Cut : Cuttings)
-						Cut->apply();
+					if (e->m_button == CuttingButton)
+					{
+						for (auto Cut : Cuttings)
+							Cut->apply();
+					}
 				}
-			}
-		});
+			});
+	}
+	else {
+		SubsystemInstance->LogToUnrealAndImstk("Cutting not assigned");
+	}
 }
 
 void UHapticController::UnInit()

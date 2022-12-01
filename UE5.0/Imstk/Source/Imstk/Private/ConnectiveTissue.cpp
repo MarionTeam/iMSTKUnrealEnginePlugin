@@ -42,6 +42,8 @@ void UConnectiveTissue::Init()
 
 	SubsystemInstance->ActiveScene->addSceneObject(PbdObject);
 
+	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
+
 	Super::bIsInitialized = true;
 }
 

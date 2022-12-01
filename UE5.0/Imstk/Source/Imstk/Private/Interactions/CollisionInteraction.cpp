@@ -83,11 +83,11 @@ ECollisionInteractionType UCollisionInteraction::GetAutoCollisionType(std::share
 void UCollisionInteraction::Init()
 {
 	if (Model1 == nullptr ) {
-		UE_LOG(LogTemp, Error, TEXT("%s"), ("ERROR: Model1 is not assigned in collision interaction"));
+		GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("ERROR: Model1 is not assigned in collision interaction");
 		return;
 	}
 	else if (Model2 == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("%s"), ("ERROR: Model2 is not assigned in collision interaction"));
+		GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("ERROR: Model2 is not assigned in collision interaction");
 		return;
 	}
 
@@ -133,9 +133,7 @@ void UCollisionInteraction::Init()
 		Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model2->ImstkCollidingObject), Model1->ImstkCollidingObject);//, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
 	}
 	else {
-		if (GEngine) 
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Initializing interaction between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + FString(Model2->ImstkCollidingObject->getName().c_str()) + " failed");
-		UE_LOG(LogTemp, Error, TEXT("Initializing interaction between %s and %s failed"), Model1->ImstkCollidingObject->getName().c_str(), Model2->ImstkCollidingObject->getName().c_str());
+		Model1->GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Creating interaction between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + FString(Model2->ImstkCollidingObject->getName().c_str()) + " failed");
 		return;
 	}
 
@@ -162,7 +160,6 @@ void UCollisionInteraction::Init()
 	SubsystemInstance->ActiveScene->addInteraction(Interaction);
 
 	if (UImstkSettings::IsDebugging()) {
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Interaction Initialized: " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " " + Model2->ImstkCollidingObject->getName().c_str());
+		GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Interaction created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + Model2->ImstkCollidingObject->getName().c_str());
 	}
 }
