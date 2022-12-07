@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "ImstkController.h"
+
+#include "imstkPbdObjectController.h"
 #include "HapticController.generated.h"
 
 UENUM(BlueprintType)
@@ -29,25 +31,25 @@ public:
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent);
 
 	// If data should be imported from a file to generate colliding geometry 
-	UPROPERTY(EditAnywhere, Category = "iMSTK")
-		bool bCollidingGeometryFromFile = false;
-	// File path from the content directory for the colliding geometry
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bCollidingGeometryFromFile", EditConditionHides), Category = "iMSTK")
-		FString CollidingGeometryFilePath = "";
+	//UPROPERTY(EditAnywhere, Category = "iMSTK")
+	//	bool bCollidingGeometryFromFile = false;
+	//// File path from the content directory for the colliding geometry
+	//UPROPERTY(EditAnywhere, meta = (EditCondition = "bCollidingGeometryFromFile", EditConditionHides), Category = "iMSTK")
+	//	FString CollidingGeometryFilePath = "";
 
-	// If data should be imported from a file to generate physics geometry 
-	UPROPERTY(EditAnywhere, Category = "iMSTK")
-		bool bPhysicsGeometryFromFile = false;
-	// File path from the content directory for the physics geometry
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bPhysicsGeometryFromFile", EditConditionHides), Category = "iMSTK")
-		FString PhysicsGeometryFilePath = "";
+	//// If data should be imported from a file to generate physics geometry 
+	//UPROPERTY(EditAnywhere, Category = "iMSTK")
+	//	bool bPhysicsGeometryFromFile = false;
+	//// File path from the content directory for the physics geometry
+	//UPROPERTY(EditAnywhere, meta = (EditCondition = "bPhysicsGeometryFromFile", EditConditionHides), Category = "iMSTK")
+	//	FString PhysicsGeometryFilePath = "";
 
-	// If data should be imported from a file to generate visual geometry 
-	UPROPERTY(EditAnywhere, Category = "iMSTK")
-		bool bVisualGeometryFromFile = false;
-	// File path from the content directory for the visual geometry
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bVisualGeometryFromFile", EditConditionHides), Category = "iMSTK")
-		FString VisualGeometryFilePath = "";
+	//// If data should be imported from a file to generate visual geometry 
+	//UPROPERTY(EditAnywhere, Category = "iMSTK")
+	//	bool bVisualGeometryFromFile = false;
+	//// File path from the content directory for the visual geometry
+	//UPROPERTY(EditAnywhere, meta = (EditCondition = "bVisualGeometryFromFile", EditConditionHides), Category = "iMSTK")
+	//	FString VisualGeometryFilePath = "";
 
 	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		TEnumAsByte<EHapticControllerPreset> Preset = EHapticControllerPreset::HapticCollidingPreset;
@@ -109,11 +111,15 @@ public:
 	* @param Button Character corresponding to the keyboard button to be pressed to grasp
 	* @return None
 	*/
-	/*UFUNCTION(BlueprintCallable, Category = "Imstk")
-		void InitGrasping(char Button = 'g');*/
 
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|HapticController")
 		void InitCutting(const int Button = 1);
+
+
+
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|HapticController")
+		void PrintForces();
+	std::shared_ptr<imstk::PbdObjectController> TempController;
 
 protected:
 	bool bIsPbdTool = false;

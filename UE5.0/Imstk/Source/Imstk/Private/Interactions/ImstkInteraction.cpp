@@ -13,7 +13,7 @@ void UImstkInteraction::UnInit()
 
 }
 
-bool UImstkInteraction::Contains(AActor Actor)
-{
-	return false;
-}
+//bool UImstkInteraction::Contains(AActor Actor)
+//{
+//	return false;
+//}

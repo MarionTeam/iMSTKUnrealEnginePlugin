@@ -7,50 +7,44 @@
 //#include "ImstkSubsystem.h"
 //#include "RBDModel.h"
 #include "imstkRigidObject2.h"
-#include "imstkPbdObjectStitching.h"
-#include "imstkPbdRigidObjectGrasping.h"
-#include "imstkPbdObjectCutting.h"
-#include "imstkSurfaceMeshCut.h"
-#include "imstkPbdObjectCellRemoval.h"
-#include "CollisionInteraction.h"
+//#include "imstkPbdObjectStitching.h"
+//#include "imstkPbdRigidObjectGrasping.h"
+//#include "imstkPbdObjectCutting.h"
+//#include "imstkSurfaceMeshCut.h"
+//#include "imstkPbdObjectCellRemoval.h"
+//#include "CollisionInteraction.h"
 #include "GeometryFilter.h"
 #include "PBDModel.h"
+#include "ControllerTool.h"
+#include "ControllerToolFilter.h"
+
+// Remove this
+#include "ControllerGraspingTool.h"
+
 #include "ImstkController.generated.h"
 
 class UImstkSubsystem;
 
 // Geometry of the tool
-UENUM()
-enum EToolGeometry
-{
-	LineMeshTool,
-	SphereTool,
-	CapsuleTool,
-	SurfaceMeshTool,
-	PlaneTool
-};
+//UENUM()
+//enum EToolGeometry
+//{
+//	LineMeshTool,
+//	SphereTool,
+//	CapsuleTool,
+//	SurfaceMeshTool,
+//	PlaneTool
+//};
+
 
 // Type of grasp for the tool
-UENUM(BlueprintType)
-enum EGraspType
-{
-	RayPointGrasp,
-	VertexGrasp,
-	CellGrasp
-};
-
-// Type of tool
-UENUM(BlueprintType)
-enum EToolType
-{
-	GraspingTool,
-	StitchingTool,
-	CollidingTool,
-	CuttingTool,
-	LevelSetTool,
-	TetrahedralCuttingTool
-};
-
+//UENUM(BlueprintType)
+//enum EGraspType
+//{
+//	RayPointGrasp,
+//	VertexGrasp,
+//	CellGrasp
+//};
 
 /** \file ImstkController.h
  *  \brief Abstract class for object in imstk that can be controlled by the user
@@ -79,26 +73,26 @@ protected:
 	std::shared_ptr<imstk::DynamicObject> ToolObj;
 
 	// Array containing grasping interactions
-	TArray<std::shared_ptr<imstk::PbdObjectGrasping>> ToolPickings;
+	//TArray<std::shared_ptr<imstk::PbdObjectGrasping>> ToolPickings;
 
-	// Array containing stitching interactions
-	TArray<std::shared_ptr<imstk::PbdObjectStitching>> Stitchings;
+	//// Array containing stitching interactions
+	//TArray<std::shared_ptr<imstk::PbdObjectStitching>> Stitchings;
 
-	// Array containing cutting interactions
-	TArray<std::shared_ptr<imstk::PbdObjectCutting>> Cuttings;
+	//// Array containing cutting interactions
+	//TArray<std::shared_ptr<imstk::PbdObjectCutting>> Cuttings;
 
-	TArray<std::shared_ptr<imstk::PbdObject>> CutObjects;
+	//TArray<std::shared_ptr<imstk::PbdObject>> CutObjects;
 
-	// Array containing tet cutting interactions
-	TArray<std::shared_ptr<imstk::PbdObjectCellRemoval>> TetCuttings;
+	//// Array containing tet cutting interactions
+	//TArray<std::shared_ptr<imstk::PbdObjectCellRemoval>> TetCuttings;
 
-	TArray<UPBDModel*> TetObjects;
+	//TArray<UPBDModel*> TetObjects;
 
 	//TArray<TPair<std::shared_ptr<imstk::SurfaceMeshCut>, std::shared_ptr<imstk::PbdObject>>> VisualMeshCuttings;
-	
+
 
 	// Array containing collision interactions
-	TArray<std::shared_ptr<imstk::CollisionInteraction>> Collisions;
+	//TArray<std::shared_ptr<imstk::CollisionInteraction>> Collisions;
 
 	// Static mesh component for surface mesh tools. Must be assigned within construction of the blueprint
 	UPROPERTY()
@@ -119,7 +113,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		FGeometryFilter ToolGeomFilter;
-
+	/*
 	// Type of tool. Determines the action performed by the tool
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|ToolSettings")
 		TEnumAsByte<EToolType> ToolType;
@@ -140,6 +134,17 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::TetrahedralCuttingTool", EditConditionHides, ClampMin = "0"), Category = "iMSTK|ToolSettings")
 		float PlaneWidth = 1.0;
+
+	*/
+
+	/** Disables the collisions of the object in iMSTK
+	* @return None
+	*/
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
+		bool ExecuteInteractions(TEnumAsByte<EToolType> ExecuteType);
+
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
+		bool ReleaseInteractions(TEnumAsByte<EToolType> ReleaseType);
 
 	/** Setter for the static mesh component. Required to be set in the construction of the blueprint for surface mesh tools.
 	* @param InputMeshComp Static mesh component to be set
@@ -170,35 +175,37 @@ public:
 	*/
 	std::shared_ptr<imstk::DynamicObject> GetToolObj();
 
+	void SetToolObj(std::shared_ptr<imstk::DynamicObject> NewToolObj);
+
 	/** Adds a grasping interaction to the tool. Multiple can be assigned to grasp more than one object
 	* @param InputPicking Grasping interaction to be added to the tool
 	* @return None
 	*/
-	void AddToolPicking(std::shared_ptr<imstk::PbdObjectGrasping> InputPicking);
+	//void AddToolPicking(std::shared_ptr<imstk::PbdObjectGrasping> InputPicking);
 
 	/** Adds a stitching interaction to the tool. Multiple can be assigned to stitch more than one object
 	* @param InputStitch Stitching interaction to be added to the tool
 	* @return None
 	*/
-	void AddStitching(std::shared_ptr<imstk::PbdObjectStitching> InputStitch);
+	//void AddStitching(std::shared_ptr<imstk::PbdObjectStitching> InputStitch);
 
 	/** Adds a cutting interaction to the tool. Multiple can be assigned to cut more than one object
 	* @param InputCutting Cutting interaction to be added to the tool
 	* @return None
 	*/
-	void AddCutting(std::shared_ptr<imstk::PbdObjectCutting> InputCutting);
+	//void AddCutting(std::shared_ptr<imstk::PbdObjectCutting> InputCutting);
 
-	void AddCutObject(std::shared_ptr<imstk::PbdObject> InputObject);
+	//void AddCutObject(std::shared_ptr<imstk::PbdObject> InputObject);
 
-	void AddTetCutting(std::shared_ptr<imstk::PbdObjectCellRemoval> InputCutting);
-	
-	void AddTetObject(UPBDModel* InputObject);
+	//void AddTetCutting(std::shared_ptr<imstk::PbdObjectCellRemoval> InputCutting);
+
+	//void AddTetObject(UPBDModel* InputObject);
 
 	/** Adds a Collision interaction to the tool. Multiple can be assigned to collide with more than one object. Array is used to disable and enable the collisions
 	* @param InputCollision Collision interaction to be added to the tool
 	* @return None
 	*/
-	void AddCollision(std::shared_ptr<imstk::CollisionInteraction> InputCollision);
+	//void AddCollision(std::shared_ptr<imstk::CollisionInteraction> InputCollision);
 
 	/** Calculates and returns the scale applied to Unreal's basic shapes in order to have the same shape as iMSTK's geometry
 	* @return FVector - Scale of the geometry or zero vector if not implemented
@@ -211,6 +218,17 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		FVector GetGeomOffset();
+
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|ControllerType")
+		TArray<FControllerToolFilter> ControllerFilters;
+
+	UPROPERTY()
+		TArray<UControllerTool*> ControllerTools;
+
+
+
 public:
 	// Called from the subsystem to clear shared pointers
 	virtual void UnInit();

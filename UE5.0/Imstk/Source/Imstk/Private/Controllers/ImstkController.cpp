@@ -64,6 +64,11 @@ std::shared_ptr<imstk::DynamicObject> UImstkController::GetToolObj()
 	return ToolObj;
 }
 
+void UImstkController::SetToolObj(std::shared_ptr<imstk::DynamicObject> NewToolObj)
+{
+	ToolObj = NewToolObj;
+}
+
 bool UImstkController::IsInitialized()
 {
 	return bIsInitialized;
@@ -71,55 +76,77 @@ bool UImstkController::IsInitialized()
 
 void UImstkController::DisableAllCollisions()
 {
-	for (std::shared_ptr<imstk::CollisionInteraction> Collision : Collisions) {
+	/*for (std::shared_ptr<imstk::CollisionInteraction> Collision : Collisions) {
 		Collision->setEnabled(false);
-	}
+	}*/
 }
 
 void UImstkController::EnableAllCollisions()
 {
-	for (std::shared_ptr<imstk::CollisionInteraction> Collision : Collisions) {
+	/*for (std::shared_ptr<imstk::CollisionInteraction> Collision : Collisions) {
 		Collision->setEnabled(true);
+	}*/
+}
+
+
+//void UImstkController::AddToolPicking(std::shared_ptr<imstk::PbdObjectGrasping> InputPicking)
+//{
+//	this->ToolPickings.Add(InputPicking);
+//}
+//
+//void UImstkController::AddStitching(std::shared_ptr<imstk::PbdObjectStitching> InputStitch)
+//{
+//	this->Stitchings.Add(InputStitch);
+//}
+//
+//void UImstkController::AddCutting(std::shared_ptr<imstk::PbdObjectCutting> InputCutting)
+//{
+//	this->Cuttings.Add(InputCutting);
+//}
+//
+//void UImstkController::AddCutObject(std::shared_ptr<imstk::PbdObject> InputObject)
+//{
+//	this->CutObjects.Add(InputObject);
+//}
+//
+//void UImstkController::AddCollision(std::shared_ptr<imstk::CollisionInteraction> InputCollision)
+//{
+//	this->Collisions.Add(InputCollision);
+//}
+//
+//void UImstkController::AddTetCutting(std::shared_ptr<imstk::PbdObjectCellRemoval> InputCutting)
+//{
+//	this->TetCuttings.Add(InputCutting);
+//}
+//
+//void UImstkController::AddTetObject(UPBDModel* InputObject)
+//{
+//	this->TetObjects.Add(InputObject);
+//}
+
+bool UImstkController::ExecuteInteractions(TEnumAsByte<EToolType> ExecuteType)
+{
+	bool Executed = false;
+	for (auto Tool : ControllerTools)
+	{
+		if (Tool->ControllerToolFilter.ToolType == ExecuteType)
+			Executed = Tool->Execute();
 	}
+	return Executed;
 }
 
-
-void UImstkController::AddToolPicking(std::shared_ptr<imstk::PbdObjectGrasping> InputPicking)
+bool UImstkController::ReleaseInteractions(TEnumAsByte<EToolType> ReleaseType)
 {
-	this->ToolPickings.Add(InputPicking);
+	bool Released = false;
+	for (auto Tool : ControllerTools)
+	{
+		if (Tool->ControllerToolFilter.ToolType == ReleaseType)
+			Released = Tool->Release();
+	}
+	return Released;
 }
 
-void UImstkController::AddStitching(std::shared_ptr<imstk::PbdObjectStitching> InputStitch)
-{
-	this->Stitchings.Add(InputStitch);
-}
-
-void UImstkController::AddCutting(std::shared_ptr<imstk::PbdObjectCutting> InputCutting)
-{
-	this->Cuttings.Add(InputCutting);
-}
-
-void UImstkController::AddCutObject(std::shared_ptr<imstk::PbdObject> InputObject)
-{
-	this->CutObjects.Add(InputObject);
-}
-
-void UImstkController::AddCollision(std::shared_ptr<imstk::CollisionInteraction> InputCollision)
-{
-	this->Collisions.Add(InputCollision);
-}
-
-void UImstkController::AddTetCutting(std::shared_ptr<imstk::PbdObjectCellRemoval> InputCutting)
-{
-	this->TetCuttings.Add(InputCutting);
-}
-
-void UImstkController::AddTetObject(UPBDModel* InputObject)
-{
-	this->TetObjects.Add(InputObject);
-}
-
-void UImstkController::SetStaticMeshComp(UStaticMeshComponent* InputMeshComp) 
+void UImstkController::SetStaticMeshComp(UStaticMeshComponent* InputMeshComp)
 {
 	this->MeshComp = InputMeshComp;
 }
@@ -137,7 +164,7 @@ FVector UImstkController::GetGeomOffset()
 void UImstkController::UnInit()
 {
 	ToolObj.reset();
-	for (std::shared_ptr<imstk::PbdObjectGrasping> ToolPicking : ToolPickings) {
+	/*for (std::shared_ptr<imstk::PbdObjectGrasping> ToolPicking : ToolPickings) {
 		ToolPicking.reset();
 	}
 	for (std::shared_ptr<imstk::PbdObjectStitching> Stitching : Stitchings) {
@@ -148,5 +175,8 @@ void UImstkController::UnInit()
 	}
 	for (std::shared_ptr<imstk::CollisionInteraction> Collision : Collisions) {
 		Collision.reset();
+	}*/
+	for (auto Tool : ControllerTools) {
+		Tool->UnInit();
 	}
 }

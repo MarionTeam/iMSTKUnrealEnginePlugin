@@ -46,9 +46,17 @@ void UControllerInteraction::Init()
 	if (!Model1->IsInitialized() || !Controller->IsInitialized())
 		return;
 
-	
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Testing new controllers~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	for (auto ControllerTool : Controller->ControllerTools) {
+		ControllerTool->CreateInteraction(Model1);
+	}
 
+	return;
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Testing new controllers~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	// Deprecated code for interactions
+
+	/*
 	// Initialize the interaction depending on the controller type
 	// TODO: maybe change this to a separate class for each interaction type (or keep like this since there are a limited number of interaction types that will likely be added in iMSTK)
 	// Separating would make more modular
@@ -112,12 +120,12 @@ void UControllerInteraction::Init()
 		if (UPBDModel* PBD = Cast<UPBDModel>(Model1)) {
 			std::shared_ptr<imstk::PbdObjectCutting> Cutting = std::make_shared<imstk::PbdObjectCutting>(PBD->PbdObject, Controller->GetToolObj());
 			if (PBD->bCleanMesh) {
-				/*std::shared_ptr<imstk::SurfaceMeshCut> SMC = std::make_shared<imstk::SurfaceMeshCut>();
+				std::shared_ptr<imstk::SurfaceMeshCut> SMC = std::make_shared<imstk::SurfaceMeshCut>();
 				SMC->setInputMesh(std::dynamic_pointer_cast<imstk::SurfaceMesh>(PBD->PbdObject->getVisualGeometry()));
 				SMC->setCutGeometry(Controller->GetToolObj()->getCollidingGeometry());
 				SMC->setEpsilon(Controller->CutEpsilon);
 				SMC->update();
-				Controller->AddCutting(SMC, PBD->PbdObject);*/
+				Controller->AddCutting(SMC, PBD->PbdObject);
 				Controller->AddCutObject(PBD->PbdObject);
 			}
 			Cutting->setEpsilon(Controller->CutEpsilon);
@@ -205,4 +213,5 @@ void UControllerInteraction::Init()
 	if (UImstkSettings::IsDebugging()) {
 		SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + FString(Controller->GetToolObj()->getName().c_str()));
 	}
+	*/
 }

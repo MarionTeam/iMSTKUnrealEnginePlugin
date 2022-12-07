@@ -12,6 +12,7 @@
 #include "imstkNeedle.h"
 #include "imstkRigidObjectController.h"
 #include "imstkDeviceManagerFactory.h"
+#include "ControllerNeedleTool.h"
 
 
 void USuturingController::InitializeComponent()
@@ -41,6 +42,10 @@ void USuturingController::InitController()
 	Super::InitController();
 	/*Needle = std::make_shared<NeedleObject>(SubsystemInstance->RigidBodyModel, this);
 	Needle->setForceThreshold(ForceThreshold);*/
+
+	UControllerTool* NewTool = NewObject<UControllerNeedleTool>();
+	EControllerObjectType ObjectType = NewTool->Init(this, FControllerToolFilter());
+	ControllerTools.Add(NewTool);
 
 	// Create the needle object
 	{

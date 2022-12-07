@@ -175,59 +175,59 @@ void UPBDModel::Init()
 
 
 	// Creates a tetrahedral cube for testing purposes
-	//if (temp) {
-	//	PbdModel = SubsystemInstance->PbdModel;
-	//	std::shared_ptr<imstk::TetrahedralMesh> prismMesh = imstk::GeometryUtils::toTetGrid(imstk::Vec3d(0, 0, 0), imstk::Vec3d(4.0, 4.0, 4.0), imstk::Vec3i(5, 5, 5));
-	//	std::shared_ptr<imstk::SurfaceMesh>     surfMesh = prismMesh->extractSurfaceMesh();
+	if (temp) {
+		PbdModel = SubsystemInstance->PbdModel;
+		std::shared_ptr<imstk::TetrahedralMesh> prismMesh = imstk::GeometryUtils::toTetGrid(imstk::Vec3d(0, 0, 0), imstk::Vec3d(4.0, 4.0, 4.0), imstk::Vec3i(5, 5, 5));
+		std::shared_ptr<imstk::SurfaceMesh>     surfMesh = prismMesh->extractSurfaceMesh();
 
-	//	/*std::shared_ptr<imstk::PbdModelConfig> pbdParams = PbdModel->getConfig();
-	//	pbdParams->m_gravity = imstk::Vec3d(0.0, 0.0, 0.0);
-	//	pbdParams->m_dt = 0.005;
-	//	pbdParams->m_iterations = 8;
-	//	pbdParams->m_linearDampingCoeff = 0.003;*/
+		/*std::shared_ptr<imstk::PbdModelConfig> pbdParams = PbdModel->getConfig();
+		pbdParams->m_gravity = imstk::Vec3d(0.0, 0.0, 0.0);
+		pbdParams->m_dt = 0.005;
+		pbdParams->m_iterations = 8;
+		pbdParams->m_linearDampingCoeff = 0.003;*/
 
-	//	//PbdObject = std::make_shared<imstk::PbdObject>("test");
+		//PbdObject = std::make_shared<imstk::PbdObject>("test");
 
-	//	PbdObject->setPhysicsGeometry(surfMesh);
-	//	PbdObject->setCollidingGeometry(surfMesh);
-	//	PbdObject->setVisualGeometry(surfMesh);
-	//	PbdObject->setDynamicalModel(PbdModel);
-	//	PbdObject->getPbdBody()->uniformMassValue = 0.05;
-	//	// Use volume+distance constraints, worse results. More performant (can use larger mesh)
-	//	PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Dihedral, 1000.0,
-	//		PbdObject->getPbdBody()->bodyHandle);
-	//	PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Distance, 500.0,
-	//		PbdObject->getPbdBody()->bodyHandle);
-	//	// Fix the borders
-	//	std::shared_ptr<imstk::VecDataArray<double, 3>> vertices = surfMesh->getVertexPositions();
-	//	for (int i = 0; i < surfMesh->getNumVertices(); i++)
-	//	{
-	//		const imstk::Vec3d& pos = (*vertices)[i];
-	//		if (pos[1] <=  - 4 * 0.5)
-	//		{
-	//			PbdObject->getPbdBody()->fixedNodeIds.push_back(i);
-	//		}
-	//	}
+		PbdObject->setPhysicsGeometry(surfMesh);
+		PbdObject->setCollidingGeometry(surfMesh);
+		PbdObject->setVisualGeometry(surfMesh);
+		PbdObject->setDynamicalModel(PbdModel);
+		PbdObject->getPbdBody()->uniformMassValue = 0.05;
+		// Use volume+distance constraints, worse results. More performant (can use larger mesh)
+		PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Dihedral, 1000.0,
+			PbdObject->getPbdBody()->bodyHandle);
+		PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Distance, 500.0,
+			PbdObject->getPbdBody()->bodyHandle);
+		// Fix the borders
+		std::shared_ptr<imstk::VecDataArray<double, 3>> vertices = surfMesh->getVertexPositions();
+		for (int i = 0; i < surfMesh->getNumVertices(); i++)
+		{
+			const imstk::Vec3d& pos = (*vertices)[i];
+			if (pos[1] <=  - 4 * 0.5)
+			{
+				PbdObject->getPbdBody()->fixedNodeIds.push_back(i);
+			}
+		}
 
-	//	ImstkCollidingObject = PbdObject;
+		ImstkCollidingObject = PbdObject;
 
-	//	SubsystemInstance->ActiveScene->addSceneObject(PbdObject);
+		SubsystemInstance->ActiveScene->addSceneObject(PbdObject);
 
-	//	TArray<FVector2D> UV0;
-	//	TArray<FColor> VertColors;
-	//	TArray<FProcMeshTangent> Tangents;
+		TArray<FVector2D> UV0;
+		TArray<FColor> VertColors;
+		TArray<FProcMeshTangent> Tangents;
 
-	//	TArray<FVector> Verts;
-	//	TArray<FVector> Normals;
-	//	TArray<int32> Triangles = UMathUtil::ToUnrealIntArray(surfMesh->getTriangleIndices());
+		TArray<FVector> Verts;
+		TArray<FVector> Normals;
+		TArray<int32> Triangles = UMathUtil::ToUnrealIntArray(surfMesh->getTriangleIndices());
 
-	//	Verts = UMathUtil::ToUnrealFVecArray(surfMesh->getVertexPositions(), true);
-	//	MeshComp->CreateMeshSection(0, Verts, Triangles, Normals, UV0, VertColors, Tangents, false);
+		Verts = UMathUtil::ToUnrealFVecArray(surfMesh->getVertexPositions(), true);
+		MeshComp->CreateMeshSection(0, Verts, Triangles, Normals, UV0, VertColors, Tangents, false);
 
 
-	//	Super::bIsInitialized = true;
-	//	return;
-	//}
+		Super::bIsInitialized = true;
+		return;
+	}
 
 	
 	// Create and set imstk geometry to unreal values

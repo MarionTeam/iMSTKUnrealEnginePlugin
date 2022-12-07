@@ -18,7 +18,7 @@
   * TODO: Maybe make it not inherit from ImstkController, because it requires more than one tool obj for collisions, etc
   * Note: Needle only works with iMSTK scene scale set to ~100 since it is currently always the same size within the iMSTK scene and is scaled up/down for Unreal
   */
-UCLASS(ClassGroup = (Imstk), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Imstk), meta = (BlueprintSpawnableComponent), hidecategories = ("iMSTK|ControllerType"))
 class IMSTK_API USuturingController : public UImstkController
 {
 	GENERATED_BODY()

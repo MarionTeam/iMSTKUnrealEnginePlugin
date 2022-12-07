@@ -81,51 +81,51 @@ protected:
 	/** Starts a vertex grasp if the tool is set to a grasping tool and a PbdObjectGrasping interaction are set on the controller
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		void BeginVertexGrasp();
+	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
+		//void BeginVertexGrasp();
 
 	/** Starts a cell grasp if the tool is set to a grasping tool and a PbdObjectGrasping interaction are set on the controller
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		void BeginCellGrasp();
+	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
+		//void BeginCellGrasp();
 
 	/** Starts a ray point grasp from RayStart in the direction provided if the tool is set to a grasping tool and a PbdObjectGrasping interaction are set on the controller
 	* @param RayStart Starting point of the ray
 	* @param RayDir Direction of the ray to be cast
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		void BeginRayPointGrasp(FVector RayStart, FVector RayDir);
+	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
+		//void BeginRayPointGrasp(FVector RayStart, FVector RayDir);
 
 	/** Ends the current grasp
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		void EndGrasp();
+	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
+		//void EndGrasp();
 
 	/** Creates a stitching interaction between the two vertices of the line mesh tool. Requires geometry to be set to a LineMeshTool.
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		void BeginStitch();
+	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
+		//void BeginStitch();
 
 	/** Applies the cut for each PbdObjectCutting interaction on the controller. Requires geometry to be set to a SurfaceMeshTool.
 	* @return None
 	*/
-	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		void BeginCut();
+	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
+		//void BeginCut();
 
-	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		bool BeginTetrahedralCut();
+	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
+		//bool BeginTetrahedralCut();
 
-	bool SplitTest(const std::array<imstk::Vec3d, 4>& InputTetVerts,
+	/*bool SplitTest(const std::array<imstk::Vec3d, 4>& InputTetVerts,
 		const imstk::Vec3d& PlaneOrigin,
 		const imstk::Vec3d& U, const double Width,
 		const imstk::Vec3d& V, const double Height,
 		const imstk::Vec3d& N);
 
-	bool IsIntersect(const double A, const double B, const double C, const double D);
+	bool IsIntersect(const double A, const double B, const double C, const double D);*/
 
 	// Mass of the object in iMSTK
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
@@ -167,30 +167,30 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|CustomController")
 		void SetGhostComponents(USceneComponent* SceneComponent, TArray<UStaticMeshComponent*> StaticMeshComponents);
 
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|Force")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|ForceTool|Force")
 		bool bIgnoreAngularForce = true;
 
 	// Spring force of the force applied to the tool
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool && bIgnoreAngularForce", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|Force")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool && bIgnoreAngularForce", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|ForceTool|Force")
 		float SpringForce = 10000;
 
 	// Spring damping of the force applied to the tool
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool && bIgnoreAngularForce", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|Force")
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bForceTool && bIgnoreAngularForce", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|ForceTool|Force")
 		float DamperForce = 100;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|Force")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|ForceTool|Force")
 		FVector LinearKs = FVector(8000000.0, 8000000.0, 8000000.0);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|Force")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|ForceTool|Force")
 		FVector AngularKs = FVector(10000.0, 10000.0, 10000.0);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|Force")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|ForceTool|Force")
 		double LinearKd = 10000.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|Force")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|ForceTool|Force")
 		double AngularKd = 300.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|Force")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|ForceTool|Force")
 		double ForceScale = 1;
 
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|CustomController")

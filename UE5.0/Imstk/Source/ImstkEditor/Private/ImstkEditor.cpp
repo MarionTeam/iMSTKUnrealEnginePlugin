@@ -76,22 +76,22 @@ void FImstkEditorModule::AddMenuExtension(const FMenuExtensionDelegate& extensio
 
 void FImstkEditorModule::MakePulldownMenu(FMenuBarBuilder& menuBuilder)
 {
-	menuBuilder.AddPullDownMenu(
+	/*menuBuilder.AddPullDownMenu(
 		FText::FromString("iMSTK"),
 		FText::FromString("Open the iMSTK menu"),
 		FNewMenuDelegate::CreateRaw(this, &FImstkEditorModule::FillPulldownMenu),
 		"iMSTK",
 		FName(TEXT("iMSTKMenu"))
-	);
+	);*/
 }
 
 void FImstkEditorModule::FillPulldownMenu(FMenuBuilder& menuBuilder)
 {
 	// Create tools in menu
 	// TODO: currently the menu tool isnt really used
-	menuBuilder.BeginSection("TaskGraph", FText::FromString("Task Graph"));
+	/*menuBuilder.BeginSection("TaskGraph", FText::FromString("Task Graph"));
 	menuBuilder.AddMenuSeparator(FName("Task_Graph"));
-	menuBuilder.EndSection();
+	menuBuilder.EndSection();*/
 }
 
 void FImstkEditorModule::AddModuleListeners()
