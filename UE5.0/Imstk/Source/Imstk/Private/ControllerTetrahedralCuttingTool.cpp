@@ -48,7 +48,7 @@ bool UControllerTetrahedralCuttingTool::Execute()
 
 		for (int j = 0; j < CutObjects.Num(); j++) {
 			bool bRemoved = false;
-			std::shared_ptr<imstk::TetrahedralMesh> TissueMesh = std::dynamic_pointer_cast<imstk::TetrahedralMesh>(CutObjects[j]->ImstkCollidingObject);
+			std::shared_ptr<imstk::TetrahedralMesh> TissueMesh = std::dynamic_pointer_cast<imstk::TetrahedralMesh>(CutObjects[j]->PbdObject->getPhysicsGeometry());
 
 			// TODO: hardcoded for plane in this direction
 			// Default config of the tool is pointing downwards on y

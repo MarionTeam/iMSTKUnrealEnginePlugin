@@ -173,7 +173,7 @@ void UImstkSubsystem::ImstkInit()
 	if (UImstkSettings::IsDebugging()) {
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Subsystem Initialized"));
-		UE_LOG(LogTemp, Error, TEXT("Subsystem Initialized"));
+		UE_LOG(LogTemp, Warning, TEXT("Subsystem Initialized"));
 	}
 
 	if (HapticManager) {
@@ -373,7 +373,7 @@ void UImstkSubsystem::LogToUnrealAndImstk(FString Message)
 	if (UImstkSettings::IsDebugging()) {
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, Message);
-		UE_LOG(LogTemp, Error, TEXT("%s"), *Message);
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *Message);
 	}
 	LOG(WARNING) << std::string(TCHAR_TO_UTF8(*Message));
 }

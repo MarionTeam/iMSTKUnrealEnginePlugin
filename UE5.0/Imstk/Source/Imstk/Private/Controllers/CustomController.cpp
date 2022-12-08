@@ -134,6 +134,12 @@ void UCustomController::InitController()
 		if (ObjectType == EControllerObjectType::Null)
 			continue;
 		else if (!PbdToolObj && ObjectType == EControllerObjectType::PbdToolObject) {
+			// Currently tools shouldnt really be plane so convert to surface mesh
+			if (std::shared_ptr<imstk::Plane> PlaneGeom = std::dynamic_pointer_cast<imstk::Plane>(ToolGeom)) {
+				std::shared_ptr<imstk::SurfaceMesh> SurfGeom = imstk::GeometryUtils::toSurfaceMesh(PlaneGeom);
+				ToolGeom = SurfGeom;
+			}
+
 			std::shared_ptr<imstk::PbdModel> PbdModel = SubsystemInstance->PbdModel;
 			PbdToolObj = std::make_shared<imstk::PbdObject>(TCHAR_TO_UTF8(*this->GetName()));
 			ToolObj = PbdToolObj;
@@ -189,6 +195,10 @@ void UCustomController::InitController()
 
 	SubsystemInstance->ActiveScene->addSceneObject(ToolObj);
 	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + GetFName().ToString());
+
+	if (!PbdToolObj && !RigidToolObj)
+		SubsystemInstance->LogToUnrealAndImstk("Error initializing " + GetFName().ToString());
+
 	Super::bIsInitialized = true;
 	if (PbdToolObj && RigidToolObj)
 		SubsystemInstance->LogToUnrealAndImstk("Warning: Both a Pbd Object and Rigid object were created on " + GetFName().ToString() + ". This can result in unexpected behavior.");
