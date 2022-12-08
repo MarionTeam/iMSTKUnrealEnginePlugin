@@ -78,6 +78,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
 		float RigidBodyCompliance;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
+		bool bUseCorrectVelocity = true;
+
 	/*UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Collision Interaction")
 		int CollisionIterations = 5;*/
 

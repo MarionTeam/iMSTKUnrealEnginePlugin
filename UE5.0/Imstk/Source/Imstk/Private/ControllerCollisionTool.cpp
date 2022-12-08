@@ -49,6 +49,7 @@ bool UControllerCollisionTool::CreateInteraction(UDynamicalModel* OtherObject)
 		Interaction->setRigidBodyCompliance(ControllerToolFilter.CollisionToolStruct.RigidBodyCompliance);
 		Interaction->setDeformableStiffnessA(ControllerToolFilter.CollisionToolStruct.Stiffness);
 		Interaction->setDeformableStiffnessB(ControllerToolFilter.CollisionToolStruct.Stiffness);
+		Interaction->setUseCorrectVelocity(ControllerToolFilter.CollisionToolStruct.bUseCorrectVelocity);
 		//Interaction->setUseCorrectVelocity(false);
 		SubsystemInstance->ActiveScene->addInteraction(Interaction);
 		Collisions.Add(Interaction);

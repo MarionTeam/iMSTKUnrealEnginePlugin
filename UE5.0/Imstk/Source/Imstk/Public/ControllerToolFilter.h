@@ -66,6 +66,9 @@ struct FControllerCollisionToolStruct
 
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = "0"), BlueprintReadWrite, Category = "iMSTK|ToolSettings")
 		double Restitution = 0.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|ToolSettings")
+		bool bUseCorrectVelocity = true;
 };
 
 USTRUCT(BlueprintType)

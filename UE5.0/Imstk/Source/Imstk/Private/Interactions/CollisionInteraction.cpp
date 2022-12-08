@@ -151,7 +151,7 @@ void UCollisionInteraction::Init()
 		PBDInteraction->setDeformableStiffnessB(Stiffness);
 		PBDInteraction->setRigidBodyCompliance(RigidBodyCompliance);
 
-		PBDInteraction->setUseCorrectVelocity(false);
+		PBDInteraction->setUseCorrectVelocity(bUseCorrectVelocity);
 	}
 
 	/*if (std::dynamic_pointer_cast<imstk::PbdCollisionHandling>(Interaction->getCollisionHandlingAB())) {
