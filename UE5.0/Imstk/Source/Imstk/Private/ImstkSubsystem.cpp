@@ -61,7 +61,7 @@
 #include "SavePackage.h"
 #endif
 
-static float prevTime = 0;
+//static float prevTime = 0;
 
 void FImstkSubsystemAsyncCallback::OnPreSimulate_Internal()
 {
@@ -376,6 +376,11 @@ void UImstkSubsystem::LogToUnrealAndImstk(FString Message)
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *Message);
 	}
 	LOG(WARNING) << std::string(TCHAR_TO_UTF8(*Message));
+}
+
+void UImstkSubsystem::ReInitScene() 
+{
+	ActiveScene->initialize();
 }
 
 void UImstkSubsystem::Deinitialize()

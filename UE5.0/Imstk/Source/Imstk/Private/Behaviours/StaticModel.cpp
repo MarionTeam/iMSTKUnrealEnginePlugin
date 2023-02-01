@@ -62,7 +62,10 @@ void UStaticModel::BeginPlay()
 
 void UStaticModel::Init()
 {
+	if (bDelayInit)
+		return;
 	Super::Init();
+
 	// Create the imstk object using the geometry set in the geometry filter
 	ImstkCollidingObject = std::make_shared<imstk::CollidingObject>(TCHAR_TO_UTF8(*(Owner->GetName())));
 	std::shared_ptr<imstk::Geometry> Geom = GetImstkGeometry();
@@ -74,9 +77,17 @@ void UStaticModel::Init()
 	Geom->translate(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), imstk::Geometry::TransformType::ApplyToData);
 
 	ImstkCollidingObject->setCollidingGeometry(Geom);
+	ImstkCollidingObject->setVisualGeometry(Geom);
 
-	SubsystemInstance->ActiveScene->addSceneObject(ImstkCollidingObject);
+	if (!bDelayInit) {
+		SubsystemInstance->ActiveScene->addSceneObject(ImstkCollidingObject);
 
-	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
-	Super::bIsInitialized = true;
+		SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
+		Super::bIsInitialized = true;
+	}
 }
+
+//void UStaticModel::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+//{
+//	LOG(WARNING) << ImstkCollidingObject->getCollidingGeometry()->getTransform();
+//}

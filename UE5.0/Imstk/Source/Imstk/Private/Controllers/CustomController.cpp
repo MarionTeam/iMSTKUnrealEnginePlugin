@@ -124,6 +124,8 @@ void UCustomController::InitController()
 			}
 		}
 	}
+	else
+		ToolGeom->scale(UMathUtil::ToImstkVec3d(GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Testing new controllers~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	for (auto ToolFilter : ControllerFilters) {

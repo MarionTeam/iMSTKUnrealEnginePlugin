@@ -46,11 +46,16 @@ void UControllerInteraction::Init()
 	if (!Model1->IsInitialized() || !Controller->IsInitialized())
 		return;
 
+	Interactions.Empty();
+
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Testing new controllers~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	for (auto ControllerTool : Controller->ControllerTools) {
-		ControllerTool->CreateInteraction(Model1);
+		auto NewInteraction = ControllerTool->CreateInteraction(Model1);
+		if (NewInteraction)
+			Interactions.Add(NewInteraction);
 	}
-
+	if (Interactions.Num() > 0)
+		Model1->AddInteraction(this);
 	return;
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Testing new controllers~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -214,4 +219,15 @@ void UControllerInteraction::Init()
 		SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + FString(Controller->GetToolObj()->getName().c_str()));
 	}
 	*/
+}
+
+void UControllerInteraction::UnInit() {
+	for (auto ControllerTool : Controller->ControllerTools) {
+		ControllerTool->UnInit();
+	}
+
+
+	for (auto Interaction : Interactions)
+		Interaction->reset();
+	Interactions.Empty();
 }

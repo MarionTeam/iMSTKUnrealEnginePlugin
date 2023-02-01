@@ -34,7 +34,7 @@ EControllerObjectType UControllerGraspingTool::Init(UImstkController* Controller
 		return EControllerObjectType::PbdToolObject;
 }
 
-bool UControllerGraspingTool::CreateInteraction(UDynamicalModel* OtherObject)
+std::shared_ptr<imstk::SceneObject> UControllerGraspingTool::CreateInteraction(UDynamicalModel* OtherObject)
 {
 	if (std::shared_ptr<imstk::PbdObject> DeformableObj = std::dynamic_pointer_cast<imstk::PbdObject>(OtherObject->ImstkCollidingObject)) {
 		std::shared_ptr<imstk::PbdObjectGrasping> ToolPicking;
@@ -52,15 +52,14 @@ bool UControllerGraspingTool::CreateInteraction(UDynamicalModel* OtherObject)
 		ToolPicking->setStiffness(ControllerToolFilter.GraspingToolStruct.GraspStiffness);
 		SubsystemInstance->ActiveScene->addInteraction(ToolPicking);
 		ToolPickings.Add(ToolPicking);
+		SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
+		return ToolPicking;
 		
 	}
 	else {
 		SubsystemInstance->LogToUnrealAndImstk("Wrong model type. Grasped model must be deformable. Grasping interaction could not be created between  " + FString(DeformableObj->getName().c_str()) + " " + FString(ControllerComponent->GetToolObj()->getName().c_str()) + ".");
-		return false;
+		return nullptr;
 	}
-
-	SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
-	return true;
 }
 
 

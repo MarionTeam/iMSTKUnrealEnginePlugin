@@ -46,34 +46,44 @@ public:
 
 	virtual void UpdateModel() override;
 
+	// One deformable model the connective tissue is generated between
 	UPROPERTY(EditAnywhere, Category = "iMSTK|ConnectiveTissue")
 		AActor* PBDActorA;
 
+	// One deformable model the connective tissue is generated between
 	UPROPERTY(EditAnywhere, Category = "iMSTK|ConnectiveTissue")
 		AActor* PBDActorB;
 
+	// Static mesh that is generated along the spline
 	UPROPERTY(EditAnywhere, Category = "iMSTK|ConnectiveTissue|Spline")
 		UStaticMesh* SplineMesh;
 
+	// Forward direction of the spine mesh
 	UPROPERTY(EditAnywhere, Category = "iMSTK|ConnectiveTissue|Spline")
 		TEnumAsByte<ESplineMeshAxis::Type> ForwardAxis;
 
+	// Material for the spline mesh
 	UPROPERTY(EditAnywhere, Category = "iMSTK|ConnectiveTissue|Spline")
 		class UMaterialInterface* SplineMeshMaterial;
 
+	// Maximum distance the connective tissue is made. Warning: Increasing can significantly impact performance
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = "0"), Category = "iMSTK|ConnectiveTissue")
-		float MaxDistance = 10;
+		float MaxDistance = 100;
 
-	// Warning: Increasing can significantly impact performance
+	// Number of strands per face on the deformable models. Warning: Increasing can significantly impact performance
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = "0"), Category = "iMSTK|ConnectiveTissue")
 		float StrandsPerFace = 2;
 
-	// Warning: Increasing can significantly impact performance
+	// Number of segments on each strand between the deformable models. Warning: Increasing can significantly impact performance
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = "0"), Category = "iMSTK|ConnectiveTissue")
 		int SegmentsPerStrand = 2;
 
 	UPROPERTY(EditAnywhere, Category = "iMSTK|ConnectiveTissue")
 		bool bIsTearable = false;
+
+	UPROPERTY(EditAnywhere, Category = "iMSTK|ConnectiveTissue")
+		bool bIsBurnable = false;
+
 
 protected:
 	UPROPERTY()

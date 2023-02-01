@@ -53,7 +53,7 @@ public:
 	UCollisionInteraction(float F, float S, float R) : Friction(F), Stiffness(S), Restitution(R) { }
 
 	// The type of collision used in the interaction
-	ECollisionInteractionType CollisionType = ECollisionInteractionType::Auto;
+	//ECollisionInteractionType CollisionType = ECollisionInteractionType::Auto;
 	
 	// The first model in the interaction that the collision will be made between. Can be set in blueprint. 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
@@ -62,6 +62,10 @@ public:
 	// The second model in the interaction that the collision will be made between. Can be set in blueprint. 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
 		UDynamicalModel* Model2;
+
+	// The name of the collision type to be used. Leave blank for automatic selection
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
+		FString CollisionType;
 
 	// Friction of the interaction
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
@@ -89,6 +93,11 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|Collision Interaction")
 		virtual void Init() override;
+
+	virtual void UnInit() override;
+
+	TArray<std::shared_ptr<imstk::SceneObject>> Interactions;
+
 protected:
 	/** Determines the type of collision using the models set on the CollisionInteraction
 	* @return CollisionInteractionType - The type of collision that was determined. Returns Auto type if collision type could not be found

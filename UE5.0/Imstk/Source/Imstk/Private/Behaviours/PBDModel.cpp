@@ -12,11 +12,12 @@
 #include "imstkPbdConstraintContainer.h"
 #include "imstkPbdFemTetConstraint.h"
 #include "imstkPbdModelConfig.h"
+#include "imstkPbdObjectCollision.h"
 
 #include "imstkCleanMesh.h"
 #include "imstkMeshIO.h"
 #include "imstkVisualModel.h"
-
+#include "CollisionInteraction.h"
 #include "Engine/GameEngine.h"
 
 
@@ -114,6 +115,7 @@ void UPBDModel::InitializeComponent()
 
 			ConvertStaticToProceduralMesh(StaticMesh, MeshComp);
 
+			MeshComp->SetVisibility(StaticMesh->GetVisibleFlag());
 			StaticMesh->SetVisibility(false);
 		}
 		else
@@ -126,7 +128,11 @@ void UPBDModel::InitializeComponent()
 }
 void UPBDModel::Init()
 {
+	if (bDelayInit)
+		return;
+
 	Super::Init();
+
 	if (GeomFilter.GeomType != EGeometryType::PointSet && GeomFilter.GeomType != EGeometryType::SurfaceMesh && !bRigidBody) {
 		SubsystemInstance->LogToUnrealAndImstk("Non Rigid PBDModels can only be PointSets or SurfaceMeshes");
 		return;
@@ -158,12 +164,22 @@ void UPBDModel::Init()
 		else
 			PbdObject->setPhysicsGeometry(imstk::MeshIO::read(std::string(TCHAR_TO_UTF8(*(ContentDir + PhysicsGeometryFilePath)))));*/
 
+		if (MeshComp)
+			Geom->scale(UMathUtil::ToImstkVec3d(MeshComp->GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
+		else
+			Geom->scale(UMathUtil::ToImstkVec3d(Owner->GetActorScale(), false), imstk::Geometry::TransformType::ApplyToData);
+
+		Geom->updatePostTransformData();
+		PbdObject->setDynamicalModel(PbdModel);
+
+		if (MeshComp)
+			PbdObject->getPbdBody()->setRigid(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), Mass, UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()), imstk::Mat3d::Identity() * RBInertiaMultiplier);
+		else
+			PbdObject->getPbdBody()->setRigid(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), Mass, UMathUtil::ToImstkQuat(Owner->GetActorQuat()), imstk::Mat3d::Identity() * RBInertiaMultiplier);
+
 		PbdObject->setVisualGeometry(Geom);
 		PbdObject->setCollidingGeometry(Geom);
 		PbdObject->setPhysicsGeometry(Geom);
-		PbdObject->setDynamicalModel(PbdModel);
-
-		PbdObject->getPbdBody()->setRigid(UMathUtil::ToImstkVec3d(Owner->GetActorLocation(), true), Mass, imstk::Quatd::Identity(), imstk::Mat3d::Identity() * RBInertiaMultiplier);
 
 		ImstkCollidingObject = PbdObject;
 
@@ -203,7 +219,7 @@ void UPBDModel::Init()
 		for (int i = 0; i < surfMesh->getNumVertices(); i++)
 		{
 			const imstk::Vec3d& pos = (*vertices)[i];
-			if (pos[1] <=  - 4 * 0.5)
+			if (pos[1] <= -4 * 0.5)
 			{
 				PbdObject->getPbdBody()->fixedNodeIds.push_back(i);
 			}
@@ -229,7 +245,7 @@ void UPBDModel::Init()
 		return;
 	}
 
-	
+
 	// Create and set imstk geometry to unreal values
 	if (!TetrahedralMesh) {
 		// Create the PbdObject using the geometry of the static mesh
@@ -335,7 +351,7 @@ void UPBDModel::Init()
 	ProcessBoundaryConditions();
 
 	PbdObject->getPbdBody()->uniformMassValue = Mass;
-	PbdModel->getConfig()->setBodyDamping(PbdObject->getPbdBody()->bodyHandle, DampingCoeff);
+	PbdModel->getConfig()->setBodyDamping(PbdObject->getPbdBody()->bodyHandle, LinearDampingCoefficient, AngularDampingCoefficient);
 
 	for (const int Num : FixedNodes) {
 		PbdObject->getPbdBody()->fixedNodeIds.push_back(Num);
@@ -382,6 +398,10 @@ void UPBDModel::Init()
 		PbdModel->getConfig()->m_dt = SubsystemInstance->TickInterval;
 
 	ImstkCollidingObject = PbdObject;
+	// Set the owner to origin of the game since imstk values are world values
+	Owner->SetActorLocation(FVector::ZeroVector);
+	Owner->SetActorRotation(FQuat::Identity);
+	MeshComp->SetWorldScale3D(FVector::OneVector);
 
 	SubsystemInstance->ActiveScene->addSceneObject(PbdObject);
 
@@ -398,11 +418,6 @@ void UPBDModel::Init()
 			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "X: " + FString::SanitizeFloat(Vert.x()) + " Y: " + FString::SanitizeFloat(Vert.y()) + " Z: " + FString::SanitizeFloat(Vert.z()));
 		//}
 	//}
-
-	// Set the owner to origin of the game since imstk values are world values
-	Owner->SetActorLocation(FVector::ZeroVector);
-	Owner->SetActorRotation(FQuat::Identity);
-	MeshComp->SetWorldScale3D(FVector::OneVector);
 
 	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
 
@@ -532,7 +547,7 @@ void UPBDModel::UpdateModel()
 	}
 }
 
-void UPBDModel::UpdateVisualFromTet() 
+void UPBDModel::UpdateVisualFromTet()
 {
 	std::shared_ptr<imstk::TetrahedralMesh> TetMesh = std::dynamic_pointer_cast<imstk::TetrahedralMesh>(PbdObject->getPhysicsGeometry());
 	std::shared_ptr<imstk::SurfaceMesh> ExtractedSurfMesh = TetMesh->extractSurfaceMesh();
@@ -570,10 +585,33 @@ void UPBDModel::UpdateVisualFromTet()
 	MeshComp->ClearMeshSection(0);
 	MeshComp->CreateMeshSection(0, Verts, Triangles, Normals, UV0, VertColors, Tangents, false);
 
+	// Re-create new map with newly extracted surface mesh
 	auto Map = std::make_shared<imstk::PointwiseMap>(TetMesh, ExtractedSurfMesh);
 	PbdObject->setPhysicsToCollidingMap(Map);
 	PbdObject->setPhysicsToVisualMap(Map);
 	Map->compute();
+
+	// TODO: fix naming here
+
+	TArray<UCollisionInteraction*> ToReInit;
+	for (int i = 0; i < Interactions.Num(); i++) {
+		for (auto ImstkInteraction : Interactions[i]->Interactions)
+			if (std::dynamic_pointer_cast<imstk::PbdObjectCollision>(ImstkInteraction)) {
+				SubsystemInstance->ActiveScene->removeSceneObject(ImstkInteraction);
+				ToReInit.Add(Interactions[i]);
+
+				ImstkInteraction.reset();
+				Interactions[i] = nullptr;
+			}
+	}
+	Interactions.RemoveAll([](const UCollisionInteraction* Ptr) {
+		return Ptr == nullptr;
+		});
+
+	for (auto InitInteraction : ToReInit) {
+		InitInteraction->Init();
+	}
+	SubsystemInstance->ActiveScene->initialize();
 }
 
 void UPBDModel::UnInit()

@@ -21,7 +21,7 @@ EControllerObjectType UControllerCollisionTool::Init(UImstkController* Controlle
 	return EControllerObjectType::PbdToolObject;
 }
 
-bool UControllerCollisionTool::CreateInteraction(UDynamicalModel* OtherObject)
+std::shared_ptr<imstk::SceneObject> UControllerCollisionTool::CreateInteraction(UDynamicalModel* OtherObject)
 {
 	//std::shared_ptr<imstk::PbdObjectCollision> Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(OtherObject), ControllerComponent->GetToolObj());
 	//Interaction->setFriction(ControllerToolFilter->CollisionToolStruct.Friction);
@@ -54,13 +54,12 @@ bool UControllerCollisionTool::CreateInteraction(UDynamicalModel* OtherObject)
 		SubsystemInstance->ActiveScene->addInteraction(Interaction);
 		Collisions.Add(Interaction);
 		//Controller->AddCollision(Interaction);
+		SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
+
+		return Interaction;
 	}
 	else {
 		SubsystemInstance->LogToUnrealAndImstk("Creating interaction between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()) + " failed");
-		return false;
+		return nullptr;
 	}
-
-	SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
-
-	return true;
 }

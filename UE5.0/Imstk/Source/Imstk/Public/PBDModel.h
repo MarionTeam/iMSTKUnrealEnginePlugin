@@ -33,8 +33,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "iMSTK|RigidBody")
 		bool bRigidBody = false;
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bRigidBody", EditConditionHides), Category = "iMSTK|RigidBody")
-		FVector RBPos = FVector::ZeroVector;
+	//UPROPERTY(EditAnywhere, meta = (EditCondition = "bRigidBody", EditConditionHides), Category = "iMSTK|RigidBody")
+		//FVector RBPos = FVector::ZeroVector;
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bRigidBody", EditConditionHides), Category = "iMSTK|RigidBody")
 		double RBInertiaMultiplier = 1;
 

@@ -7,6 +7,7 @@
 #include "ControllerCuttingTool.h"
 #include "ControllerTetrahedralCuttingTool.h"
 #include "ControllerLevelsetTool.h"
+#include "ControllerBurningTool.h"
 
 UControllerTool* FControllerToolFilter::CreateTool() {
 	switch (ToolType)
@@ -23,6 +24,8 @@ UControllerTool* FControllerToolFilter::CreateTool() {
 		return NewObject<UControllerLevelsetTool>();
 	case EToolType::TetrahedralCuttingTool:
 		return NewObject<UControllerTetrahedralCuttingTool>();
+	case EToolType::BurningTool:
+		return NewObject<UControllerBurningTool>();
 	default:
 		return nullptr;
 	}

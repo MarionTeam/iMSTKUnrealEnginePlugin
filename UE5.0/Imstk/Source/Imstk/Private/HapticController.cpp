@@ -105,6 +105,9 @@ void UHapticController::InitController()
 			}
 		}
 	}
+	else 
+		ToolGeom->scale(UMathUtil::ToImstkVec3d(GetComponentScale(), false), imstk::Geometry::TransformType::ApplyToData);
+	
 
 	if (MeshComp)
 		ToolGeom->rotate(UMathUtil::ToImstkQuat(MeshComp->GetComponentRotation().Quaternion()), imstk::Geometry::TransformType::ApplyToData);
@@ -333,6 +336,43 @@ void UHapticController::UpdateUnrealPosRot()
 		SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec((*PbdToolObj->getPbdBody()->vertices)[0], true), UMathUtil::ToUnrealFQuat((*PbdToolObj->getPbdBody()->orientations)[0]) * OrientationOffset);
 	else
 		SetWorldLocationAndRotation(UMathUtil::ToUnrealFVec(RigidToolObj->getRigidBody()->getPosition(), true), UMathUtil::ToUnrealFQuat(RigidToolObj->getRigidBody()->getOrientation()) * OrientationOffset);
+}
+
+void UHapticController::InitAction(EToolType ToolType, const int Button)
+{
+	// TODO: Currently only one action button, also should try to phase out the other inits for grasping and cutting and use this
+	ActionButtons.Add(Button);
+	ToolTypes.Add(ToolType);
+
+	//if (ToolPickings.Num() > 0) {
+	imstk::connect<imstk::ButtonEvent>(DeviceClient, &imstk::DeviceClient::buttonStateChanged,
+		[&](imstk::ButtonEvent* e)
+		{
+			if (e->m_buttonState == BUTTON_PRESSED)
+			{
+				for (int i = 0; i < ActionButtons.Num(); i++) {
+					if (e->m_button == ActionButtons[i])
+					{
+						for (auto Tool : ControllerTools) {
+							if (Tool->ControllerToolFilter.ToolType == ToolTypes[i])
+								Tool->Execute();
+						}
+					}
+				}
+			}
+			else if (e->m_buttonState == BUTTON_RELEASED)
+			{
+				for (int i = 0; i < ActionButtons.Num(); i++) {
+					if (e->m_button == ActionButtons[i])
+					{
+						for (auto Tool : ControllerTools) {
+							if (Tool->ControllerToolFilter.ToolType == ToolTypes[i])
+								Tool->Release();
+						}
+					}
+				}
+			}
+		});
 }
 
 void UHapticController::InitGrasping(const int Button)

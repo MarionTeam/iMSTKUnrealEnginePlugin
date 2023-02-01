@@ -3,6 +3,7 @@
 
 #include "DynamicalModel.h"
 #include "KismetProceduralMeshLibrary.h"
+#include "CollisionInteraction.h"
 
 
 void UDynamicalModel::InitializeComponent()
@@ -17,9 +18,19 @@ void UDynamicalModel::InitializeComponent()
 
 		if (MeshComp)
 			MeshComp->SetMobility(EComponentMobility::Type::Movable);
-		Owner->SetActorEnableCollision(false);
+		//Owner->SetActorEnableCollision(false);
 		SubsystemInstance = GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>();
 	}
+}
+
+TArray<UCollisionInteraction*> UDynamicalModel::GetInteractions()
+{
+	return Interactions;
+}
+
+void UDynamicalModel::AddInteraction(UCollisionInteraction* Interaction)
+{
+	Interactions.Add(Interaction);
 }
 
 std::shared_ptr<imstk::Geometry> UDynamicalModel::GetImstkGeometry()
@@ -52,6 +63,51 @@ FVector UDynamicalModel::GetGeomScale()
 FVector UDynamicalModel::GetGeomOffset()
 {
 	return GeomFilter.GetGeomOffset();
+}
+
+void UDynamicalModel::RemoveFromScene()
+{
+	// Remove all interactions
+	for (int i = 0; i < Interactions.Num(); i++) {
+		//TArray<std::shared_ptr<imstk::SceneObject>> ToReset;
+
+		for (int j = 0; j < Interactions[i]->Interactions.Num(); j++) {
+			SubsystemInstance->ActiveScene->removeSceneObject(Interactions[i]->Interactions[j]);
+			SubsystemInstance->AllInteractions.Remove(Interactions[i]);
+			//ToReset.Add(Interactions[i]->Interactions[j]);
+			//Interactions[i]->Interactions[j].reset();
+			Interactions[i]->UnInit();
+		}
+
+
+
+		/*for (auto ImstkInteraction : Interactions[i]->Interactions) {
+			SubsystemInstance->ActiveScene->removeSceneObject(ImstkInteraction);
+			SubsystemInstance->AllInteractions.Remove(Interactions[i]);
+
+			ImstkInteraction.reset();
+			Interactions[i]->UnInit();
+		}*/
+	}
+	Interactions.Empty();
+
+	SubsystemInstance->ActiveScene->removeSceneObject(ImstkCollidingObject);
+	SubsystemInstance->ActiveScene->initialize();
+	SubsystemInstance->AllBehaviours.Remove(this);
+	bIsInitialized = false;
+	SetComponentTickEnabled(false);
+	UnInit();
+}
+
+FVector UDynamicalModel::GetGeometryPosition()
+{
+	return UMathUtil::ToUnrealFVec(ImstkCollidingObject->getCollidingGeometry()->getCenter(), true);
+}
+
+void UDynamicalModel::AddToScene() 
+{
+	bDelayInit = false;
+	Init();
 }
 
 void UDynamicalModel::UnInit()

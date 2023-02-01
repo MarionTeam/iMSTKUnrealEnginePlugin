@@ -30,4 +30,6 @@ public:
 	* @return None
 	*/
 	virtual void Init() override;
+
+	virtual void UnInit() override;
 };

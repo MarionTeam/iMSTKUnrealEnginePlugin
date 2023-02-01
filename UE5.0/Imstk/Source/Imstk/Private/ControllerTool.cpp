@@ -13,9 +13,9 @@ EControllerObjectType UControllerTool::Init(UImstkController* Controller, const 
 	return EControllerObjectType::Null;
 }
 
-bool UControllerTool::CreateInteraction(UDynamicalModel* OtherObject)
+std::shared_ptr<imstk::SceneObject> UControllerTool::CreateInteraction(UDynamicalModel* OtherObject)
 {
-	return false;
+	return nullptr;
 }
 
 bool UControllerTool::IsInitialized()

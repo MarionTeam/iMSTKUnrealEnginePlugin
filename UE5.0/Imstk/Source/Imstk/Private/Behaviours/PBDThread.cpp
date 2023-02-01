@@ -22,7 +22,7 @@ void UPBDThread::InitializeComponent()
 		else
 		{
 			// No spline attached error
-			SubsystemInstance->LogToUnrealAndImstk("Error Initializing: " + Owner->GetName()+ ". No spline component attached to actor");
+			SubsystemInstance->LogToUnrealAndImstk("Error Initializing: " + Owner->GetName() + ". No spline component attached to actor");
 			SubsystemInstance->AllBehaviours.Remove(this);
 		}
 	}
@@ -42,7 +42,10 @@ UPBDThread::UPBDThread() : UDeformableModel()
 
 void UPBDThread::Init()
 {
+	if (bDelayInit)
+		return;
 	Super::Init();
+
 	PbdObject = std::make_shared<imstk::PbdObject>(TCHAR_TO_UTF8(*(Owner->GetName())));
 
 	// Create a line mesh in iMSTK based on the unreal spline component attached to the actor
@@ -50,7 +53,7 @@ void UPBDThread::Init()
 	std::shared_ptr<imstk::LineMesh> StringMesh = std::make_shared<imstk::LineMesh>();
 	int NumVerts = SplineComponent->GetNumberOfSplinePoints();
 	std::shared_ptr<imstk::VecDataArray<double, 3>> VerticesPtr = std::make_shared<imstk::VecDataArray<double, 3>>(NumVerts);
-	imstk::VecDataArray<double, 3>&Vertices = *VerticesPtr.get();
+	imstk::VecDataArray<double, 3>& Vertices = *VerticesPtr.get();
 	for (int i = 0; i < NumVerts; i++)
 	{
 		Vertices[i] = UMathUtil::ToImstkVec3d(SplineComponent->GetWorldLocationAtSplinePoint(i), true);
@@ -88,19 +91,19 @@ void UPBDThread::Init()
 	PbdObject->setCollidingGeometry(StringMesh);
 	PbdObject->setDynamicalModel(PbdModel);
 
-	PbdModel->getConfig()->setBodyDamping(PbdObject->getPbdBody()->bodyHandle, DampingCoeff);
+	PbdModel->getConfig()->setBodyDamping(PbdObject->getPbdBody()->bodyHandle, LinearDampingCoefficient, AngularDampingCoefficient);
 
 	PbdObject->getPbdBody()->uniformMassValue = Mass;
 
-	if (!bSharedModel) 
+	if (!bSharedModel)
 		PbdModel->getConfig()->m_iterations = ModelIterations;
 
 	if (bUseDistanceConstraint)
 		PbdModel->getConfig()->enableConstraint(imstk::PbdModelConfig::ConstraintGenType::Distance, DistanceConstraint, PbdObject->getPbdBody()->bodyHandle);
 
-	if (bUseBendConstraint) 
+	if (bUseBendConstraint)
 		PbdModel->getConfig()->enableBendConstraint(BendStiffness, 1, true, PbdObject->getPbdBody()->bodyHandle);
-	
+
 
 	ImstkCollidingObject = PbdObject;
 	Geometry = StringMesh;
@@ -111,14 +114,14 @@ void UPBDThread::Init()
 		PbdObject->getPbdBody()->fixedNodeIds.push_back(Num);
 	}
 
-	SubsystemInstance->ActiveScene->addSceneObject(PbdObject);
-
 	if (bZeroTangents) {
 		for (int i = 0; i < Vertices.size(); i++)
 		{
 			SplineComponent->SetTangentsAtSplinePoint(i, FVector::Zero(), FVector::Zero(), ESplineCoordinateSpace::Local);
 		}
 	}
+
+	SubsystemInstance->ActiveScene->addSceneObject(PbdObject);
 
 	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
 	Super::bIsInitialized = true;
@@ -127,7 +130,7 @@ void UPBDThread::Init()
 void UPBDThread::UpdateModel()
 {
 	// Update spline component positions
-	if (!VisualGeom) 
+	if (!VisualGeom)
 		VisualGeom = std::dynamic_pointer_cast<imstk::LineMesh>(PbdObject->getVisualGeometry());
 
 	std::shared_ptr<imstk::VecDataArray<double, 3>> VerticesPtr = VisualGeom->getVertexPositions();
@@ -138,7 +141,7 @@ void UPBDThread::UpdateModel()
 	{
 		SplineComponent->SetWorldLocationAtSplinePoint(i, UMathUtil::ToUnrealFVec(Vertices[i], true));
 	}
-	
+
 	if (UImstkSettings::IsDebugging()) {
 		if (GEngine) {
 			if (bPrintPositionInformation)

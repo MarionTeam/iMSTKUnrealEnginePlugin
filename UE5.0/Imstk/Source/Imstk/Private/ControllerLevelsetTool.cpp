@@ -24,7 +24,7 @@ EControllerObjectType UControllerLevelsetTool::Init(UImstkController* Controller
 	return EControllerObjectType::RigidToolObject;
 }
 
-bool UControllerLevelsetTool::CreateInteraction(UDynamicalModel* OtherObject)
+std::shared_ptr<imstk::SceneObject> UControllerLevelsetTool::CreateInteraction(UDynamicalModel* OtherObject)
 {
 	if (std::shared_ptr<LevelSetObject> LevelSet = std::dynamic_pointer_cast<LevelSetObject>(OtherObject->ImstkCollidingObject)) {
 		std::shared_ptr<imstk::RigidObjectLevelSetCollision> interaction = std::make_shared<imstk::RigidObjectLevelSetCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(ControllerComponent->GetToolObj()), LevelSet);
@@ -41,12 +41,13 @@ bool UControllerLevelsetTool::CreateInteraction(UDynamicalModel* OtherObject)
 		//std::shared_ptr<imstk::CollisionDetectionAlgorithm> cd = interaction->getCollisionDetection();
 
 		SubsystemInstance->ActiveScene->addInteraction(interaction);
+		SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
+		return interaction;
 	}
 	else {
 		SubsystemInstance->LogToUnrealAndImstk("Model must be a LevelSet model. LevelSet interaction could not be created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " " + FString(ControllerComponent->GetToolObj()->getName().c_str()) + ".");
-		return false;
+		return nullptr;
 	}
 
-	SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
-	return true;
+
 }

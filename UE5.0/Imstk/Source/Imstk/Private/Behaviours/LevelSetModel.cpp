@@ -62,7 +62,10 @@ void ULevelSetModel::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 void ULevelSetModel::Init()
 {
+	if (bDelayInit)
+		return;
 	Super::Init();
+
 	if (GeomFilter.GeomType != EGeometryType::SurfaceMesh) {
 		SubsystemInstance->LogToUnrealAndImstk("LevelSetModels can only be SurfaceMeshes for " + Owner->GetName());
 		return;
@@ -82,12 +85,15 @@ void ULevelSetModel::Init()
 	else {
 		LevelSetObj = std::make_shared<LevelSetObject>(MeshComp, ImageData, this, ImageMaterial);
 	}
-	SubsystemInstance->ActiveScene->addSceneObject(LevelSetObj);
+
 	ImstkCollidingObject = LevelSetObj;
 
 	// Set the location of the component to 0,0,0 because of how the image data is positioned
 	MeshComp->SetWorldLocation(FVector::Zero());
 	MeshComp->SetWorldRotation(FRotator::ZeroRotator);
+
+
+	SubsystemInstance->ActiveScene->addSceneObject(LevelSetObj);
 
 	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
 
@@ -150,7 +156,7 @@ std::shared_ptr<imstk::SurfaceMesh> ULevelSetModel::GetSurfaceMeshFromStatic()
 {
 	std::shared_ptr<imstk::SurfaceMesh> MeshGeom = std::make_shared<imstk::SurfaceMesh>();
 	UStaticMeshComponent* StaticMeshComp = (UStaticMeshComponent*)GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass());
-	if (!StaticMeshComp|| !StaticMeshComp->GetStaticMesh())
+	if (!StaticMeshComp || !StaticMeshComp->GetStaticMesh())
 		return nullptr;
 
 	// Get vertices and indices from static mesh and create imstk geometry

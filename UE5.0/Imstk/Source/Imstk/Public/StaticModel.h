@@ -30,4 +30,6 @@ public:
 	* @return None
 	*/
 	virtual void Init() override;
+
+	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };

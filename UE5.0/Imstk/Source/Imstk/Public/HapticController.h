@@ -99,6 +99,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|HapticController")
 		void UpdateUnrealPosRot();
 
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|HapticController")
+		void InitAction(EToolType ToolType, const int Button = 1);
+
 
 	/** Initializes grasping for the tool with the inputted button
 	* @param Button Int corresponding to the haptic button to be pressed to grasp
@@ -134,6 +137,10 @@ private:
 	int GraspingButton;
 	int CuttingButton;
 
+	UPROPERTY()
+		TArray<int> ActionButtons;
+	UPROPERTY()
+		TArray<TEnumAsByte<EToolType>> ToolTypes;
 
 public:
 	virtual void UnInit() override;

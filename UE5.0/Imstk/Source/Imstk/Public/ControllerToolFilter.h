@@ -14,7 +14,8 @@ enum EToolType
 	CollidingTool,
 	CuttingTool,
 	LevelSetTool,
-	TetrahedralCuttingTool
+	TetrahedralCuttingTool,
+	BurningTool
 };
 
 UENUM(BlueprintType)
@@ -104,6 +105,16 @@ struct FControllerTetrahedralCuttingToolStruct
 		double PlaneWidth = 0.0;
 };
 
+USTRUCT(BlueprintType)
+struct FControllerBurningToolStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, Meta = (ClampMin = "10", ClampMax = "200"), BlueprintReadWrite, Category = "iMSTK|ToolSettings")
+		double Wattage = 50;
+
+};
+
 class UControllerTool;
 /**
  * 
@@ -134,6 +145,9 @@ struct FControllerToolFilter
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::TetrahedralCuttingTool", EditConditionHides), Category = "iMSTK")
 		FControllerTetrahedralCuttingToolStruct TetrahedralCuttingToolStruct;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::BurningTool", EditConditionHides), Category = "iMSTK")
+		FControllerBurningToolStruct BurningToolStruct;
 
 	UControllerTool* CreateTool();
 

@@ -6,8 +6,9 @@
 #include "ControllerTool.h"
 #include "ControllerNeedleTool.generated.h"
 
-/**
- * 
+/** \file ControllerNeedleTool.h
+ *  \brief Object for a needle tool
+ *  \details Initializes the tool and creates the interactions between an object and the tool
  */
 UCLASS()
 class IMSTK_API UControllerNeedleTool : public UControllerTool
@@ -15,7 +16,16 @@ class IMSTK_API UControllerNeedleTool : public UControllerTool
 	GENERATED_BODY()
 
 public:
+	/** Initializes the needle controller tool and tells the controller which type of tool to generate
+	* @param Controller - The controller the tool is attached to
+	* @param ToolFilter - The tool filter of the controller for this particular tool
+	* @return EControllerObjectType - Returns the type of tool the controller must create for the tool to be functional
+	*/
 	virtual EControllerObjectType Init(UImstkController* Controller, const FControllerToolFilter& ToolFilter) override;
 
-	virtual bool CreateInteraction(UDynamicalModel* OtherObject) override;
+	/** Initializes the needle interaction and adds a puncturable component to the tissue in the interaction
+	* @param OtherObject - The object to be punctured
+	* @return std::shared_ptr<imstk::SceneObject> The generated interaction or nullptr if there was an error in generation
+	*/
+	virtual std::shared_ptr<imstk::SceneObject> CreateInteraction(UDynamicalModel* OtherObject) override;
 };

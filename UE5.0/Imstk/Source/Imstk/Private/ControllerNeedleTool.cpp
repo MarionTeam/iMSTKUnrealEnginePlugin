@@ -26,7 +26,7 @@ EControllerObjectType UControllerNeedleTool::Init(UImstkController* Controller, 
 	return EControllerObjectType::RigidToolObject;
 }
 
-bool UControllerNeedleTool::CreateInteraction(UDynamicalModel* OtherObject)
+std::shared_ptr<imstk::SceneObject> UControllerNeedleTool::CreateInteraction(UDynamicalModel* OtherObject)
 {
 	if (Cast<UDeformableModel>(OtherObject)) {
 		OtherObject->ImstkCollidingObject->addComponent<imstk::Puncturable>();
@@ -35,15 +35,13 @@ bool UControllerNeedleTool::CreateInteraction(UDynamicalModel* OtherObject)
 		auto SutureInteraction = std::make_shared<NeedleInteraction>(std::dynamic_pointer_cast<imstk::PbdObject>(OtherObject->ImstkCollidingObject), SuturCont->Needle, std::dynamic_pointer_cast<imstk::PbdObject>(SuturCont->Thread->ImstkCollidingObject));
 		SubsystemInstance->ActiveScene->addInteraction(SutureInteraction);
 		SuturCont->SetNeedleInteraction(SutureInteraction);
+
+		SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
+
+		return SutureInteraction;
 	}
 	else {
 		SubsystemInstance->LogToUnrealAndImstk("Wrong model types, Model1 must be a deformable model. Suturing interaction could not be created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " " + FString(ControllerComponent->GetToolObj()->getName().c_str()) + ".");
-		return false;
+		return nullptr;
 	}
-
-
-
-	SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
-	
-	return true;
 }

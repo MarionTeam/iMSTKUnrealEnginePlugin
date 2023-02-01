@@ -22,7 +22,7 @@ EControllerObjectType UControllerCuttingTool::Init(UImstkController* Controller,
 	return EControllerObjectType::PbdToolObject;
 }
 
-bool UControllerCuttingTool::CreateInteraction(UDynamicalModel* OtherObject)
+std::shared_ptr<imstk::SceneObject> UControllerCuttingTool::CreateInteraction(UDynamicalModel* OtherObject)
 {
 	if (std::shared_ptr<imstk::PbdObject> PBDObject = std::dynamic_pointer_cast<imstk::PbdObject>(OtherObject->ImstkCollidingObject)) {
 		std::shared_ptr<imstk::PbdObjectCutting> Cutting = std::make_shared<imstk::PbdObjectCutting>(PBDObject, ControllerComponent->GetToolObj());
@@ -37,14 +37,14 @@ bool UControllerCuttingTool::CreateInteraction(UDynamicalModel* OtherObject)
 		//}
 		Cutting->setEpsilon(ControllerToolFilter.CuttingToolStruct.CutEpsilon);
 		Cuttings.Add(Cutting);
+
+		SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
+		return Cutting;
 	}
 	else {
 		SubsystemInstance->LogToUnrealAndImstk("Model must be deformable. Cutting interaction could not be created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " " + FString(ControllerComponent->GetToolObj()->getName().c_str()) + ".");
-		return false;
+		return nullptr;
 	}
-
-	SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
-	return true;
 }
 
 

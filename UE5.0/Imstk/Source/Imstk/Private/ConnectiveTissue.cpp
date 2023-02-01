@@ -5,6 +5,9 @@
 #include "PBDModel.h"
 #include "imstkPbdConnectiveTissueConstraintGenerator.h"
 #include "imstkTearable.h"
+#include "imstkBurnable.h"
+#include "imstkPbdModel.h"
+#include "imstkPbdModelConfig.h"
 
 void UConnectiveTissue::InitializeComponent()
 {
@@ -28,15 +31,21 @@ void UConnectiveTissue::Init()
 		return;
 	}
 
+	// Init the models if they are not already initialized (subsystem will prevent double initialization)
 	if (!PbdModelA->IsInitialized())
 		PbdModelA->Init();
 	if (!PbdModelB->IsInitialized())
 		PbdModelB->Init();
 
-	PbdObject = imstk::makeConnectiveTissue(PbdModelA->PbdObject, PbdModelB->PbdObject, SubsystemInstance->PbdModel, MaxDistance, StrandsPerFace, SegmentsPerStrand);
+	PbdObject = imstk::makeConnectiveTissue(PbdModelA->PbdObject, PbdModelB->PbdObject, SubsystemInstance->PbdModel, MaxDistance/UMathUtil::GetScale(), StrandsPerFace, SegmentsPerStrand);
+
+	SubsystemInstance->PbdModel->getConfig()->setBodyDamping(PbdObject->getPbdBody()->bodyHandle, LinearDampingCoefficient, AngularDampingCoefficient);
 
 	if (bIsTearable)
 		std::shared_ptr<imstk::Tearable> TearableComp = PbdObject->addComponent<imstk::Tearable>();
+
+	if (bIsBurnable)
+		std::shared_ptr<imstk::Burnable> BurnableComp = PbdObject->addComponent<imstk::Burnable>();
 
 	ImstkCollidingObject = PbdObject;
 

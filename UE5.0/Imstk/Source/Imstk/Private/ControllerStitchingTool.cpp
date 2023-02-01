@@ -24,7 +24,7 @@ EControllerObjectType UControllerStitchingTool::Init(UImstkController* Controlle
 	return EControllerObjectType::PbdToolObject;
 }
 
-bool UControllerStitchingTool::CreateInteraction(UDynamicalModel* OtherObject)
+std::shared_ptr<imstk::SceneObject> UControllerStitchingTool::CreateInteraction(UDynamicalModel* OtherObject)
 {
 	if (std::shared_ptr<imstk::PbdObject> DeformableObject =  std::dynamic_pointer_cast<imstk::PbdObject>(OtherObject->ImstkCollidingObject)) {
 		std::shared_ptr<imstk::PbdObjectStitching> Stitching = std::make_shared<imstk::PbdObjectStitching>(DeformableObject);
@@ -32,14 +32,14 @@ bool UControllerStitchingTool::CreateInteraction(UDynamicalModel* OtherObject)
 		Stitching->setStitchDistance(Dist);
 		SubsystemInstance->ActiveScene->addInteraction(Stitching);
 		Stitchings.Add(Stitching);
+
+		SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
+		return Stitching;
 	}
 	else {
 		SubsystemInstance->LogToUnrealAndImstk("Model must be deformable. Stitching interaction could not be created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " " + FString(ControllerComponent->GetToolObj()->getName().c_str()) + ".");
-		return false;
+		return nullptr;
 	}
-
-	SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
-	return true;
 }
 
 

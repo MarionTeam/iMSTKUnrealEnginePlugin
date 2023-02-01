@@ -23,20 +23,20 @@ EControllerObjectType UControllerTetrahedralCuttingTool::Init(UImstkController* 
 	return EControllerObjectType::PbdToolObject;
 }
 
-bool UControllerTetrahedralCuttingTool::CreateInteraction(UDynamicalModel* OtherObject)
+std::shared_ptr<imstk::SceneObject> UControllerTetrahedralCuttingTool::CreateInteraction(UDynamicalModel* OtherObject)
 {
 	if (std::shared_ptr<imstk::PbdObject> PBDObject = std::dynamic_pointer_cast<imstk::PbdObject>(OtherObject->ImstkCollidingObject)) {
 		std::shared_ptr<imstk::PbdObjectCellRemoval> CellRemoval = std::make_shared<imstk::PbdObjectCellRemoval>(PBDObject);
 		TetCuttings.Add(CellRemoval);
 		CutObjects.Add(Cast<UPBDModel>(OtherObject));
+
+		SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
+		return CellRemoval;
 	}
 	else {
 		SubsystemInstance->LogToUnrealAndImstk("Model must be deformable. Tetrahedral cutting interaction could not be created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " " + FString(ControllerComponent->GetToolObj()->getName().c_str()) + ".");
-		return false;
+		return nullptr;
 	}
-
-	SubsystemInstance->LogToUnrealAndImstk("Interaction created between " + FString(OtherObject->ImstkCollidingObject->getName().c_str()) + " and " + FString(ControllerComponent->GetToolObj()->getName().c_str()));
-	return true;
 }
 
 
@@ -48,6 +48,8 @@ bool UControllerTetrahedralCuttingTool::Execute()
 
 		for (int j = 0; j < CutObjects.Num(); j++) {
 			bool bRemoved = false;
+			if (!CutObjects[j] || !CutObjects[j]->PbdObject)
+				continue;
 			std::shared_ptr<imstk::TetrahedralMesh> TissueMesh = std::dynamic_pointer_cast<imstk::TetrahedralMesh>(CutObjects[j]->PbdObject->getPhysicsGeometry());
 
 			// TODO: hardcoded for plane in this direction
@@ -80,8 +82,7 @@ bool UControllerTetrahedralCuttingTool::Execute()
 				if (SplitTest(TetVerts, PlanePos, Left, PlaneHalfWidth, Forward, PlaneHalfWidth, N))
 				{
 					TetCuttings[j]->removeCellOnApply(i);
-					bRemoved = true;
-					bRemovedAny = true;
+					bRemoved = bRemovedAny = true;
 				}
 			}
 			TetCuttings[j]->apply();
@@ -167,4 +168,5 @@ void UControllerTetrahedralCuttingTool::UnInit() {
 	for (auto Cut : TetCuttings)
 		Cut.reset();
 	TetCuttings.Empty();
+	CutObjects.Empty();
 }

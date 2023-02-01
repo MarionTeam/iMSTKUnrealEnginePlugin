@@ -81,7 +81,10 @@ void URBDModel::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 void URBDModel::Init()
 {
+	if (bDelayInit)
+		return;
 	Super::Init();
+
 	// Create the imstk object using the geometry set in the geometry filter
 	RigidObject = std::make_shared<imstk::RigidObject2>(TCHAR_TO_UTF8(*(Owner->GetName())));
 	std::shared_ptr<imstk::Geometry> Geom = GetImstkGeometry();
@@ -96,7 +99,7 @@ void URBDModel::Init()
 		RigidBodyModel->getConfig()->m_gravity = UMathUtil::ToImstkVec3d(Gravity, true);
 	else
 		RigidBodyModel->getConfig()->m_gravity = SubsystemInstance->RigidBodyModel->getConfig()->m_gravity;
-	
+
 	if (bIndividualDT)
 		RigidBodyModel->getConfig()->m_dt = IndividualDT;
 	else
@@ -114,10 +117,10 @@ void URBDModel::Init()
 	RigidObject->getRigidBody()->setInitOrientation(UMathUtil::ToImstkQuat(Owner->GetActorRotation().Quaternion()));
 	RigidObject->getRigidBody()->setInertiaTensor(imstk::Mat3d::Identity());
 
-	SubsystemInstance->ActiveScene->addSceneObject(RigidObject);
-
 	// Set the parent colliding object to the constructed object
 	ImstkCollidingObject = RigidObject;
+
+	SubsystemInstance->ActiveScene->addSceneObject(RigidObject);
 
 	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
 
@@ -143,7 +146,7 @@ void URBDModel::UpdatePosRot()
 	}
 }
 
-void URBDModel::UnInit() 
+void URBDModel::UnInit()
 {
 	Super::UnInit();
 	RigidObject.reset();

@@ -22,7 +22,7 @@ enum EDefaultModelPreset
 	LineMeshPreset
 };
 
-
+class UCollisionInteraction;
 /** \file DynamicalModel.h
  *  \brief Abstract class to model any object that is added to the Imstk scene
  *  \details Contains a geometry filter to convert between Unreal and Imstk objects
@@ -61,6 +61,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|Geometry")
 		FGeometryFilter GeomFilter;
 
+	TArray<UCollisionInteraction*> GetInteractions();
+
+	void AddInteraction(UCollisionInteraction* Interaction);
+
+	// If set to true creates the object but does not add it to the scene (must be manually added)
+	UPROPERTY(EditAnywhere, Category = "iMSTK|Other")
+		bool bDelayInit = false;
+
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|DynamicalModel")
+		void AddToScene();
+
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|DynamicalModel")
+		FVector GetGeometryPosition();
+
 protected:
 	// References to the owning object
 	UPROPERTY()
@@ -69,6 +83,9 @@ protected:
 	// Reference to the imstk subsystem
 	UPROPERTY()
 		UImstkSubsystem* SubsystemInstance;
+
+	UPROPERTY()
+		TArray<UCollisionInteraction*> Interactions;
 
 	// Cached geometry for when GetCollidingGeometry is called
 	std::shared_ptr<imstk::Geometry> Geometry;
@@ -101,4 +118,7 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|DynamicalModel")
 		FVector GetGeomOffset();
+
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|DynamicalModel")
+		virtual void RemoveFromScene();
 };

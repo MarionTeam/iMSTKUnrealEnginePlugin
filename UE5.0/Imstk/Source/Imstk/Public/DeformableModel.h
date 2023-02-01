@@ -37,8 +37,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		double Mass = 1.0;
 
-	UPROPERTY(EditAnywhere, Category = "iMSTK")
-		double DampingCoeff = 0.01;
+	UPROPERTY(EditAnywhere, Category = "iMSTK|PbdModel")
+		double LinearDampingCoefficient = 0.01;
+
+	UPROPERTY(EditAnywhere, Category = "iMSTK|PbdModel")
+		double AngularDampingCoefficient = 0.01;
 
 	// Viscous damping coefficient of the PBDModel
 	/*UPROPERTY(EditAnywhere, Category = "General|Advanced")

@@ -15,7 +15,7 @@ UCLASS(Abstract)
 class IMSTK_API UImstkBehaviour : public UActorComponent
 {
 	GENERATED_BODY()
-public:	
+public:
 	/** Default constructor.
 	* @return None
 	*/
@@ -27,7 +27,7 @@ protected:
 
 	bool bIsInitialized = false;
 
-public:	
+public:
 	virtual void InitializeComponent() override;
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

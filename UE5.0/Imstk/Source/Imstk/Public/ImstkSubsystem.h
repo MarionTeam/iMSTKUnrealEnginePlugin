@@ -117,6 +117,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|Subsystem")
 		void LogToUnrealAndImstk(FString Message);
 
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Subsystem")
+		void ReInitScene();
+
 protected:
 	bool bIsCreateOnRunning = false;
 
