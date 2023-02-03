@@ -5,10 +5,10 @@
 #include "CoreMinimal.h"
 #include "SGraphNode.h"
 #include <EdGraph/EdGraphNode.h>
-#include "EdTaskGraphNode.h"
 
-/**
- * 
+/** \file STaskGraphNode.h
+ *  \brief Slate UI for a task graph node
+ *  \details 
  */
 class IMSTKEDITOR_API STaskGraphNode : public SGraphNode
 {

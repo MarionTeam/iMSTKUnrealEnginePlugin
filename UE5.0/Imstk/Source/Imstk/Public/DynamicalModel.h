@@ -69,9 +69,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "iMSTK|Other")
 		bool bDelayInit = false;
 
+	/** Initializes the model and adds it to the scene
+	* @return None
+	*/
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|DynamicalModel")
 		void AddToScene();
 
+	/** Gets the center of the colliding geometry in iMSTK in Unreal space
+	* @return FVector containing the position of the geometry
+	*/
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|DynamicalModel")
 		FVector GetGeometryPosition();
 
@@ -89,7 +95,6 @@ protected:
 
 	// Cached geometry for when GetCollidingGeometry is called
 	std::shared_ptr<imstk::Geometry> Geometry;
-	//bool bIsGeomCreated = false;
 
 	// TODO: Maybe add this to a geometry util class
 	/** Converts the static mesh attached to the model into a procedural mesh
@@ -119,6 +124,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|DynamicalModel")
 		FVector GetGeomOffset();
 
+	/** Removes the object and all interactions involving the object from the scene and uninits it
+	* @return None
+	*/
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|DynamicalModel")
 		virtual void RemoveFromScene();
 };

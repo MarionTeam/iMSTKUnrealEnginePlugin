@@ -3,15 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "SlateBasics.h"
-#include "SlateExtras.h"
 #include "Editor/LevelEditor/Public/LevelEditor.h"
-#include "Editor/PropertyEditor/Public/PropertyEditing.h"
 #include "IAssetTypeActions.h"
 #include "ImstkEditor.h"
 
-/**
- * 
+/** \file TaskGraphTool.h
+ *  \brief Module and actions for the iMSTK task graph
+ *  \details
  */
 class TaskGraphTool : public IImstkModuleListenerInterface, public TSharedFromThis<TaskGraphTool>
 {

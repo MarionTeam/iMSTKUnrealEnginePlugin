@@ -10,7 +10,7 @@ void UDynamicalModel::InitializeComponent()
 {
 	Super::InitializeComponent();
 
-	// Check if game is in play mode (required because InitializeComponent() is run when creating a blueprint of the object
+	// Check if game is in play mode (required because InitializeComponent() is run when creating a blueprint of the object)
 	if (GetWorld() && GetWorld()->GetGameInstance()) {
 		// Set variables to use during execution
 		Owner = GetOwner();
@@ -18,7 +18,6 @@ void UDynamicalModel::InitializeComponent()
 
 		if (MeshComp)
 			MeshComp->SetMobility(EComponentMobility::Type::Movable);
-		//Owner->SetActorEnableCollision(false);
 		SubsystemInstance = GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>();
 	}
 }
@@ -42,7 +41,7 @@ std::shared_ptr<imstk::Geometry> UDynamicalModel::GetImstkGeometry()
 	// Initialize imstk geometry
 	Geometry = GeomFilter.Init(this);
 	if (!Geometry) {
-		SubsystemInstance->LogToUnrealAndImstk("Imstk geometry for %s could not be created " + Owner->GetName());
+		SubsystemInstance->LogToUnrealAndImstk("Imstk geometry for %s could not be created " + Owner->GetName(), FColor::Red);
 		return nullptr;
 	}
 	return Geometry;
@@ -69,28 +68,16 @@ void UDynamicalModel::RemoveFromScene()
 {
 	// Remove all interactions
 	for (int i = 0; i < Interactions.Num(); i++) {
-		//TArray<std::shared_ptr<imstk::SceneObject>> ToReset;
 
 		for (int j = 0; j < Interactions[i]->Interactions.Num(); j++) {
 			SubsystemInstance->ActiveScene->removeSceneObject(Interactions[i]->Interactions[j]);
 			SubsystemInstance->AllInteractions.Remove(Interactions[i]);
-			//ToReset.Add(Interactions[i]->Interactions[j]);
-			//Interactions[i]->Interactions[j].reset();
 			Interactions[i]->UnInit();
 		}
-
-
-
-		/*for (auto ImstkInteraction : Interactions[i]->Interactions) {
-			SubsystemInstance->ActiveScene->removeSceneObject(ImstkInteraction);
-			SubsystemInstance->AllInteractions.Remove(Interactions[i]);
-
-			ImstkInteraction.reset();
-			Interactions[i]->UnInit();
-		}*/
 	}
 	Interactions.Empty();
 
+	// Remove object from scene and reinitialize the scene
 	SubsystemInstance->ActiveScene->removeSceneObject(ImstkCollidingObject);
 	SubsystemInstance->ActiveScene->initialize();
 	SubsystemInstance->AllBehaviours.Remove(this);

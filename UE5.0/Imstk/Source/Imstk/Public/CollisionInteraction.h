@@ -85,9 +85,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Collision Interaction")
 		bool bUseCorrectVelocity = true;
 
-	/*UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Collision Interaction")
-		int CollisionIterations = 5;*/
-
 	/** Initializes the interaction within iMSTK between the set models set on the CollisionInteraction
 	* @return None
 	*/

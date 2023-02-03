@@ -13,9 +13,6 @@ UImageDataImporterFactory::UImageDataImporterFactory(const FObjectInitializer& O
 	Formats.Add(FString(TEXT("dcm;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatDcm", "Dcm File").ToString());
 	Formats.Add(FString(TEXT("nrrd;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatNrrd", "Nrrd File").ToString());
 	Formats.Add(FString(TEXT("mhd;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatMhd", "Mhd File").ToString());
-	//Formats.Add(FString(TEXT("png;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatPng", "Png File").ToString());
-	//Formats.Add(FString(TEXT("jpg;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatJpg", "Jpg File").ToString());
-	//Formats.Add(FString(TEXT("bmp;")) + NSLOCTEXT("UImstkGeometryImporterFactory", "FormatBmp", "Bmp File").ToString());
 	SupportedClass = UImageDataAsset::StaticClass();
 	bCreateNew = false;
 	bEditorImport = true;

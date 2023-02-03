@@ -30,7 +30,6 @@ UTetrahedralMeshImporterFactory::UTetrahedralMeshImporterFactory(const FObjectIn
 //TODO: Maybe make a menu pop up to decide some of the choices here (such as smoothing masks etc)
 UObject* UTetrahedralMeshImporterFactory::FactoryCreateFile(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, const FString& Filename, const TCHAR* Parms, FFeedbackContext* Warn, bool& bOutOperationCanceled)
 {
-	//UE_LOG(LogTemp, Log, TEXT("%s %s"), *Filename, *InParent->GetName());
 	UTetrahedralMeshAsset* TetMeshAsset = nullptr;
 
 	// Import file into imstk first to extract data
@@ -86,7 +85,6 @@ UObject* UTetrahedralMeshImporterFactory::FactoryCreateFile(UClass* InClass, UOb
 	FString Extension;
 	FPaths::Split(InParent->GetName(), Path, File, Extension);
 	FString PackagePath = Path + "/" + NewName.ToString();
-	//UE_LOG(LogTemp, Log, TEXT("%s"), *PackagePath);
 
 	// Create static mesh based on the imported values
 	UPackage* Package = CreatePackage(*PackagePath);
@@ -100,7 +98,6 @@ UObject* UTetrahedralMeshImporterFactory::FactoryCreateFile(UClass* InClass, UOb
 
 		imstk::VecDataArray<double, 3>& Vertices = *SurfaceMesh->getVertexPositions();
 		for (int i = 0; i < Vertices.size(); i++) {
-			//RawMesh.VertexPositions.Add(FVector3f(UMathUtil::ToUnrealFVec(Vertices[i], false)));
 			// Avoid using Math util function to maintain vertex positions on import
 			RawMesh.VertexPositions.Add(FVector3f(Vertices[i].x(), Vertices[i].z(), Vertices[i].y()));
 		}
@@ -149,12 +146,7 @@ UObject* UTetrahedralMeshImporterFactory::FactoryCreateFile(UClass* InClass, UOb
 		StaticMesh->PreEditChange(nullptr);
 		FStaticMeshSourceModel& SourceModel = StaticMesh->AddSourceModel();
 		SourceModel.SaveRawMesh(RawMesh);
-		/*
-		for (UMaterialInterface* Material : MeshMaterials)
-		{
-			StaticMesh->StaticMaterials.Add(FStaticMaterial(Material));
-		}
-		*/
+
 
 		// Model Configuration
 		SourceModel.BuildSettings.bRecomputeNormals = true;
@@ -166,17 +158,8 @@ UObject* UTetrahedralMeshImporterFactory::FactoryCreateFile(UClass* InClass, UOb
 		SourceModel.BuildSettings.bUseFullPrecisionUVs = false;
 		SourceModel.BuildSettings.bUseHighPrecisionTangentBasis = false;
 
-
-		//UE_LOG(LogTemp, Log, TEXT("Is RawMesh valid: %s"), (RawMesh.IsValid() ? TEXT("true") : TEXT("false")));
-
-		// Processing the StaticMesh
-		//StaticMesh->ImportVersion = EImportStaticMeshVersion::LastVersion;
-		//StaticMesh->CreateBodySetup();
-		//StaticMesh->SetLightingGuid();
-		// 
 		TArray<FText> BuildErrors;
 		StaticMesh->Build(true, &BuildErrors);
-		//StaticMesh->PostEditChange();
 
 		FAssetRegistryModule::AssetCreated(StaticMesh);
 		Package->MarkPackageDirty();

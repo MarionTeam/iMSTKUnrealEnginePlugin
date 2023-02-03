@@ -8,8 +8,9 @@
 #include "imstkLineMesh.h"
 #include "PBDThread.generated.h"
 
-/**
- *   
+/** \file PBDThread.h
+ *  \brief Uses a spline component attached to the actor to simulate a thread object in iMSTK
+ *  \details A spline component must be attached to the actor. Visualization can be done using spline meshes in Unreal.
  */
 UCLASS(ClassGroup = (Imstk), meta = (BlueprintSpawnableComponent), hidecategories = ("iMSTK|Geometry"))
 class IMSTK_API UPBDThread : public UDeformableModel
@@ -59,7 +60,7 @@ public:
 		void MoveVertexToLocation(int VertIndex, FVector Pos);
 
 protected:
-	// TODO: Move stuff like this and MeshGeom in pbdModel into dynamical model and make a GetVisualGeom() function
+	// TODO: Convert to use colliding geom
 	std::shared_ptr<imstk::LineMesh> VisualGeom;
 
 public:

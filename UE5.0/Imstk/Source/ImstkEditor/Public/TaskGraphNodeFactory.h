@@ -5,8 +5,9 @@
 #include <EdGraphUtilities.h>
 #include <EdGraph/EdGraphNode.h>
 
-/**
- * 
+/** \file TaskGraphNodeFactory.h
+ *  \brief Node factory for the iMSTK task graph
+ *  \details 
  */
 class FTaskGraphNodeFactory : public FGraphPanelNodeFactory
 {

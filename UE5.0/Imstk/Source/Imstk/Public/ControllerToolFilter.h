@@ -5,6 +5,11 @@
 #include "CoreMinimal.h"
 #include "ControllerToolFilter.generated.h"
 
+/** \file ControllerToolFilter.h
+ *  \brief Exposes parameters for tools to the editor for the user to set
+ *  \details
+ */
+
 // Type of tool
 UENUM(BlueprintType)
 enum EToolType
@@ -21,7 +26,6 @@ enum EToolType
 UENUM(BlueprintType)
 enum EGraspType
 {
-	RayPointGrasp,
 	VertexGrasp,
 	CellGrasp
 };
@@ -68,6 +72,10 @@ struct FControllerCollisionToolStruct
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = "0"), BlueprintReadWrite, Category = "iMSTK|ToolSettings")
 		double Restitution = 0.0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|ToolSettings")
+		bool bRigidTool = false;
+
+	// Disables calculations for certain forces including but not limited to friction. Disabling can help with collision issues
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|ToolSettings")
 		bool bUseCorrectVelocity = true;
 };
@@ -116,9 +124,7 @@ struct FControllerBurningToolStruct
 };
 
 class UControllerTool;
-/**
- * 
- */
+
 USTRUCT(BlueprintType)
 struct FControllerToolFilter
 {
@@ -127,7 +133,7 @@ struct FControllerToolFilter
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		TEnumAsByte<EToolType> ToolType;
 
-	// Structs for each shape that can be created in Imstk
+	// Structs for each Tool that can be created in Imstk
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ToolType == EToolType::GraspingTool", EditConditionHides), Category = "iMSTK")
 		FControllerGraspingToolStruct GraspingToolStruct;
 

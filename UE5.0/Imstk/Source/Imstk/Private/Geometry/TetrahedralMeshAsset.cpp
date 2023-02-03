@@ -2,14 +2,9 @@
 
 
 #include "TetrahedralMeshAsset.h"
-#include "imstkSurfaceMesh.h"
 #include "MathUtil.h"
 
 void UTetrahedralMeshAsset::SetTetrahedralMesh(std::shared_ptr<imstk::TetrahedralMesh> Input) {
-	// TODO: make sure this inputs the mesh correctly
-	// Extract the values from imstk and and store in arrays
-	//Vertices = UMathUtil::ToUnrealFVecArray(Input->getVertexPositions(), false);
-	
 	// Store tet mesh without flipped y and z to maintain surface mesh orientation (since it is flipped on return) and have tet mesh line up in imstk
 	std::shared_ptr<imstk::VecDataArray<double, 3>> CurVerts = Input->getVertexPositions();
 

@@ -6,6 +6,10 @@
 #include "ImstkController.h"
 
 #include "imstkPbdObjectController.h"
+
+//#include "CoreMinimal.h"
+//#include "ImstkController.h"
+//#include "imstkRigidObject2.h"
 #include "HapticController.generated.h"
 
 UENUM(BlueprintType)
@@ -29,27 +33,6 @@ class IMSTK_API UHapticController : public UImstkController
 
 public:
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent);
-
-	// If data should be imported from a file to generate colliding geometry 
-	//UPROPERTY(EditAnywhere, Category = "iMSTK")
-	//	bool bCollidingGeometryFromFile = false;
-	//// File path from the content directory for the colliding geometry
-	//UPROPERTY(EditAnywhere, meta = (EditCondition = "bCollidingGeometryFromFile", EditConditionHides), Category = "iMSTK")
-	//	FString CollidingGeometryFilePath = "";
-
-	//// If data should be imported from a file to generate physics geometry 
-	//UPROPERTY(EditAnywhere, Category = "iMSTK")
-	//	bool bPhysicsGeometryFromFile = false;
-	//// File path from the content directory for the physics geometry
-	//UPROPERTY(EditAnywhere, meta = (EditCondition = "bPhysicsGeometryFromFile", EditConditionHides), Category = "iMSTK")
-	//	FString PhysicsGeometryFilePath = "";
-
-	//// If data should be imported from a file to generate visual geometry 
-	//UPROPERTY(EditAnywhere, Category = "iMSTK")
-	//	bool bVisualGeometryFromFile = false;
-	//// File path from the content directory for the visual geometry
-	//UPROPERTY(EditAnywhere, meta = (EditCondition = "bVisualGeometryFromFile", EditConditionHides), Category = "iMSTK")
-	//	FString VisualGeometryFilePath = "";
 
 	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		TEnumAsByte<EHapticControllerPreset> Preset = EHapticControllerPreset::HapticCollidingPreset;
@@ -99,30 +82,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|HapticController")
 		void UpdateUnrealPosRot();
 
+	/** Initializes the action for the tool with the inputted button
+	* @param Button Int corresponding to the haptic button to be pressed to perform the action
+	* @return None
+	*/
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|HapticController")
 		void InitAction(EToolType ToolType, const int Button = 1);
 
 
-	/** Initializes grasping for the tool with the inputted button
-	* @param Button Int corresponding to the haptic button to be pressed to grasp
-	* @return None
-	*/
-	UFUNCTION(BlueprintCallable, Category = "iMSTK|HapticController")
-		void InitGrasping(const int Button = 1);
-
-	/** Initializes grasping for the tool with the inputted button (keyboard)
-	* @param Button Character corresponding to the keyboard button to be pressed to grasp
-	* @return None
-	*/
-
-	UFUNCTION(BlueprintCallable, Category = "iMSTK|HapticController")
-		void InitCutting(const int Button = 1);
-
-
-
-	UFUNCTION(BlueprintCallable, Category = "iMSTK|HapticController")
+	// For testing forces on haptic device
+	// Note: requires collision interactions on ControllerCollisionTool.h to be public
+	/*UFUNCTION(BlueprintCallable, Category = "iMSTK|HapticController")
 		void PrintForces();
-	std::shared_ptr<imstk::PbdObjectController> TempController;
+	std::shared_ptr<imstk::PbdObjectController> TempController;*/
 
 protected:
 	bool bIsPbdTool = false;

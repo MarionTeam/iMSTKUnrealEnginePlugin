@@ -7,12 +7,9 @@
 #include "ImstkBehaviour.h"
 #include "ImstkInteraction.h"
 #include "ImstkConstraint.h"
-//#include "ImstkController.h"
 #include "imstkSceneManager.h"
 #include "imstkScene.h"
 #include "imstkRigidBodyModel2.h"
-
-#include "imstkPbdObjectCutting.h"
 #include "imstkPbdModel.h"
 
 #include "HAL/RunnableThread.h"
@@ -21,24 +18,12 @@
 // Async
 #include "Chaos/SimCallbackInput.h"
 #include "Chaos/SimCallbackObject.h"
-//#include "Chaos/GeometryParticlesfwd.h"
-//#include "PhysicsProxy/SingleParticlePhysicsProxyFwd.h"
 
 #include "ImstkSubsystem.generated.h"
-
-//#define CHECK_NULL(Pointer, LogClass, Message) if(Pointer) UE_LOG(LogClass, Error, TEXT(Message)); return
 
 class UDeformableModel;
 class UImstkController;
 
-// TickFunction for the subsystem to allow the subsystem to tick
-//struct FImstkSubsystemTickFunction : public FTickFunction
-//{
-//	// The owning subsystem
-//	UImstkSubsystem* Owner;
-//
-//	virtual void ExecuteTick(float DeltaTime, ELevelTick TickType, ENamedThreads::Type CurrentThread, const FGraphEventRef& MyCompletionGraphEvent) override;
-//};
 
 struct FImstkSubsystemAsyncInput : public Chaos::FSimCallbackInput
 {
@@ -76,11 +61,6 @@ class IMSTK_API UImstkSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "iMSTK|Subsystem")
-		void ImstkTest();
-
-
-
 	/** Default constructor.
 	* @return None
 	*/
@@ -102,10 +82,8 @@ public:
 	/** Returns true if the simulation is paused
 	* @return True if the simulation is paused
 	*/
-	bool IsSimulationPaused();
-
-	// Tick function of the subsystem
-	//FImstkSubsystemTickFunction TickFunction;
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Subsystem")
+		bool IsSimulationPaused();
 
 	/** Updates the scene and progresses by the amount of time provided if using realtime, else will use the assigned TickInterval
 	* @param DeltaTime - The amount of time to progress the scene
@@ -114,9 +92,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|Subsystem")
 		void UpdateSimulation(float DeltaTime);
 
+	/** Logs a message to both Unreal and Imstk
+	* @param Message The message to be logged
+	* @return None
+	*/
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|Subsystem")
-		void LogToUnrealAndImstk(FString Message);
+		void LogToUnrealAndImstk(FString Message, FColor Color);
 
+	/** Reinitializes the active scene
+	* @return None
+	*/
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|Subsystem")
 		void ReInitScene();
 

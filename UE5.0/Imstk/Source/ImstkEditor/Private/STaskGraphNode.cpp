@@ -2,7 +2,6 @@
 
 
 #include "STaskGraphNode.h"
-//#include "Widgets/Text/SInlineEditableTextBlock.h"
 #include "GraphEditorSettings.h"
 #include "SGraphPin.h"
 
@@ -21,7 +20,6 @@ public:
 
 		GraphPinObj = InPin;
 		check(GraphPinObj != nullptr);
-		//GraphPinObj->Direction = EGPD_Output;
 
 		const UEdGraphSchema* Schema = GraphPinObj->GetSchema();
 		check(Schema);

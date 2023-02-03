@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "AssetTypeActions_Base.h"
 
-/**
- * 
+/** \file TaskGraphAssetTypeActions.h
+ *  \brief Asset actions for the iMSTK task graph
+ *  \details 
  */
 class IMSTKEDITOR_API FTaskGraphAssetTypeActions : public FAssetTypeActions_Base
 {

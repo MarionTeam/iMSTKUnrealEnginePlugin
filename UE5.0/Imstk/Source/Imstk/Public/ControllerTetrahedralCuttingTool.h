@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "ControllerTool.h"
 #include "PBDModel.h"
-#include "imstkTetrahedralMesh.h"
 #include "imstkPbdObjectCellRemoval.h"
 #include "ControllerTetrahedralCuttingTool.generated.h"
 

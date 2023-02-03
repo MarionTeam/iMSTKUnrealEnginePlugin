@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "Kismet/BlueprintFunctionLibrary.h"
 #include "imstkMath.h"
 #include "imstkVecDataArray.h"
 #include "MathUtil.generated.h"

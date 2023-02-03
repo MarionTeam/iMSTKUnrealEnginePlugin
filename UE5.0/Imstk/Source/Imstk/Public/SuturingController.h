@@ -9,13 +9,16 @@
 #include "NeedleObject.h"
 #include "NeedleInteraction.h"
 
+//#include "CoreMinimal.h"
+//#include "ImstkController.h"
+//#include "PBDThread.h"
+//#include "NeedleInteraction.h"
 #include "SuturingController.generated.h"
 
 
  /** \file SuturingController.h
   *  \brief Creates a needle and thread controller. Requires a PBD thread to be attached to the actor
   *  \details Creates the Imstk scene manager, scene and rigidbody model as well as initializing all imstk behaviours assigned in Unreal.
-  * TODO: Maybe make it not inherit from ImstkController, because it requires more than one tool obj for collisions, etc
   * Note: Needle only works with iMSTK scene scale set to ~100 since it is currently always the same size within the iMSTK scene and is scaled up/down for Unreal
   */
 UCLASS(ClassGroup = (Imstk), meta = (BlueprintSpawnableComponent), hidecategories = ("iMSTK|ControllerType"))

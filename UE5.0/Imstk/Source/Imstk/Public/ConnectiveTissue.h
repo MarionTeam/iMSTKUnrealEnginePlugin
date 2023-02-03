@@ -29,8 +29,9 @@ struct FSplineLineMeshData
 	}
 };
 
-/**
- * Using this component, especially with high segments per strand and strands per face can cause significant performance impacts. When starting the game there is a lot of overhead for this creating the splines and spline meshes causing the game to stall when starting.
+/** \file ConnectiveTissue.h
+ *  \brief Creates connective tissue strands between two PBD models
+ *  \details Using this component, especially with high segments per strand and strands per face can cause significant performance impacts. When starting the game there is a lot of overhead for this creating the splines and spline meshes causing the game to stall when starting.
  */
 UCLASS(ClassGroup = (Imstk), meta = (BlueprintSpawnableComponent), hidecategories = ("iMSTK|Geometry"))
 class IMSTK_API UConnectiveTissue : public UDeformableModel
@@ -78,9 +79,15 @@ public:
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = "0"), Category = "iMSTK|ConnectiveTissue")
 		int SegmentsPerStrand = 2;
 
+	// Whether or not the tissue is tearable. Note: Do partitioning must be set to false
 	UPROPERTY(EditAnywhere, Category = "iMSTK|ConnectiveTissue")
 		bool bIsTearable = false;
 
+	// The strain the tissue can take before failing
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIsTearable", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|ConnectiveTissue")
+		float MaxStrain = 0.5;
+
+	// Whether or not the tissue is burnable. Note: Do partitioning must be set to false
 	UPROPERTY(EditAnywhere, Category = "iMSTK|ConnectiveTissue")
 		bool bIsBurnable = false;
 

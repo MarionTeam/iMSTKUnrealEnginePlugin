@@ -22,7 +22,7 @@ void UPBDThread::InitializeComponent()
 		else
 		{
 			// No spline attached error
-			SubsystemInstance->LogToUnrealAndImstk("Error Initializing: " + Owner->GetName() + ". No spline component attached to actor");
+			SubsystemInstance->LogToUnrealAndImstk("Error Initializing: " + Owner->GetName() + ". No spline component attached to actor", FColor::Red);
 			SubsystemInstance->AllBehaviours.Remove(this);
 		}
 	}
@@ -123,7 +123,7 @@ void UPBDThread::Init()
 
 	SubsystemInstance->ActiveScene->addSceneObject(PbdObject);
 
-	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
+	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString(), FColor::Green);
 	Super::bIsInitialized = true;
 }
 

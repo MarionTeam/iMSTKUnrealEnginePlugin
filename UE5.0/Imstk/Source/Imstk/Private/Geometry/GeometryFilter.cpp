@@ -59,7 +59,6 @@ std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UDynamicalModel* M
 			TCoords->push_back(imstk::Vec2f(TexCoordBuffer->GetVertexUV(i, 0).X, TexCoordBuffer->GetVertexUV(i, 0).Y));
 		}
 
-		// TODO: Could change this to array view?
 		TArray<int> Indices;
 		for (int32 i = 0; i < IndexBuffer->GetNumIndices(); i++) {
 			Indices.Add(IndexBuffer->GetIndex(i));
@@ -82,7 +81,6 @@ std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UDynamicalModel* M
 			TCoords->push_back(imstk::Vec2f((float)VertexBuffer[i].UV0[0], (float)VertexBuffer[i].UV0[1]));
 		}
 
-		// TODO: Could change this to array view?
 		TArray<int> Indices;
 		for (int32 i = 0; i < IndexBuffer.Num(); i++) {
 			Indices.Add(IndexBuffer[i]);
@@ -122,7 +120,7 @@ std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UImstkController* 
 		}
 	}
 	if (Count > 1) {
-		Controller->GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Warning: More than one static mesh component is attached to controller " + Controller->GetName() + ". Behaviour May not function as expected.");
+		Controller->GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Warning: More than one static mesh component is attached to controller " + Controller->GetName() + ". Behaviour May not function as expected.", FColor::Yellow);
 	}
 
 
@@ -142,7 +140,6 @@ std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UImstkController* 
 			Vertices.Add(FVector(PositionVertexBuffer->VertexPosition(i)));
 		}
 
-		// TODO: Could change this to array view?
 		TArray<int> Indices;
 		for (int32 i = 0; i < IndexBuffer->GetNumIndices(); i++) {
 			Indices.Add(IndexBuffer->GetIndex(i));
@@ -151,26 +148,6 @@ std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UImstkController* 
 		MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
 		MeshGeom->computeVertexNormals();
 	}
-	//else if (ProcMeshComp) {
-	//	// Get vertices and indices from procedural mesh and create imstk geometry
-	//	TArray<FProcMeshVertex> VertexBuffer = ProcMeshComp->GetProcMeshSection(0)->ProcVertexBuffer;
-	//	TArray<uint32> IndexBuffer = ProcMeshComp->GetProcMeshSection(0)->ProcIndexBuffer;
-
-	//	// Get vertices and indices in the mesh and set those values in the imstk mesh
-	//	TArray<FVector> Vertices;
-	//	for (int32 i = 0; i < VertexBuffer.Num(); i++) {
-	//		Vertices.Add(VertexBuffer[i].Position);
-	//	}
-
-	//	// TODO: Could change this to array view?
-	//	TArray<int> Indices;
-	//	for (int32 i = 0; i < IndexBuffer.Num(); i++) {
-	//		Indices.Add(IndexBuffer[i]);
-	//	}
-
-	//	MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
-	//	MeshGeom->computeVertexNormals();
-	//}
 	else {
 		// ERROR
 		return nullptr;
@@ -189,8 +166,6 @@ FVector FSurfaceMeshGeomStruct::GetGeomScale() {
 
 std::shared_ptr<imstk::Geometry> FCapsuleGeomStruct::Init() const {
 	std::shared_ptr<imstk::Capsule> CapsuleGeom = std::make_shared<imstk::Capsule>();
-
-	//CapsuleGeom->setPosition(imstk::Vec3d(0, (Length / UMathUtil::GetScale()) / 2, 0));
 	CapsuleGeom->setRadius(Radius / UMathUtil::GetScale());
 	CapsuleGeom->setLength(Length / UMathUtil::GetScale());
 	CapsuleGeom->setPosition(UMathUtil::ToImstkVec3d(GeometryOffset, true));
@@ -294,21 +269,6 @@ std::shared_ptr<imstk::Geometry> FPointSetGeomStruct::Init(UImstkController* Con
 		MeshGeom->updatePostTransformData();
 		return MeshGeom;
 	}
-	//else if (ProcMeshComp) {
-
-	//	TArray<FProcMeshVertex> VertexBuffer = ProcMeshComp->GetProcMeshSection(0)->ProcVertexBuffer;
-
-	//	// Get vertices and indices in the mesh and set those values in the imstk mesh
-	//	TArray<FVector> Vertices;
-	//	for (int32 i = 0; i < VertexBuffer.Num(); i++) {
-	//		Vertices.Add(VertexBuffer[i].Position);
-	//	}
-
-	//	MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true));
-	//	MeshGeom->updatePostTransformData();
-	//	return MeshGeom;
-
-	//}
 	else {
 		// ERROR
 		return nullptr;

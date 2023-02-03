@@ -97,7 +97,7 @@ struct FSphereGeomStruct : public FGeometryTypeStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, BlueprintReadWrite, Category = "iMSTK")
 		FVector GeometryOffset;
 
-	FSphereGeomStruct() { Radius = 1; GeometryOffset = FVector::ZeroVector; };
+	FSphereGeomStruct() { Radius = 50; GeometryOffset = FVector::ZeroVector; };
 
 	/** Creates an Imstk sphere using the provided parameters and editor values.
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
@@ -144,7 +144,7 @@ struct FCapsuleGeomStruct : public FGeometryTypeStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		FVector GeometryOffset;
 
-	FCapsuleGeomStruct() { Radius = 1; Length = 1; GeometryOffset = FVector::ZeroVector; };
+	FCapsuleGeomStruct() { Radius = 12.5; Length = 50; GeometryOffset = FVector::ZeroVector; };
 
 	/** Creates an Imstk capsule using the provided parameters and editor values.
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
@@ -166,7 +166,7 @@ struct FCylinderGeomStruct : public FGeometryTypeStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		FVector GeometryOffset;
 
-	FCylinderGeomStruct() { Radius = 1; Length = 1; GeometryOffset = FVector::ZeroVector; };
+	FCylinderGeomStruct() { Radius = 12.5; Length = 50; GeometryOffset = FVector::ZeroVector; };
 
 	/** Creates an Imstk Cylinder using the provided parameters and editor values.
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry
@@ -225,7 +225,7 @@ struct FPlaneGeomStruct : public FGeometryTypeStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		FVector Normal;
 
-	FPlaneGeomStruct() { Normal = FVector::ZeroVector; };
+	FPlaneGeomStruct() { Normal = FVector(0,0,1); };
 
 	/** Creates an Imstk Plane using the provided parameters and editor values.
 	* @return std::shared_ptr<imstk::Geometry> - Created Imstk geometry

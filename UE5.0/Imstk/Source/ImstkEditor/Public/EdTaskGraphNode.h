@@ -7,8 +7,9 @@
 #include "TaskGraph.h"
 #include "EdTaskGraphNode.generated.h"
 
-/**
- * 
+/** \file EdTaskGraphNode.h
+ *  \brief Representation of the task graph node in the editor
+ *  \details 
  */
 UCLASS()
 class IMSTKEDITOR_API UEdTaskGraphNode : public UEdGraphNode

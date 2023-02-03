@@ -2,21 +2,17 @@
 
 
 #include "LevelSetModel.h"
-#include "Materials/MaterialInstanceDynamic.h"
 
+#include "Materials/MaterialInstanceDynamic.h"
 #include "imstkSurfaceMeshDistanceTransform.h"
 #include "imstkLevelSetModel.h"
-
 #include "imstkVisualModel.h"
 #include "imstkSignedDistanceField.h"
 #include "imstkTaskGraph.h"
 #include "imstkImageData.h"
 #include "imstkSurfaceMesh.h"
 #include "imstkSurfaceMeshFlyingEdges.h"
-
 #include "imstkMeshIO.h"
-#include "imstkCleanMesh.h"
-
 
 void ULevelSetModel::InitializeComponent()
 {
@@ -41,7 +37,6 @@ void ULevelSetModel::InitializeComponent()
 			MeshComp->RegisterComponent();
 		}
 	}
-
 }
 
 // Called when the game starts or when spawned
@@ -67,13 +62,13 @@ void ULevelSetModel::Init()
 	Super::Init();
 
 	if (GeomFilter.GeomType != EGeometryType::SurfaceMesh) {
-		SubsystemInstance->LogToUnrealAndImstk("LevelSetModels can only be SurfaceMeshes for " + Owner->GetName());
+		SubsystemInstance->LogToUnrealAndImstk("LevelSetModels can only be SurfaceMeshes for " + Owner->GetName(), FColor::Red);
 		return;
 	}
 	if (!ImageData) {
 		std::shared_ptr<imstk::SurfaceMesh> MeshGeom = GetSurfaceMeshFromStatic();
 		if (!MeshGeom) {
-			SubsystemInstance->LogToUnrealAndImstk("Error Initializing: " + Owner->GetName() + " no static mesh attached to actor");
+			SubsystemInstance->LogToUnrealAndImstk("Error Initializing: " + Owner->GetName() + " no static mesh attached to actor", FColor::Red);
 			return;
 		}
 
@@ -95,7 +90,7 @@ void ULevelSetModel::Init()
 
 	SubsystemInstance->ActiveScene->addSceneObject(LevelSetObj);
 
-	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
+	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString(), FColor::Green);
 
 	Super::bIsInitialized = true;
 }
@@ -109,7 +104,7 @@ void ULevelSetModel::FindBounds()
 {
 	UStaticMeshComponent* BoundaryMeshComp = (UStaticMeshComponent*)BoundingActor->GetComponentByClass(UStaticMeshComponent::StaticClass());
 	if (!BoundaryMeshComp) {
-		SubsystemInstance->LogToUnrealAndImstk("No mesh attached to bounding actor for " + Owner->GetName());
+		SubsystemInstance->LogToUnrealAndImstk("No mesh attached to bounding actor for " + Owner->GetName(), FColor::Red);
 	}
 	UStaticMesh* BoundaryMesh = BoundaryMeshComp->GetStaticMesh();
 	FPositionVertexBuffer* VertexBuffer = &BoundaryMesh->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
@@ -197,7 +192,7 @@ FMeshDataStruct ULevelSetModel::GenerateSurfaceMeshData(bool FlipNormals)
 
 	// Scale the iMSTK level set Model appropriately
 	const imstk::Vec3d& currSpacing = LvlSetImage->getSpacing();
-	const FVector UnrealScale = MeshComp->GetComponentScale(); // TODO: This is annoying since its an actor component and not a scene component so you can't scale the actual Model. maybe transform this into a scene component
+	const FVector UnrealScale = MeshComp->GetComponentScale(); // TODO: This is annoying since its an actor component and not a scene component so you can't scale the actual Model. Maybe change this into a scene component
 	imstk::Vec3d scaledSpacing = imstk::Vec3d(currSpacing.x() * UnrealScale.X, currSpacing.y() * UnrealScale.Z, currSpacing.z() * UnrealScale.Y);
 	LvlSetImage->setSpacing(scaledSpacing);
 
@@ -222,25 +217,6 @@ void ULevelSetModel::UnInit()
 	Super::UnInit();
 	LevelSetObj.reset();
 }
-
-//void ULevelSetModel::GenerateSurfaceMeshData() 
-//{
-//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "Creating mesh file");
-//	std::shared_ptr<imstk::SurfaceMeshFlyingEdges> SMFE = std::make_shared<imstk::SurfaceMeshFlyingEdges>();
-//
-//	SMFE->setInputImage(LevelSetObject->InitLvlSetImage);
-//	SMFE->update();
-//	imstk::MeshIO::write(SMFE->getOutputMesh(), std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())) + "outputMesh.stl");
-//}
-//
-//void ULevelSetModel::GenerateLevelSetData()
-//{
-//	imstk::MeshIO::write(LevelSetObject->InitLvlSetImage, std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())) + "outputMesh.mhd");
-//}
-
-
-
-
 
 LevelSetObject::LevelSetObject(UProceduralMeshComponent* ProcMeshComp, UImageDataAsset* ImageData, ULevelSetModel* LevelSetModel, UMaterial* Material) : LevelSetDeformableObject("LevelSetObject"),
 m_isoExtract(std::make_shared<imstk::LocalMarchingCubes>())
@@ -303,7 +279,7 @@ m_isoExtract(std::make_shared<imstk::LocalMarchingCubes>())
 	MeshComp = ProcMeshComp;
 	this->Material = Material;
 
-	//TODO: this is a hacky work around for an issue with rotation. Not sure why this works and it doesnt work normally. probably has something to do with how I am creating the surfacemesh to begin with?
+	//TODO: this is a hacky work around for an issue with rotation. Not sure why this works and it doesnt work normally. 
 	imstk::MeshIO::write(SurfMesh, std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())) + "outputMesh.stl");
 	SurfMesh = imstk::MeshIO::read<imstk::SurfaceMesh>(std::string(TCHAR_TO_UTF8(*FPaths::ProjectLogDir())) + "outputMesh.stl");
 
@@ -380,14 +356,7 @@ LevelSetObject::createVisualModels()
 		auto surfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(m_isoExtract->getOutput(i));
 		if (surfMesh->getNumVertices() > 0 && m_chunksGenerated.count(i) == 0)
 		{
-			//LOG(WARNING) << "New visual";
-			/*std::shared_ptr<imstk::VisualModel> surfMeshModel = std::make_shared<imstk::VisualModel>();
-			surfMeshModel->setGeometry(m_isoExtract->getOutput(i));*/
-
 			TArray<FVector2D> UV0;
-			/*for (int j = 0; j < surfMesh->getNumVertices(); j++) {
-				UV0.Add(FVector2D(FMath::FRand(), FMath::FRand()));
-			}*/
 
 			TArray<FLinearColor> VertColors;
 			TArray<FProcMeshTangent> Tangents;
@@ -409,7 +378,6 @@ LevelSetObject::createVisualModels()
 				auto* MaterialInstance = UMaterialInstanceDynamic::Create(Material, Material);
 				MeshComp->SetMaterial(i, MaterialInstance);
 			}
-			//addVisualModel(surfMeshModel);
 			m_chunksGenerated.insert(i);
 		}
 	}
@@ -452,9 +420,6 @@ LevelSetObject::UpdateUnrealMesh()
 		auto surfMesh = std::dynamic_pointer_cast<imstk::SurfaceMesh>(m_isoExtract->getOutput(i.first));
 		if (surfMesh->getNumVertices() > 0) {
 			TArray<FVector2D> UV0;
-			/*for (int j = 0; j < surfMesh->getNumVertices(); j++) {
-				UV0.Add(FVector2D(FMath::FRand(), FMath::FRand()));
-			}*/
 
 			TArray<FLinearColor> VertColors;
 			TArray<FProcMeshTangent> Tangents;
@@ -467,15 +432,10 @@ LevelSetObject::UpdateUnrealMesh()
 			TArray<FVector> Verts;
 			Verts = UMathUtil::ToUnrealFVecArray(surfMesh->getVertexPositions(), true);
 
-			/*if (Verts.Num() == MeshComp->GetProcMeshSection(i.first)->ProcVertexBuffer.Num() && surfMesh->getNumTriangles() * 3 == MeshComp->GetProcMeshSection(i.first)->ProcIndexBuffer.Num()) {
-				MeshComp->UpdateMeshSection_LinearColor(i.first, Verts, Normals, UV0, VertColors, Tangents);
-			}
-			else {*/
 			TArray<int32> Indices = UMathUtil::ToUnrealIntArray(surfMesh->getTriangleIndices());
 
 			MeshComp->ClearMeshSection(i.first);
 			MeshComp->CreateMeshSection_LinearColor(i.first, Verts, Indices, Normals, UV0, VertColors, Tangents, false);
-			//}
 			if (Material) {
 				auto* MaterialInstance = UMaterialInstanceDynamic::Create(Material, Material);
 				MeshComp->SetMaterial(i.first, MaterialInstance);

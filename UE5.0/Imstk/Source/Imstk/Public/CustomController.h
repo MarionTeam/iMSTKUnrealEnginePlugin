@@ -5,9 +5,8 @@
 #include "CoreMinimal.h"
 #include "ImstkController.h"
 #include "DynamicalModel.h"
-
 #include "imstkPbdObject.h"
-
+#include "imstkRigidObject2.h"
 #include "CustomController.generated.h"
 
 UENUM(BlueprintType)
@@ -17,7 +16,8 @@ enum EControllerPreset
 	GraspingPreset,
 	CuttingPreset,
 	StitchingPreset,
-	LevelSetPreset
+	LevelSetPreset,
+	TetrahedralCuttingPreset
 };
 
 /** \file CustomController.h
@@ -47,7 +47,8 @@ public:
 	/** Moves the iMSTK object to the inputted location and orientation. Moves the Unreal Actor that the component is attached to to the specified location if bUpdateUnrealPosRot is set.
 	* @param Location - The Unreal position to move the controller to
 	* @param Orientation - The Unreal orientation to move the controller to
-	* @param bUpdateUnrealPosRot - Updates the position and rotation of the Unreal Actor if true
+	* @param bUpdateUnrealPosRot - Updates the position and rotation of the Unreal Actor if true. Note: If the tool is a PbdTool then it will be affected by gravity and may not line up with the iMSTK object,
+	*							   therefore it may be better to give the tool 0 mass if feasible
 	* @return None
 	*/
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
@@ -62,6 +63,12 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
 		FVector MoveControllerToRaycastOnPlane(FVector RayStart, FVector RayDir, FQuat Orientation, UDynamicalModel* PlaneActor, bool bUpdateUnrealPosRot = true);
+
+	/** Returns the position of the controller within iMSTK
+	* @return Unreal position of the controller within iMSTK
+	*/
+	UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
+		FVector GetControlleriMSTKPosition();
 
 protected:
 	/** Helper function that updates the object in imstk the WorldPos, or a location on the plane determined by a raycast from the WorlPos in the
@@ -78,60 +85,10 @@ protected:
 	*/
 	void UpdateUnrealPosRot();
 
-	/** Starts a vertex grasp if the tool is set to a grasping tool and a PbdObjectGrasping interaction are set on the controller
-	* @return None
-	*/
-	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		//void BeginVertexGrasp();
-
-	/** Starts a cell grasp if the tool is set to a grasping tool and a PbdObjectGrasping interaction are set on the controller
-	* @return None
-	*/
-	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		//void BeginCellGrasp();
-
-	/** Starts a ray point grasp from RayStart in the direction provided if the tool is set to a grasping tool and a PbdObjectGrasping interaction are set on the controller
-	* @param RayStart Starting point of the ray
-	* @param RayDir Direction of the ray to be cast
-	* @return None
-	*/
-	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		//void BeginRayPointGrasp(FVector RayStart, FVector RayDir);
-
-	/** Ends the current grasp
-	* @return None
-	*/
-	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		//void EndGrasp();
-
-	/** Creates a stitching interaction between the two vertices of the line mesh tool. Requires geometry to be set to a LineMeshTool.
-	* @return None
-	*/
-	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		//void BeginStitch();
-
-	/** Applies the cut for each PbdObjectCutting interaction on the controller. Requires geometry to be set to a SurfaceMeshTool.
-	* @return None
-	*/
-	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		//void BeginCut();
-
-	//UFUNCTION(BlueprintCallable, Category = "iMSTK|Controller")
-		//bool BeginTetrahedralCut();
-
-	/*bool SplitTest(const std::array<imstk::Vec3d, 4>& InputTetVerts,
-		const imstk::Vec3d& PlaneOrigin,
-		const imstk::Vec3d& U, const double Width,
-		const imstk::Vec3d& V, const double Height,
-		const imstk::Vec3d& N);
-
-	bool IsIntersect(const double A, const double B, const double C, const double D);*/
-
 	// Mass of the object in iMSTK
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK")
 		float Mass = 0.2;
 
-	// TODO: separate into a factory for the tool object?
 	// Velocity damping of the tool's rigid body in iMSTK
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "ToolType != EToolType::TetrahedralCuttingTool", EditConditionHides), BlueprintReadWrite, Category = "iMSTK|RigidBody")
 		float VelocityDamping = 1.0;
@@ -192,12 +149,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bForceTool && !bIgnoreAngularForce", EditConditionHides), Category = "iMSTK|ForceTool|Force")
 		double ForceScale = 1;
-
-	UFUNCTION(BlueprintCallable, Category = "iMSTK|CustomController")
-		FVector GetControlleriMSTKPosition();
-
-	//imstk::Vec3d SpringForce = imstk::Vec3d::Zero();
-	//imstk::Vec3d DamperForce = imstk::Vec3d::Zero();
 
 	imstk::Vec3d AngularSpringForce = imstk::Vec3d::Zero();
 	imstk::Vec3d AngularDamperForce = imstk::Vec3d::Zero();

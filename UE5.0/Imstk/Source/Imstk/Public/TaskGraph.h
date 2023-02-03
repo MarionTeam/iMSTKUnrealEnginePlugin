@@ -33,8 +33,9 @@ struct IMSTK_API FTaskGraphNode
 	FTaskGraphNode(int Index, FString Name, FLinearColor Color) : Name(Name), Index(Index), Color(Color) {};
 };
 
-/**
- *
+/** \file TaskGraph.h
+ *  \brief Representation of an iMSTK task graph
+ *  \details 
  */
 UCLASS(Blueprintable)
 class IMSTK_API UTaskGraph : public UObject

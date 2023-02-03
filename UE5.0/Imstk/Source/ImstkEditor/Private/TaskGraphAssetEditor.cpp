@@ -8,8 +8,6 @@
 #include <EdGraph/EdGraphNode.h>
 #include "STaskGraphNode.h"
 #include "SGraphPanel.h"
-#include "EdTaskGraphNode.h"
-#include "Editor/UnrealEd/Public/Kismet2/BlueprintEditorUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "TaskGraphSchema.h"
 

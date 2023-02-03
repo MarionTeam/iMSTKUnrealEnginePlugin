@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "TaskGraph.h"
 
-/**
- *
+/** \file TaskGraphAssetEditor.h
+ *  \brief Asset editor for the iMSTK task graph
+ *  \details 
  */
 class IMSTKEDITOR_API FTaskGraphAssetEditor : public FAssetEditorToolkit, public FNotifyHook, public FGCObject
 {

@@ -15,12 +15,6 @@ void FTaskGraphConnectionDrawingPolicy::DetermineWiringStyle(UEdGraphPin* Output
 	Params.AssociatedPin1 = OutputPin;
 	Params.AssociatedPin2 = InputPin;
 	Params.WireThickness = 1.5f;
-
-	//const bool bDeemphasizeUnhoveredPins = HoveredPins.Num() > 0;
-	//if (bDeemphasizeUnhoveredPins)
-	//{
-	//	ApplyHoverDeemphasis(OutputPin, InputPin, /*inout*/ Params.WireThickness, /*inout*/ Params.WireColor);
-	//}
 }
 
 void FTaskGraphConnectionDrawingPolicy::Draw(TMap<TSharedRef<SWidget>, FArrangedWidget>& InPinGeometries, FArrangedChildren& ArrangedNodes)

@@ -8,7 +8,6 @@
 #include "DynamicalModel.h"
 #include "ControllerTool.generated.h"
 
-//class UControllerGraspingTool;
 class UImstkController;
 
 UENUM()

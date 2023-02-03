@@ -2,14 +2,15 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Engine/DeveloperSettings.h"
-#include "ImstkSettings.generated.h"
-
 /** \file ImstkSettings.h
  *  \brief Provides settings in editor for imstk
  *  \details Has settings for imstk logging and debugging messages in unreal
  */
+#include "CoreMinimal.h"
+#include "Engine/DeveloperSettings.h"
+#include "ImstkSettings.generated.h"
+
+// Settings for iMSTK
 UCLASS(config = Game, defaultconfig, Category = "Holds settings for iMSTK")
 class IMSTK_API UImstkSettings : public UDeveloperSettings
 {

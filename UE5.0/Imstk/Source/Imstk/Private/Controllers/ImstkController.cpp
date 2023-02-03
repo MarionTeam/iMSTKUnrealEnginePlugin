@@ -74,56 +74,6 @@ bool UImstkController::IsInitialized()
 	return bIsInitialized;
 }
 
-void UImstkController::DisableAllCollisions()
-{
-	/*for (std::shared_ptr<imstk::CollisionInteraction> Collision : Collisions) {
-		Collision->setEnabled(false);
-	}*/
-}
-
-void UImstkController::EnableAllCollisions()
-{
-	/*for (std::shared_ptr<imstk::CollisionInteraction> Collision : Collisions) {
-		Collision->setEnabled(true);
-	}*/
-}
-
-
-//void UImstkController::AddToolPicking(std::shared_ptr<imstk::PbdObjectGrasping> InputPicking)
-//{
-//	this->ToolPickings.Add(InputPicking);
-//}
-//
-//void UImstkController::AddStitching(std::shared_ptr<imstk::PbdObjectStitching> InputStitch)
-//{
-//	this->Stitchings.Add(InputStitch);
-//}
-//
-//void UImstkController::AddCutting(std::shared_ptr<imstk::PbdObjectCutting> InputCutting)
-//{
-//	this->Cuttings.Add(InputCutting);
-//}
-//
-//void UImstkController::AddCutObject(std::shared_ptr<imstk::PbdObject> InputObject)
-//{
-//	this->CutObjects.Add(InputObject);
-//}
-//
-//void UImstkController::AddCollision(std::shared_ptr<imstk::CollisionInteraction> InputCollision)
-//{
-//	this->Collisions.Add(InputCollision);
-//}
-//
-//void UImstkController::AddTetCutting(std::shared_ptr<imstk::PbdObjectCellRemoval> InputCutting)
-//{
-//	this->TetCuttings.Add(InputCutting);
-//}
-//
-//void UImstkController::AddTetObject(UPBDModel* InputObject)
-//{
-//	this->TetObjects.Add(InputObject);
-//}
-
 bool UImstkController::ExecuteInteractions(TEnumAsByte<EToolType> ExecuteType)
 {
 	bool Executed = false;
@@ -164,18 +114,7 @@ FVector UImstkController::GetGeomOffset()
 void UImstkController::UnInit()
 {
 	ToolObj.reset();
-	/*for (std::shared_ptr<imstk::PbdObjectGrasping> ToolPicking : ToolPickings) {
-		ToolPicking.reset();
-	}
-	for (std::shared_ptr<imstk::PbdObjectStitching> Stitching : Stitchings) {
-		Stitching.reset();
-	}
-	for (std::shared_ptr<imstk::PbdObjectCutting> Cutting : Cuttings) {
-		Cutting.reset();
-	}
-	for (std::shared_ptr<imstk::CollisionInteraction> Collision : Collisions) {
-		Collision.reset();
-	}*/
+	
 	for (auto Tool : ControllerTools) {
 		Tool->UnInit();
 	}

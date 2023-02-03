@@ -10,14 +10,11 @@
 #include "imstkPBDObjectCollision.h"
 #include "imstkRigidObjectCollision.h"
 #include "imstkPbdCollisionHandling.h"
-#include "imstkPbdSolver.h"
-
 #include "imstkLineMesh.h"
 #include "ImstkSubsystem.h"
 #include "ImstkSettings.h"
-#include "Engine/Engine.h"
 
-//TODO: Might not need anymore!
+// Deprecated function for determining the collision type
 ECollisionInteractionType UCollisionInteraction::GetAutoCollisionType(std::shared_ptr<imstk::Geometry> Geom1, std::shared_ptr<imstk::Geometry> Geom2)
 {
 	// Cast both models to determine what types they are and return the corresponding CollisionInteractionType for each combination of imstk geometries 
@@ -83,11 +80,11 @@ ECollisionInteractionType UCollisionInteraction::GetAutoCollisionType(std::share
 void UCollisionInteraction::Init()
 {
 	if (Model1 == nullptr ) {
-		GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("ERROR: Model1 is not assigned in collision interaction");
+		GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("ERROR: Model1 is not assigned in collision interaction", FColor::Red);
 		return;
 	}
 	else if (Model2 == nullptr) {
-		GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("ERROR: Model2 is not assigned in collision interaction");
+		GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("ERROR: Model2 is not assigned in collision interaction", FColor::Red);
 		return;
 	}
 
@@ -96,33 +93,25 @@ void UCollisionInteraction::Init()
 
 	Interactions.Empty();
 
-	// Determine the collision type if set to auto
-	//if (CollisionType == ECollisionInteractionType::Auto)
-	//	CollisionType = GetAutoCollisionType(Model1->GetImstkGeometry(), Model2->GetImstkGeometry());
-
-	//// If GetAutoCollisionType returns Auto, then collision type was not found. Therefore return
-	//if (CollisionType == ECollisionInteractionType::Auto)
-	//	return;
-	//TODO: redo this
 	// Create interaction and add to scene
 	UImstkSubsystem* SubsystemInstance = GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>();
 	std::shared_ptr<imstk::CollisionInteraction> Interaction;
 
 	if (CollisionType == "") {
 		if (Cast<UPBDThread>(Model1) && Cast<UPBDThread>(Model2)) {
-			Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), std::dynamic_pointer_cast<imstk::PbdObject>(Model2->ImstkCollidingObject));// , std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+			Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model1->ImstkCollidingObject), std::dynamic_pointer_cast<imstk::PbdObject>(Model2->ImstkCollidingObject));
 		}
 		else if (Cast<URBDModel>(Model1) && Cast<URBDModel>(Model2))
 		{
-			Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), std::dynamic_pointer_cast<imstk::RigidObject2>(Model2->ImstkCollidingObject));//, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+			Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), std::dynamic_pointer_cast<imstk::RigidObject2>(Model2->ImstkCollidingObject));
 		}
 		else if (Cast<URBDModel>(Model1) && Cast<UStaticModel>(Model2))
 		{
-			Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), Model2->ImstkCollidingObject);//, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+			Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Model1->ImstkCollidingObject), Model2->ImstkCollidingObject);
 		}
 		else if (Cast<UStaticModel>(Model1) && Cast<URBDModel>(Model2))
 		{
-			Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Model2->ImstkCollidingObject), Model1->ImstkCollidingObject);//, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+			Interaction = std::make_shared<imstk::RigidObjectCollision>(std::dynamic_pointer_cast<imstk::RigidObject2>(Model2->ImstkCollidingObject), Model1->ImstkCollidingObject);
 		}
 		else if (Cast<UPBDModel>(Model1) && Cast<UPBDModel>(Model2))
 		{
@@ -134,10 +123,10 @@ void UCollisionInteraction::Init()
 		}
 		else if ((Cast<UStaticModel>(Model1) || Cast<URBDModel>(Model1)) && Cast<UDeformableModel>(Model2))
 		{
-			Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model2->ImstkCollidingObject), Model1->ImstkCollidingObject);//, std::string(TCHAR_TO_UTF8(*UEnum::GetValueAsString(CollisionType))));
+			Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model2->ImstkCollidingObject), Model1->ImstkCollidingObject);
 		}
 		else {
-			Model1->GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Creating interaction between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + FString(Model2->ImstkCollidingObject->getName().c_str()) + " failed");
+			Model1->GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Creating interaction between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + FString(Model2->ImstkCollidingObject->getName().c_str()) + " failed", FColor::Red);
 			return;
 		}
 	}
@@ -170,7 +159,7 @@ void UCollisionInteraction::Init()
 			Interaction = std::make_shared<imstk::PbdObjectCollision>(std::dynamic_pointer_cast<imstk::PbdObject>(Model2->ImstkCollidingObject), Model1->ImstkCollidingObject, std::string(TCHAR_TO_UTF8(*CollisionType)));
 		}
 		else {
-			Model1->GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Creating interaction between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + FString(Model2->ImstkCollidingObject->getName().c_str()) + " failed");
+			Model1->GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Creating interaction between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + FString(Model2->ImstkCollidingObject->getName().c_str()) + " failed", FColor::Red);
 			return;
 		}
 	}
@@ -192,11 +181,6 @@ void UCollisionInteraction::Init()
 		PBDInteraction->setUseCorrectVelocity(bUseCorrectVelocity);
 	}
 
-	/*if (std::dynamic_pointer_cast<imstk::PbdCollisionHandling>(Interaction->getCollisionHandlingAB())) {
-		auto colHandler = std::dynamic_pointer_cast<imstk::PbdCollisionHandling>(Interaction->getCollisionHandlingAB());
-		colHandler->getCollisionSolver()->setCollisionIterations(CollisionIterations);
-	}*/	
-
 	SubsystemInstance->ActiveScene->addInteraction(Interaction);
 	
 	Interactions.Add(Interaction);
@@ -206,7 +190,7 @@ void UCollisionInteraction::Init()
 		Model2->AddInteraction(this);
 	}
 	if (UImstkSettings::IsDebugging()) {
-		GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Interaction created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + Model2->ImstkCollidingObject->getName().c_str());
+		GetWorld()->GetGameInstance()->GetSubsystem<UImstkSubsystem>()->LogToUnrealAndImstk("Interaction created between " + FString(Model1->ImstkCollidingObject->getName().c_str()) + " and " + Model2->ImstkCollidingObject->getName().c_str(), FColor::Green);
 	}
 }
 

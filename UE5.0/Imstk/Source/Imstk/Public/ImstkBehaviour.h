@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-//#include "Engine/GameEngine.h"
 #include "ImstkBehaviour.generated.h"
 
 /** \file ImstkBehaviour.h

@@ -6,8 +6,9 @@
 #include "EdGraph/EdGraphSchema.h"
 #include "TaskGraphSchema.generated.h"
 
-/**
- * 
+/** \file TaskGraphSchema.h
+ *  \brief Schema for the iMSTK task graph
+ *  \details
  */
 UCLASS()
 class IMSTKEDITOR_API UTaskGraphSchema : public UEdGraphSchema

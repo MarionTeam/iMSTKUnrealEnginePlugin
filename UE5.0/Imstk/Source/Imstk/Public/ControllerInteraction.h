@@ -18,10 +18,6 @@ class IMSTK_API UControllerInteraction : public UCollisionInteraction
 	GENERATED_BODY()
 
 public:
-	//TODO: probably move into its own class
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Controller Interaction")
-		double GraspCompliance = 0.0001;
-
 	// Controller in the interaction 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "iMSTK|Controller Interaction")
 		UImstkController* Controller;

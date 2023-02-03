@@ -3,7 +3,7 @@
 
 #include "StaticModel.h"
 #include "ImstkSettings.h"
-#include "Engine/GameEngine.h"
+//#include "Engine/GameEngine.h"
 
 void UStaticModel::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {
@@ -82,12 +82,7 @@ void UStaticModel::Init()
 	if (!bDelayInit) {
 		SubsystemInstance->ActiveScene->addSceneObject(ImstkCollidingObject);
 
-		SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
+		SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString(), FColor::Green);
 		Super::bIsInitialized = true;
 	}
 }
-
-//void UStaticModel::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-//{
-//	LOG(WARNING) << ImstkCollidingObject->getCollidingGeometry()->getTransform();
-//}

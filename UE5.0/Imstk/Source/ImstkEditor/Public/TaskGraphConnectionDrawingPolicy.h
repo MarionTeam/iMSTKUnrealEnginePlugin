@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "ConnectionDrawingPolicy.h"
 
-/**
- * 
+/** \file TaskGraphConnectionDrawingPolicy.h
+ *  \brief Connection drawing policy for the iMSTK task graph
+ *  \details 
  */
 class IMSTKEDITOR_API FTaskGraphConnectionDrawingPolicy : public FConnectionDrawingPolicy
 {

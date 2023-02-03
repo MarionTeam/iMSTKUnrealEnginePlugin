@@ -29,10 +29,6 @@ class IMSTK_API UDeformableModel : public UDynamicalModel
 	GENERATED_BODY()
 
 public:
-	//UPROPERTY(EditAnywhere, Category = "General")
-	//	//bool TetrahedralMesh;
-	//	UTetrahedralMeshAsset* TetrahedralMesh;
-
 	// Mass of the PBDModel
 	UPROPERTY(EditAnywhere, Category = "iMSTK")
 		double Mass = 1.0;
@@ -43,17 +39,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "iMSTK|PbdModel")
 		double AngularDampingCoefficient = 0.01;
 
-	// Viscous damping coefficient of the PBDModel
-	/*UPROPERTY(EditAnywhere, Category = "General|Advanced")
-		double ViscousDampingCoeff = 0.01;*/
-
 	// Number of iterations of the PBDModel
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "!bSharedModel", EditConditionHides), Category = "iMSTK|PBDModel")
 		int ModelIterations = 1;
-
-	// Contact stiffness of the PBDmodel
-	/*UPROPERTY(EditAnywhere, Category = "General|Advanced")
-		double ContactStiffness = 1.0;*/
 
 	UPROPERTY(EditAnywhere, Category = "iMSTK|Constraints")
 		bool bUseDistanceConstraint = false;
@@ -88,11 +76,6 @@ public:
 
 	virtual void InitializeComponent() override;
 
-	/** Initializes the geometry and the PBD model for the deformable model
-	* @return None
-	*/
-	//virtual void Init() override;
-
 	/** Updates the mesh's vertices in Unreal to visualize the scene in imstk
 	* @return None
 	*/
@@ -101,8 +84,10 @@ public:
 	// 
 	std::shared_ptr<imstk::PbdObject> PbdObject;
 
-	//virtual void OnRegister() override;
-
+	/** Sets an array of vertex indices to be fixed on the deformable model
+	* @params NewFixedVerts Array of integers containing the indices of the vertices to be fixed
+	* @return None
+	*/
 	UFUNCTION(BlueprintCallable, Category = "iMSTK|DeformableModel")
 		virtual void SetFixedVerts(TArray<int> NewFixedVerts);
 

@@ -5,6 +5,8 @@
 #include "Editor/UnrealEd/Public/Kismet2/BlueprintEditorUtils.h"
 #include "TaskGraph.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "UObject/Package.h"
+#include "UObject/SavePackage.h"
 
 
 #define LOCTEXT_NAMESPACE "TaskGraphTool"
@@ -74,13 +76,15 @@ void TaskGraphTool::OpenTaskGraph()
 	if (!FPaths::FileExists(FilePath)) {
 		FString PackagePath = TEXT("/Game/TaskGraphs/") + AssetName;
 
-		UPackage* Package = CreatePackage(nullptr, *PackagePath);
+		UPackage* Package = CreatePackage(*PackagePath);
 		TaskGraph = NewObject<UTaskGraph>(Package, UTaskGraph::StaticClass(), *AssetName, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone);
 
 		FAssetRegistryModule::AssetCreated(TaskGraph);
 		TaskGraph->MarkPackageDirty();
 
-		bool IsSuccessful = UPackage::SavePackage(Package, TaskGraph, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *FilePath);
+		FSavePackageArgs SavePackageArgs = { NULL,  EObjectFlags::RF_Standalone ,0U, false, true, true, FDateTime::MinValue(), GError };
+
+		bool IsSuccessful = UPackage::SavePackage(Package, TaskGraph, *FilePath, SavePackageArgs);
 
 		UE_LOG(LogClass, Log, TEXT("File created"));
 	}

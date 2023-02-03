@@ -4,26 +4,10 @@
 #include "NeedleObject.h"
 #include "ImstkSettings.h"
 #include "imstkPbdModel.h"
-#include "imstkSelectEnclosedPoints.h"
-#include "imstkPointwiseMap.h"
-#include "imstkPointToTetMap.h"
-#include "imstkTetrahedralMesh.h"
-#include "KismetProceduralMeshLibrary.h"
-#include "imstkPbdConstraintContainer.h"
-#include "imstkPbdFemTetConstraint.h"
-#include "imstkPbdModelConfig.h"
 #include "Interfaces/IPluginManager.h"
 #include "imstkIsometricMap.h"
-#include "imstkRbdConstraint.h"
 #include "imstkNeedle.h"
-
-#include "imstkCleanMesh.h"
 #include "imstkMeshIO.h"
-
-#include "Engine/GameEngine.h"
-
-
-#include "imstkGeometryUtilities.h"
 
 // Called when the game starts or when spawned
 void UNeedleObject::BeginPlay()

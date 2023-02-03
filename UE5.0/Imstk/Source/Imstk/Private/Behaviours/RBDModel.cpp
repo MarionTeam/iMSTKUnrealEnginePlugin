@@ -6,7 +6,6 @@
 #include "imstkRigidBodyModel2.h"
 #include "imstkRbdConstraint.h"
 #include "MathUtil.h"
-#include "Engine/GameEngine.h"
 
 void URBDModel::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {
@@ -122,7 +121,7 @@ void URBDModel::Init()
 
 	SubsystemInstance->ActiveScene->addSceneObject(RigidObject);
 
-	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString());
+	SubsystemInstance->LogToUnrealAndImstk("Initialized: " + Owner->GetFName().ToString(), FColor::Green);
 
 	Super::bIsInitialized = true;
 }

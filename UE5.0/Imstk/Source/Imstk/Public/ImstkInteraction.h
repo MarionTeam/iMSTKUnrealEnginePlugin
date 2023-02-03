@@ -22,6 +22,4 @@ public:
 
 	// Called from the subsystem to clear shared pointers
 	virtual void UnInit();
-
-	//virtual bool Contains(AActor Actor);
 };

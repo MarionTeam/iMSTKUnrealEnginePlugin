@@ -39,12 +39,6 @@ public:
 		FVector GetVertexPosition(int Vert = 0);
 
 protected:
-
-	/** Called during TickComponent to move the Unreal object in order to match the Imstk simulation
-	* @return None.
-	*/
-	//void UpdatePosRot();
-
 	// Object is created during Init and used in Imstk simulation
 	std::shared_ptr<imstk::PbdObject> Needle;
 
