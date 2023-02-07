@@ -12,8 +12,6 @@
 #include "imstkPbdModel.h"
 #include "ImstkController.h"
 #include "imstkPbdModelConfig.h"
-#include "imstkDeviceManager.h"
-#include "imstkDeviceManagerFactory.h"
 #include "TimerManager.h"
 
 // Physics Substepping

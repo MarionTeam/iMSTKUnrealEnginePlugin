@@ -4,7 +4,6 @@
 #include "ControllerGraspingTool.h"
 #include "ImstkSubsystem.h"
 #include "ImstkController.h"
-#include "imstkPbdObject.h"
 
 #include "imstkPbdRigidObjectGrasping.h"
 

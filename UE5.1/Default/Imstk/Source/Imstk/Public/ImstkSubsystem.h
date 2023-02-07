@@ -15,7 +15,6 @@
 // Async
 #include "Chaos/SimCallbackInput.h"
 #include "Chaos/SimCallbackObject.h"
-#include "Physics/Experimental/PhysScene_Chaos.h"
 
 #include "ImstkSubsystem.generated.h"
 

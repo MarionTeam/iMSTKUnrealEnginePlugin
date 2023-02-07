@@ -6,10 +6,7 @@
 #include "ImstkController.h"
 
 #include "imstkPbdObjectController.h"
-
-//#include "CoreMinimal.h"
-//#include "ImstkController.h"
-//#include "imstkRigidObject2.h"
+#include "imstkRigidObject2.h"
 #include "HapticController.generated.h"
 
 UENUM(BlueprintType)

@@ -113,7 +113,7 @@ public:
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = "0"), Category = "iMSTK|Force")
 		double TranslationScaling = 1.0;
 
-	UPROPERTY(EditAnywhere, Category = "iMSTK|Force")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "iMSTK|Force")
 		bool bUseCriticalDamping = true;
 	UPROPERTY(EditAnywhere, Category = "iMSTK|Force")
 		bool bUseForceSmoothening = true;

@@ -39,11 +39,33 @@ std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UDynamicalModel* M
 			}
 		}
 	}
+	if (ProcMeshComp) {
+		// Get vertices and indices from procedural mesh and create imstk geometry
+		TArray<FProcMeshVertex> VertexBuffer = ProcMeshComp->GetProcMeshSection(0)->ProcVertexBuffer;
+		TArray<uint32> IndexBuffer = ProcMeshComp->GetProcMeshSection(0)->ProcIndexBuffer;
 
-	if (StaticMeshComp) {
+		// Get vertices and indices in the mesh and set those values in the imstk mesh
+		TArray<FVector> Vertices;
+		std::shared_ptr<imstk::VecDataArray<float, 2>> TCoords = std::make_shared<imstk::VecDataArray<float, 2>>();
+		for (int32 i = 0; i < VertexBuffer.Num(); i++) {
+			Vertices.Add(VertexBuffer[i].Position);
+			TCoords->push_back(imstk::Vec2f((float)VertexBuffer[i].UV0[0], (float)VertexBuffer[i].UV0[1]));
+		}
+
+		TArray<int> Indices;
+		for (int32 i = 0; i < IndexBuffer.Num(); i++) {
+			Indices.Add(IndexBuffer[i]);
+		}
+
+		MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
+
+		MeshGeom->setVertexTCoords("tcoords", TCoords);
+		MeshGeom->computeVertexNormals();
+	}
+	else if (StaticMeshComp) {
 		if (!StaticMeshComp->GetStaticMesh()->bAllowCPUAccess)
 			FMessageLog("PIE").Warning(FText::FromString("'Allow CPU Access' is not enabled for " + StaticMeshComp->GetStaticMesh()->GetFName().ToString() + ". This is required to access static mesh data in the packaged game."));
-		
+
 		// Get vertices and indices from static mesh and create imstk geometry
 		FPositionVertexBuffer* PositionVertexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].VertexBuffers.PositionVertexBuffer;
 		FRawStaticIndexBuffer* IndexBuffer = &StaticMeshComp->GetStaticMesh()->GetRenderData()->LODResources[0].IndexBuffer;
@@ -65,29 +87,6 @@ std::shared_ptr<imstk::Geometry> FSurfaceMeshGeomStruct::Init(UDynamicalModel* M
 		}
 
 		MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
-		MeshGeom->setVertexTCoords("tcoords", TCoords);
-		MeshGeom->computeVertexNormals();
-	}
-	else if (ProcMeshComp) {
-		// Get vertices and indices from procedural mesh and create imstk geometry
-		TArray<FProcMeshVertex> VertexBuffer = ProcMeshComp->GetProcMeshSection(0)->ProcVertexBuffer;
-		TArray<uint32> IndexBuffer = ProcMeshComp->GetProcMeshSection(0)->ProcIndexBuffer;
-
-		// Get vertices and indices in the mesh and set those values in the imstk mesh
-		TArray<FVector> Vertices;
-		std::shared_ptr<imstk::VecDataArray<float, 2>> TCoords = std::make_shared<imstk::VecDataArray<float, 2>>();
-		for (int32 i = 0; i < VertexBuffer.Num(); i++) {
-			Vertices.Add(VertexBuffer[i].Position);
-			TCoords->push_back(imstk::Vec2f((float)VertexBuffer[i].UV0[0], (float)VertexBuffer[i].UV0[1]));
-		}
-
-		TArray<int> Indices;
-		for (int32 i = 0; i < IndexBuffer.Num(); i++) {
-			Indices.Add(IndexBuffer[i]);
-		}
-
-		MeshGeom->initialize(UMathUtil::ToImstkVecDataArray3d(Vertices, true), UMathUtil::ToImstkVecDataArray3i(Indices));
-
 		MeshGeom->setVertexTCoords("tcoords", TCoords);
 		MeshGeom->computeVertexNormals();
 	}

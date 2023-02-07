@@ -11,7 +11,6 @@
 #include "imstkRbdConstraint.h"
 #include "imstkNeedle.h"
 #include "imstkRigidObjectController.h"
-#include "imstkDeviceManagerFactory.h"
 #include "ControllerNeedleTool.h"
 
 
