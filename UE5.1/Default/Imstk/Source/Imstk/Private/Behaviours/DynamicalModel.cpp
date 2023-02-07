@@ -50,7 +50,6 @@ std::shared_ptr<imstk::Geometry> UDynamicalModel::GetImstkGeometry()
 
 void UDynamicalModel::ConvertStaticToProceduralMesh(UStaticMeshComponent* StaticMesh, UProceduralMeshComponent* ProcMesh)
 {
-	StaticMesh->GetStaticMesh()->bAllowCPUAccess = true;
 	UKismetProceduralMeshLibrary::CopyProceduralMeshFromStaticMeshComponent(StaticMesh, 0, ProcMesh, false);
 }
 
